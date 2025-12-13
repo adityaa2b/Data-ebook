@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Introduction to Data - Interactive E-Book</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+            background: linear-gradient(135deg, #EBF4FF 0%, #ffffff 50%, #E0E7FF 100%);
+            min-height: 100vh;
+        }
+        
+        .header {
+            background: white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 16px;
+        }
+        
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        
+        .header-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .header-title h1 {
+            font-size: 20px;
+            color: #1f2937;
+        }
+        
+        .header-title p {
+            font-size: 14px;
+            color: #6b7280;
+        }
+        
+        .menu-btn {
+            background: none;
+            border: none;
+            padding: 8px;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: background 0.2s;
+        }
+        
+        .menu-btn:hover {
+            background: #f3f4f6;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e5e7eb;
+            border-radius: 9999px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(to right, #3b82f6, #6366f1);
+            transition: width 0.5s ease;
+        }
+        
+        .progress-text {
+            text-align: right;
+            font-size: 12px;
+            color: #6b7280;
+            margin-top: 4px;
+        }
+        
+        .menu-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 200;
+            display: none;
+        }
+        
+        .menu-overlay.active {
+            display: block;
+        }
+        
+        .menu-sidebar {
+            position: fixed;
+            right: 0;
+            top: 0;
+            height: 100%;
+            width: 320px;
+            background: white;
+            padding: 24px;
+            overflow-y: auto;
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+            z-index: 201;
+        }
+        
+        .menu-sidebar.active {
+            transform: translateX(0);
+        }
+        
+        .menu-sidebar h2 {
+            font-size: 24px;
+            margin-bottom: 24px;
+            color: #1f2937;
+        }
+        
+        .menu-item {
+            width: 100%;
+            text-align: left;
+            padding: 16px;
+            margin-bottom: 8px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            background: #f9fafb;
+            transition: all 0.2s;
+        }
+        
+        .menu-item:hover {
+            background: #f3f4f6;
+        }
+        
+        .menu-item.active {
+            background: #3b82f6;
+            color: white;
+            box-shadow: 0 4px 6px rgba(59, 130, 246, 0.3);
+        }
+        
+        .menu-item-content {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .menu-item-icon {
+            font-size: 24px;
+        }
+        
+        .menu-item-title {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        
+        .menu-item-subtitle {
+            font-size: 12px;
+            opacity: 0.75;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 32px 16px;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            padding: 48px;
+            min-height: 600px;
+        }
+        
+        .page-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 2px solid #f3f4f6;
+        }
+        
+        .page-icon {
+            font-size: 48px;
+        }
+        
+        .page-info p {
+            font-size: 14px;
+            color: #6b7280;
+        }
+        
+        .page-info h2 {
+            font-size: 28px;
+            color: #1f2937;
+        }
+        
+        .content {
+            line-height: 1.7;
+        }
+        
+        .content h1 {
+            font-size: 36px;
+            color: #2563eb;
+            margin-bottom: 16px;
+        }
+        
+        .content h2 {
+            font-size: 28px;
+            color: #1f2937;
+            margin-bottom: 16px;
+        }
+        
+        .content h3 {
+            font-size: 24px;
+            color: #1f2937;
+            margin-bottom: 12px;
+        }
+        
+        .content h4 {
+            font-size: 20px;
+            margin-bottom: 8px;
+        }
+        
+        .content p {
+            font-size: 18px;
+            color: #374151;
+            margin-bottom: 16px;
+        }
+        
+        .box {
+            padding: 24px;
+            border-radius: 8px;
+            margin: 24px 0;
+        }
+        
+        .box-blue {
+            background: #eff6ff;
+            border-left: 4px solid #3b82f6;
+        }
+        
+        .box-green {
+            background: #f0fdf4;
+            border-left: 4px solid #10b981;
+        }
+        
+        .box-purple {
+            background: #faf5ff;
+            border-left: 4px solid #a855f7;
+        }
+        
+        .box-orange {
+            background: #fff7ed;
+            border-left: 4px solid #f97316;
+        }
+        
+        .box-red {
+            background: #fef2f2;
+            border-left: 4px solid #ef4444;
+        }
+        
+        .box-pink {
+            background: #fdf2f8;
+            border-left: 4px solid #ec4899;
+        }
+        
+        .grid {
+            display: grid;
+            gap: 16px;
+            margin: 24px 0;
+        }
+        
+        .grid-2 {
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        }
+        
+        .card-item {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+        }
+        
+        .card-item:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            transform: translateY(-2px);
+        }
+        
+        .flex {
+            display: flex;
+            gap: 16px;
+            align-items: flex-start;
+        }
+        
+        .icon-large {
+            font-size: 48px;
+        }
+        
+        .lifecycle-step {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+            transition: all 0.3s;
+        }
+        
+        .lifecycle-step:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        .step-number {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+        
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 32px;
+        }
+        
+        .nav-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .nav-btn:disabled {
+            background: #e5e7eb;
+            color: #9ca3af;
+            cursor: not-allowed;
+        }
+        
+        .nav-btn-primary {
+            background: #3b82f6;
+            color: white;
+            box-shadow: 0 2px 4px rgba(59, 130, 246, 0.3);
+        }
+        
+        .nav-btn-primary:hover:not(:disabled) {
+            background: #2563eb;
+            box-shadow: 0 4px 8px rgba(59, 130, 246, 0.4);
+        }
+        
+        .page-indicator {
+            text-align: center;
+            color: #6b7280;
+            font-size: 14px;
+        }
+        
+        .cta-box {
+            background: linear-gradient(to right, #3b82f6, #6366f1);
+            color: white;
+            padding: 32px;
+            border-radius: 8px;
+            margin-top: 32px;
+        }
+        
+        .cta-box h3 {
+            color: white;
+            margin-bottom: 16px;
+        }
+        
+        .cta-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: white;
+            color: #3b82f6;
+            padding: 12px 24px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .cta-btn:hover {
+            background: #f3f4f6;
+        }
+        
+        .checkmark {
+            color: #10b981;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+        
+        @media (max-width: 768px) {
+            .card {
+                padding: 24px;
+            }
+            
+            .menu-sidebar {
+                width: 100%;
+            }
+            
+            .content h1 {
+                font-size: 28px;
+            }
+            
+            .content h2 {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <div class="header-content">
+            <div class="header-top">
+                <div class="header-title">
+                    <div style="font-size: 28px;">📚</div>
+                    <div>
+                        <h1>Introduction to Data</h1>
+                        <p>by Aditya Bhutada</p>
+                    </div>
+                </div>
+                <button class="menu-btn" onclick="toggleMenu()">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="3" y1="12" x2="21" y2="12"></line>
+                        <line x1="3" y1="6" x2="21" y2="6"></line>
+                        <line x1="3" y1="18" x2="21" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressBar"></div>
+            </div>
+            <div class="progress-text" id="progressText">0% Complete</div>
+        </div>
+    </div>
+
+    <!-- Menu Overlay -->
+    <div class="menu-overlay" id="menuOverlay" onclick="toggleMenu()"></div>
+    
+    <!-- Menu Sidebar -->
+    <div class="menu-sidebar" id="menuSidebar">
+        <h2>Table of Contents</h2>
+        <div id="menuItems"></div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container">
+        <div class="card">
+            <div class="page-header">
+                <span class="page-icon" id="pageIcon">📚</span>
+                <div class="page-info">
+                    <p id="pageNumber">Chapter 1 of 7</p>
+                    <h2 id="pageTitle">Welcome</h2>
+                </div>
+            </div>
+            <div class="content" id="pageContent"></div>
+        </div>
+
+        <!-- Navigation -->
+        <div class="navigation">
+            <button class="nav-btn nav-btn-primary" id="prevBtn" onclick="previousPage()">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="15 18 9 12 15 6"></polyline>
+                </svg>
+                Previous
+            </button>
+            <div class="page-indicator" id="pageIndicator">Page 1 of 7</div>
+            <button class="nav-btn nav-btn-primary" id="nextBtn" onclick="nextPage()">
+                Next
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        let currentPage = 0;
+        let completedPages = new Set();
+
+        const pages = [
+            {
+                title: "Welcome",
+                icon: "📚",
+                content: `
+                    <div style="text-align: center; margin-bottom: 32px;">
+                        <h1>Introduction to Data</h1>
+                        <p style="font-size: 20px; color: #6b7280;">LinkedIn Learning Series</p>
+                        <p style="font-size: 18px; color: #9ca3af; margin-top: 8px;">by Aditya Bhutada</p>
+                    </div>
+                    
+                    <div class="box box-blue">
+                        <p style="font-size: 18px;">
+                            Welcome to this interactive learning experience! Navigate through the chapters to discover the fundamentals of data, its importance, and practical applications in today's digital world.
+                        </p>
+                    </div>
+                    
+                    <div class="grid grid-2">
+                        <div class="card-item" style="border-top: 4px solid #3b82f6;">
+                            <div style="font-size: 32px; margin-bottom: 8px;">📖</div>
+                            <div style="font-weight: 600; color: #1f2937;">7 Chapters</div>
+                            <div style="font-size: 14px; color: #6b7280;">Comprehensive content</div>
+                        </div>
+                        <div class="card-item" style="border-top: 4px solid #10b981;">
+                            <div style="font-size: 32px; margin-bottom: 8px;">⏱️</div>
+                            <div style="font-weight: 600; color: #1f2937;">15 min read</div>
+                            <div style="font-size: 14px; color: #6b7280;">Quick learning</div>
+                        </div>
+                    </div>
+                `
+            },
+            {
+                title: "What is Data?",
+                icon: "❓",
+                content: `
+                    <h2>What is Data?</h2>
+                    
+                    <div class="box box-blue">
+                        <p>
+                            Think of data as raw facts and figures—by themselves, they don't tell us much. But once we process and analyze them, they turn into valuable insights that drive smarter decisions. <strong style="color: #2563eb;">It tries to tell you a story.</strong>
+                        </p>
+                    </div>
+
+                    <h3 style="margin-top: 32px;">Types of Data</h3>
+                    
+                    <div class="card-item box-green" style="margin-bottom: 16px;">
+                        <h4 style="color: #059669;">📊 Structured Data</h4>
+                        <p>Organized in rows and columns (e.g., databases, spreadsheets)</p>
+                        <div style="background: #f0fdf4; padding: 12px; border-radius: 4px; margin-top: 8px;">
+                            <strong style="color: #047857;">Example:</strong> Sales records in Excel
+                        </div>
+                    </div>
+
+                    <div class="card-item box-purple" style="margin-bottom: 16px;">
+                        <h4 style="color: #7c3aed;">💬 Unstructured Data</h4>
+                        <p>Free-form content like text, images, audio, video</p>
+                        <div style="background: #faf5ff; padding: 12px; border-radius: 4px; margin-top: 8px;">
+                            <strong style="color: #7c3aed;">Example:</strong> Tweets or customer reviews
+                        </div>
+                    </div>
+
+                    <div class="card-item box-orange">
+                        <h4 style="color: #ea580c;">🔀 Semi-structured Data</h4>
+                        <p>Hybrid formats such as JSON, XML, or log files</p>
+                        <div style="background: #fff7ed; padding: 12px; border-radius: 4px; margin-top: 8px;">
+                            <strong style="color: #ea580c;">Example:</strong> Web server logs
+                        </div>
+                    </div>
+                `
+            },
+            {
+                title: "Why is Data Important?",
+                icon: "💡",
+                content: `
+                    <h2>Why is Data Important?</h2>
+                    
+                    <div class="card-item" style="background: linear-gradient(to right, #eff6ff, #dbeafe); margin-bottom: 20px;">
+                        <div class="flex">
+                            <div class="icon-large">🎯</div>
+                            <div>
+                                <h3 style="color: #1e40af; margin-bottom: 8px;">Decision-making</h3>
+                                <p>Businesses rely on data to guide strategies and make informed choices</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-item" style="background: linear-gradient(to right, #faf5ff, #f3e8ff); margin-bottom: 20px;">
+                        <div class="flex">
+                            <div class="icon-large">🚀</div>
+                            <div>
+                                <h3 style="color: #7c3aed; margin-bottom: 8px;">Innovation</h3>
+                                <p>AI and machine learning models are powered by data</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-item" style="background: linear-gradient(to right, #f0fdf4, #dcfce7); margin-bottom: 20px;">
+                        <div class="flex">
+                            <div class="icon-large">⚡</div>
+                            <div>
+                                <h3 style="color: #059669; margin-bottom: 8px;">Efficiency</h3>
+                                <p>Data helps optimize processes and reduce costs</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="box box-red">
+                        <div class="flex">
+                            <div style="font-size: 32px;">🎬</div>
+                            <div>
+                                <h3 style="color: #dc2626; margin-bottom: 8px;">Case Study: Netflix</h3>
+                                <p>Netflix analyzes viewing data to recommend shows and decide which series to produce. This data-driven approach has revolutionized content creation and user experience.</p>
+                            </div>
+                        </div>
+                    </div>
+                `
+            },
+            {
+                title: "The Data Lifecycle",
+                icon: "🔄",
+                content: `
+                    <h2>The Data Lifecycle</h2>
+                    <p style="font-size: 18px; color: #6b7280; margin-bottom: 24px;">Data goes through several stages before it becomes useful:</p>
+
+                    <div class="lifecycle-step" style="background: #eff6ff;">
+                        <div class="step-number" style="background: #3b82f6;">1</div>
+                        <div>
+                            <h3 style="color: #1e40af;">Collection</h3>
+                            <p>Gathering raw data from sources (surveys, sensors, transactions)</p>
+                        </div>
+                    </div>
+
+                    <div class="lifecycle-step" style="background: #f0fdf4;">
+                        <div class="step-number" style="background: #10b981;">2</div>
+                        <div>
+                            <h3 style="color: #059669;">Storage</h3>
+                            <p>Saving data in databases, warehouses, or cloud systems</p>
+                        </div>
+                    </div>
+
+                    <div class="lifecycle-step" style="background: #faf5ff;">
+                        <div class="step-number" style="background: #a855f7;">3</div>
+                        <div>
+                            <h3 style="color: #7c3aed;">Processing</h3>
+                            <p>Cleaning and transforming data into usable formats</p>
+                        </div>
+                    </div>
+
+                    <div class="lifecycle-step" style="background: #fff7ed;">
+                        <div class="step-number" style="background: #f97316;">4</div>
+                        <div>
+                            <h3 style="color: #ea580c;">Analysis</h3>
+                            <p>Applying statistical or AI methods to extract insights</p>
+                        </div>
+                    </div>
+
+                    <div class="lifecycle-step" style="background: #fdf2f8;">
+                        <div class="step-number" style="background: #ec4899;">5</div>
+                        <div>
+                            <h3 style="color: #db2777;">Visualization</h3>
+                            <p>Presenting results in charts, dashboards, or reports</p>
+                        </div>
+                    </div>
+
+                    <div class="lifecycle-step" style="background: #fef2f2;">
+                        <div class="step-number" style="background: #ef4444;">6</div>
+                        <div>
+                            <h3 style="color: #dc2626;">Decision-making</h3>
+                            <p>Using insights to take actions</p>
+                        </div>
+                    </div>
+                `
+            },
+            {
+                title: "Key Concepts",
+                icon: "🔑",
+                content: `
+                    <h2>Key Concepts</h2>
+                    
+                    <div class="card-item" style="border-top: 4px solid #3b82f6; margin-bottom: 16px;">
+                        <h3>📡 Big Data</h3>
+                        <p>Extremely large datasets that require advanced tools to process</p>
+                    </div>
+
+                    <div class="card-item" style="border-top: 4px solid #10b981; margin-bottom: 16px;">
+                        <h3>📊 Data Quality</h3>
+                        <p>Accuracy, completeness, and consistency determine reliability</p>
+                    </div>
+
+                    <div class="card-item" style="border-top: 4px solid #a855f7; margin-bottom: 16px;">
+                        <h3>🗂️ Metadata</h3>
+                        <p>"Data about data" (e.g., file size, author, creation date)</p>
+                    </div>
+
+                    <div class="card-item" style="border-top: 4px solid #f97316; margin-bottom: 16px;">
+                        <h3>🛡️ Data Governance</h3>
+                        <p>Framework of policies and processes that ensure proper management, security, and compliance of data</p>
+                    </div>
+
+                    <div class="card-item" style="border-top: 4px solid #ef4444; margin-bottom: 16px;">
+                        <h3>⚙️ Data Engineering</h3>
+                        <p>The practice of designing, building, and maintaining systems that collect, store, and process data efficiently</p>
+                    </div>
+
+                    <div class="card-item" style="border-top: 4px solid #ec4899;">
+                        <h3>📈 Data Visualization</h3>
+                        <p>The art of representing data through charts and graphics to make insights clear and actionable</p>
+                    </div>
+                `
+            },
+            {
+                title: "Practical Applications",
+                icon: "🎯",
+                content: `
+                    <h2>Practical Applications</h2>
+                    
+                    <div class="card-item" style="background: linear-gradient(to right, #eff6ff, #dbeafe); margin-bottom: 20px;">
+                        <div class="flex">
+                            <div class="icon-large">💼</div>
+                            <div>
+                                <h3 style="color: #1e40af;">Business Intelligence</h3>
+                                <p>Dashboards for sales and performance tracking</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-item" style="background: linear-gradient(to right, #f0fdf4, #dcfce7); margin-bottom: 20px;">
+                        <div class="flex">
+                            <div class="icon-large">🏥</div>
+                            <div>
+                                <h3 style="color: #059669;">Healthcare</h3>
+                                <p>Patient records and predictive diagnosis</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-item" style="background: linear-gradient(to right, #faf5ff, #f3e8ff); margin-bottom: 20px;">
+                        <div class="flex">
+                            <div class="icon-large">📱</div>
+                            <div>
+                                <h3 style="color: #7c3aed;">Social Media</h3>
+                                <p>Analytics for engagement, trends, and sentiment</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-item" style="background: linear-gradient(to right, #fff7ed, #ffedd5);">
+                        <div class="flex">
+                            <div class="icon-large">💰</div>
+                            <div>
+                                <h3 style="color: #ea580c;">Finance</h3>
+                                <p>Risk assessment, fraud detection, algorithmic trading, and personalized financial services</p>
+                            </div>
+                        </div>
+                    </div>
+                `
+            },
+            {
+                title: "Summary & Next Steps",
+                icon: "✅",
+                content: `
+                    <h2>Summary & Takeaways</h2>
+                    
+                    <div class="box box-green" style="margin-bottom: 16px;">
+                        <div class="flex">
+                            <span class="checkmark">✓</span>
+                            <p style="font-size: 18px;">Data is the foundation of modern decision-making</p>
+                        </div>
+                    </div>
+
+                    <div class="box box-green" style="margin-bottom: 16px;">
+                        <div class="flex">
+                            <span class="checkmark">✓</span>
+                            <p style="font-size: 18px;">Understanding its types and lifecycle is essential before diving deeper</p>
+                        </div>
+                    </div>
+
+                    <div class="box box-green">
+                        <div class="flex">
+                            <span class="checkmark">✓</span>
+                            <p style="font-size: 18px;">Next topic in the series: <strong style="color: #059669;">Data Cleaning & Preparation</strong></p>
+                        </div>
+                    </div>
+
+                    <div class="cta-box">
+                        <h3>📌 Call to Action</h3>
+                        <p style="font-size: 18px; margin-bottom: 24px;">Follow this LinkedIn Learning Series for more insights into the world of Data!</p>
+                        <a href="https://www.linkedin.com/in/aditya-bhutada94/" target="_blank" class="cta-btn">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                            </svg>
+                            Connect with Aditya Bhutada
+                        </a>
+                    </div>
+
+                    <div style="text-align: center; margin-top: 32px; padding: 24px; background: #f9fafb; border-radius: 8px;">
+                        <p style="font-size: 18px; color: #6b7280; margin-bottom: 8px;">🎉 Congratulations on completing the course!</p>
+                        <p style="color: #9ca3af;">You've mastered the fundamentals of data</p>
+                    </div>
+                `
+            }
+        ];
+
+        function renderPage() {
+            const page = pages[currentPage];
+            document.getElementById('pageIcon').textContent = page.icon;
+            document.getElementById('pageNumber').textContent = `Chapter ${currentPage + 1} of ${pages.length}`;
+            document.getElementById('pageTitle').textContent = page.title;
+            document.getElementById('pageContent').innerHTML = page.content;
+            document.getElementById('pageIndicator').textContent = `Page ${currentPage + 1} of ${pages.length}`;
+            
+            // Update buttons
+            document.getElementById('prevBtn').disabled = currentPage === 0;
+            document.getElementById('nextBtn').disabled = currentPage === pages.length - 1;
+            
+            // Update progress
+            completedPages.add(currentPage);
+            const progress = ((completedPages.size) / pages.length) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+            document.getElementById('progressText').textContent = Math.round(progress) + '% Complete';
+            
+            // Scroll to top
+            window.scrollTo(0, 0);
+        }
+
+        function renderMenu() {
+            const menuItems = pages.map((page, index) => `
+                <button class="menu-item ${currentPage === index ? 'active' : ''}" onclick="goToPage(${index})">
+                    <div class="menu-item-content">
+                        <span class="menu-item-icon">${page.icon}</span>
+                        <div style="flex: 1; text-align: left;">
+                            <div class="menu-item-title">${page.title}</div>
+                            <div class="menu-item-subtitle">Chapter ${index + 1}</div>
+                        </div>
+                        ${completedPages.has(index) ? '<span style="color: #10b981; font-size: 20px;">✓</span>' : ''}
+                    </div>
+                </button>
+            `).join('');
+            
+            document.getElementById('menuItems').innerHTML = menuItems;
+        }
+
+        function toggleMenu() {
+            const overlay = document.getElementById('menuOverlay');
+            const sidebar = document.getElementById('menuSidebar');
+            overlay.classList.toggle('active');
+            sidebar.classList.toggle('active');
+        }
+
+        function goToPage(index) {
+            currentPage = index;
+            renderPage();
+            renderMenu();
+            toggleMenu();
+        }
+
+        function nextPage() {
+            if (currentPage < pages.length - 1) {
+                currentPage++;
+                renderPage();
+                renderMenu();
+            }
+        }
+
+        function previousPage() {
+            if (currentPage > 0) {
+                currentPage--;
+                renderPage();
+                renderMenu();
+            }
+        }
+
+        // Initialize
+        renderPage();
+        renderMenu();
+    </script>
+</body>
+</html>
