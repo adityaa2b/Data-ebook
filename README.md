@@ -2,7 +2,9 @@
 
 An interactive web-based e-book designed for the LinkedIn Learning Series, covering fundamental concepts of data science, analytics, and data engineering.
 
-https://adityaa2b.github.io/Data-ebook/
+https://adityaa2b.github.io/Data-ebook/Data.html
+
+https://adityaa2b.github.io/Data-ebook/data_cleaning_ebook.html
 
 https://www.linkedin.com/in/aditya-bhutada94/
 
