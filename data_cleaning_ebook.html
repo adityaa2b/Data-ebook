@@ -1,0 +1,1054 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Cleaning & Preparation - Interactive E-Book</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+            background: linear-gradient(135deg, #FEF3C7 0%, #ffffff 50%, #DBEAFE 100%);
+            min-height: 100vh;
+        }
+        
+        .header {
+            background: white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 16px;
+        }
+        
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        
+        .header-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .header-title h1 {
+            font-size: 20px;
+            color: #1f2937;
+        }
+        
+        .header-title p {
+            font-size: 14px;
+            color: #6b7280;
+        }
+        
+        .menu-btn {
+            background: none;
+            border: none;
+            padding: 8px;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: background 0.2s;
+        }
+        
+        .menu-btn:hover {
+            background: #f3f4f6;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e5e7eb;
+            border-radius: 9999px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(to right, #f59e0b, #3b82f6);
+            transition: width 0.5s ease;
+        }
+        
+        .progress-text {
+            text-align: right;
+            font-size: 12px;
+            color: #6b7280;
+            margin-top: 4px;
+        }
+        
+        .menu-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 200;
+            display: none;
+        }
+        
+        .menu-overlay.active {
+            display: block;
+        }
+        
+        .menu-sidebar {
+            position: fixed;
+            right: 0;
+            top: 0;
+            height: 100%;
+            width: 320px;
+            background: white;
+            padding: 24px;
+            overflow-y: auto;
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+            z-index: 201;
+        }
+        
+        .menu-sidebar.active {
+            transform: translateX(0);
+        }
+        
+        .menu-sidebar h2 {
+            font-size: 24px;
+            margin-bottom: 24px;
+            color: #1f2937;
+        }
+        
+        .menu-item {
+            width: 100%;
+            text-align: left;
+            padding: 16px;
+            margin-bottom: 8px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            background: #f9fafb;
+            transition: all 0.2s;
+        }
+        
+        .menu-item:hover {
+            background: #f3f4f6;
+        }
+        
+        .menu-item.active {
+            background: linear-gradient(to right, #f59e0b, #3b82f6);
+            color: white;
+            box-shadow: 0 4px 6px rgba(245, 158, 11, 0.3);
+        }
+        
+        .menu-item-content {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .menu-item-icon {
+            font-size: 24px;
+        }
+        
+        .menu-item-title {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        
+        .menu-item-subtitle {
+            font-size: 12px;
+            opacity: 0.75;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 32px 16px;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            padding: 48px;
+            min-height: 600px;
+        }
+        
+        .page-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 2px solid #f3f4f6;
+        }
+        
+        .page-icon {
+            font-size: 48px;
+        }
+        
+        .page-info p {
+            font-size: 14px;
+            color: #6b7280;
+        }
+        
+        .page-info h2 {
+            font-size: 28px;
+            color: #1f2937;
+        }
+        
+        .content {
+            line-height: 1.7;
+        }
+        
+        .content h1 {
+            font-size: 36px;
+            color: #f59e0b;
+            margin-bottom: 16px;
+        }
+        
+        .content h2 {
+            font-size: 28px;
+            color: #1f2937;
+            margin-bottom: 16px;
+        }
+        
+        .content h3 {
+            font-size: 24px;
+            color: #1f2937;
+            margin-bottom: 12px;
+        }
+        
+        .content h4 {
+            font-size: 20px;
+            margin-bottom: 8px;
+        }
+        
+        .content p {
+            font-size: 18px;
+            color: #374151;
+            margin-bottom: 16px;
+        }
+        
+        .box {
+            padding: 24px;
+            border-radius: 8px;
+            margin: 24px 0;
+        }
+        
+        .box-amber {
+            background: #fffbeb;
+            border-left: 4px solid #f59e0b;
+        }
+        
+        .box-blue {
+            background: #eff6ff;
+            border-left: 4px solid #3b82f6;
+        }
+        
+        .box-green {
+            background: #f0fdf4;
+            border-left: 4px solid #10b981;
+        }
+        
+        .box-purple {
+            background: #faf5ff;
+            border-left: 4px solid #a855f7;
+        }
+        
+        .box-red {
+            background: #fef2f2;
+            border-left: 4px solid #ef4444;
+        }
+        
+        .box-yellow {
+            background: #fefce8;
+            border-left: 4px solid #eab308;
+        }
+        
+        .grid {
+            display: grid;
+            gap: 16px;
+            margin: 24px 0;
+        }
+        
+        .grid-2 {
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        }
+        
+        .grid-3 {
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        }
+        
+        .card-item {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+        }
+        
+        .card-item:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            transform: translateY(-2px);
+        }
+        
+        .flex {
+            display: flex;
+            gap: 16px;
+            align-items: flex-start;
+        }
+        
+        .icon-large {
+            font-size: 48px;
+        }
+        
+        .step-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+            transition: all 0.3s;
+        }
+        
+        .step-item:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        .step-number {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+        
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 32px;
+        }
+        
+        .nav-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .nav-btn:disabled {
+            background: #e5e7eb;
+            color: #9ca3af;
+            cursor: not-allowed;
+        }
+        
+        .nav-btn-primary {
+            background: linear-gradient(to right, #f59e0b, #3b82f6);
+            color: white;
+            box-shadow: 0 2px 4px rgba(245, 158, 11, 0.3);
+        }
+        
+        .nav-btn-primary:hover:not(:disabled) {
+            box-shadow: 0 4px 8px rgba(245, 158, 11, 0.4);
+            transform: translateY(-2px);
+        }
+        
+        .page-indicator {
+            text-align: center;
+            color: #6b7280;
+            font-size: 14px;
+        }
+        
+        .cta-box {
+            background: linear-gradient(to right, #f59e0b, #3b82f6);
+            color: white;
+            padding: 32px;
+            border-radius: 8px;
+            margin-top: 32px;
+        }
+        
+        .cta-box h3 {
+            color: white;
+            margin-bottom: 16px;
+        }
+        
+        .cta-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: white;
+            color: #f59e0b;
+            padding: 12px 24px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+            margin-right: 12px;
+            margin-bottom: 12px;
+        }
+        
+        .cta-btn:hover {
+            background: #f3f4f6;
+            transform: translateY(-2px);
+        }
+        
+        .checkmark {
+            color: #10b981;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+        
+        .series-badge {
+            background: linear-gradient(to right, #fbbf24, #3b82f6);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            display: inline-block;
+            margin-bottom: 16px;
+        }
+        
+        @media (max-width: 768px) {
+            .card {
+                padding: 24px;
+            }
+            
+            .menu-sidebar {
+                width: 100%;
+            }
+            
+            .content h1 {
+                font-size: 28px;
+            }
+            
+            .content h2 {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <div class="header-content">
+            <div class="header-top">
+                <div class="header-title">
+                    <div style="font-size: 28px;">🧹</div>
+                    <div>
+                        <h1>Data Cleaning & Preparation</h1>
+                        <p>by Aditya Bhutada • Part 2</p>
+                    </div>
+                </div>
+                <button class="menu-btn" onclick="toggleMenu()">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="3" y1="12" x2="21" y2="12"></line>
+                        <line x1="3" y1="6" x2="21" y2="6"></line>
+                        <line x1="3" y1="18" x2="21" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressBar"></div>
+            </div>
+            <div class="progress-text" id="progressText">0% Complete</div>
+        </div>
+    </div>
+
+    <!-- Menu Overlay -->
+    <div class="menu-overlay" id="menuOverlay" onclick="toggleMenu()"></div>
+    
+    <!-- Menu Sidebar -->
+    <div class="menu-sidebar" id="menuSidebar">
+        <h2>Table of Contents</h2>
+        <div id="menuItems"></div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container">
+        <div class="card">
+            <div class="page-header">
+                <span class="page-icon" id="pageIcon">🧹</span>
+                <div class="page-info">
+                    <p id="pageNumber">Chapter 1 of 8</p>
+                    <h2 id="pageTitle">Welcome</h2>
+                </div>
+            </div>
+            <div class="content" id="pageContent"></div>
+        </div>
+
+        <!-- Navigation -->
+        <div class="navigation">
+            <button class="nav-btn nav-btn-primary" id="prevBtn" onclick="previousPage()">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="15 18 9 12 15 6"></polyline>
+                </svg>
+                Previous
+            </button>
+            <div class="page-indicator" id="pageIndicator">Page 1 of 8</div>
+            <button class="nav-btn nav-btn-primary" id="nextBtn" onclick="nextPage()">
+                Next
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        let currentPage = 0;
+        let completedPages = new Set();
+
+        const pages = [
+            {
+                title: "Welcome",
+                icon: "🧹",
+                content: `
+                    <div style="text-align: center; margin-bottom: 32px;">
+                        <span class="series-badge">LinkedIn Learning Series • Part 2</span>
+                        <h1>Data Cleaning & Preparation</h1>
+                        <p style="font-size: 22px; color: #f59e0b; font-weight: 600; margin-top: 8px;">Turning Raw Data into Reliable Insights</p>
+                        <p style="font-size: 18px; color: #9ca3af; margin-top: 8px;">by Aditya Bhutada</p>
+                    </div>
+                    
+                    <div class="box box-amber">
+                        <p style="font-size: 18px;">
+                            Welcome back to the LinkedIn Learning Series! In Part 1, we explored the fundamentals of data. Now, let's dive into the critical process of cleaning and preparing data for analysis.
+                        </p>
+                    </div>
+                    
+                    <div class="grid grid-3">
+                        <div class="card-item" style="border-top: 4px solid #f59e0b;">
+                            <div style="font-size: 32px; margin-bottom: 8px;">📖</div>
+                            <div style="font-weight: 600; color: #1f2937;">8 Chapters</div>
+                            <div style="font-size: 14px; color: #6b7280;">In-depth content</div>
+                        </div>
+                        <div class="card-item" style="border-top: 4px solid #3b82f6;">
+                            <div style="font-size: 32px; margin-bottom: 8px;">⏱️</div>
+                            <div style="font-weight: 600; color: #1f2937;">20 min read</div>
+                            <div style="font-size: 14px; color: #6b7280;">Comprehensive guide</div>
+                        </div>
+                        <div class="card-item" style="border-top: 4px solid #10b981;">
+                            <div style="font-size: 32px; margin-bottom: 8px;">🛠️</div>
+                            <div style="font-weight: 600; color: #1f2937;">Practical Tips</div>
+                            <div style="font-size: 14px; color: #6b7280;">Real-world tools</div>
+                        </div>
+                    </div>
+                `
+            },
+            {
+                title: "Introduction",
+                icon: "📋",
+                content: `
+                    <h2>Introduction</h2>
+                    
+                    <div class="box box-blue">
+                        <p style="font-size: 18px; font-style: italic;">
+                            Data cleaning and preparation is the process of transforming raw, messy data into a structured, accurate, and usable format. Without this step, analysis and machine learning models can produce misleading or incorrect results.
+                        </p>
+                    </div>
+
+                    <div style="margin-top: 32px;">
+                        <h3 style="color: #f59e0b;">The Reality of Raw Data</h3>
+                        <p>
+                            In the real world, data rarely comes in perfect condition. It's often:
+                        </p>
+                        <ul style="margin-left: 24px; margin-top: 12px; line-height: 1.8;">
+                            <li><strong>Incomplete</strong> - Missing critical information</li>
+                            <li><strong>Inconsistent</strong> - Different formats and standards</li>
+                            <li><strong>Inaccurate</strong> - Containing errors or outdated values</li>
+                            <li><strong>Duplicated</strong> - Repeated entries that skew analysis</li>
+                        </ul>
+                    </div>
+
+                    <div class="card-item" style="background: linear-gradient(to right, #fef3c7, #dbeafe); margin-top: 32px;">
+                        <div class="flex">
+                            <div style="font-size: 48px;">📊</div>
+                            <div>
+                                <h3 style="color: #1e40af; margin-bottom: 8px;">Industry Insight</h3>
+                                <p>Data scientists spend approximately <strong style="color: #f59e0b;">60-80% of their time</strong> on data cleaning and preparation, making it one of the most critical yet time-consuming phases of any data project.</p>
+                            </div>
+                        </div>
+                    </div>
+                `
+            },
+            {
+                title: "Why It Matters",
+                icon: "⚡",
+                content: `
+                    <h2>Why Data Cleaning Matters</h2>
+                    
+                    <div class="grid" style="gap: 20px;">
+                        <div class="card-item" style="background: linear-gradient(to right, #dcfce7, #f0fdf4);">
+                            <div class="flex">
+                                <div class="icon-large">✓</div>
+                                <div>
+                                    <h3 style="color: #059669; margin-bottom: 8px;">Accuracy</h3>
+                                    <p>Clean data ensures reliable insights and prevents costly mistakes in decision-making</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card-item" style="background: linear-gradient(to right, #dbeafe, #eff6ff);">
+                            <div class="flex">
+                                <div class="icon-large">⚡</div>
+                                <div>
+                                    <h3 style="color: #1e40af; margin-bottom: 8px;">Efficiency</h3>
+                                    <p>Saves time during analysis and visualization by eliminating errors upfront</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card-item" style="background: linear-gradient(to right, #fef3c7, #fffbeb);">
+                            <div class="flex">
+                                <div class="icon-large">🤝</div>
+                                <div>
+                                    <h3 style="color: #d97706; margin-bottom: 8px;">Trust</h3>
+                                    <p>Builds confidence in decisions based on data across all stakeholders</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="box box-amber" style="margin-top: 32px;">
+                        <div class="flex">
+                            <div style="font-size: 32px;">💡</div>
+                            <div>
+                                <h3 style="color: #d97706; margin-bottom: 8px;">Real-World Example</h3>
+                                <p>A company analyzing customer feedback must remove duplicates and fix spelling errors before sentiment analysis. Without cleaning, "grate product" and "great product" might be treated as different sentiments, leading to inaccurate insights about customer satisfaction.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 32px; padding: 24px; background: #fef2f2; border-radius: 8px; border-left: 4px solid #ef4444;">
+                        <h3 style="color: #dc2626; margin-bottom: 12px;">⚠️ The Cost of Dirty Data</h3>
+                        <p>Poor data quality can lead to:</p>
+                        <ul style="margin-left: 24px; margin-top: 8px; line-height: 1.8;">
+                            <li>Wrong business decisions</li>
+                            <li>Failed machine learning models</li>
+                            <li>Customer dissatisfaction</li>
+                            <li>Compliance and legal issues</li>
+                            <li>Wasted resources and time</li>
+                        </ul>
+                    </div>
+                `
+            },
+            {
+                title: "Common Data Issues",
+                icon: "🔍",
+                content: `
+                    <h2>Common Data Issues</h2>
+                    <p style="color: #6b7280; margin-bottom: 24px;">Understanding what can go wrong is the first step to fixing it.</p>
+
+                    <div class="step-item" style="background: #dbeafe;">
+                        <div class="step-number" style="background: #0ea5e9;">7</div>
+                        <div>
+                            <h3 style="color: #0369a1;">Validation</h3>
+                            <p>Check cleaned data against rules or benchmarks to ensure quality</p>
+                        </div>
+                    </div>
+                `
+            },
+            {
+                title: "Tools & Techniques",
+                icon: "🔧",
+                content: `
+                    <h2>Tools & Techniques</h2>
+                    <p style="color: #6b7280; margin-bottom: 24px;">Choose the right tool based on your data size, complexity, and technical skills.</p>
+
+                    <div class="card-item" style="border-left: 4px solid #10b981; margin-bottom: 20px;">
+                        <div class="flex">
+                            <div style="font-size: 48px;">📊</div>
+                            <div style="flex: 1;">
+                                <h3 style="color: #059669; margin-bottom: 8px;">Excel / Google Sheets</h3>
+                                <p style="margin-bottom: 12px;"><strong>Best for:</strong> Small to medium datasets, basic cleaning tasks</p>
+                                <div style="background: #f0fdf4; padding: 12px; border-radius: 4px;">
+                                    <strong>Key Features:</strong><br>
+                                    • Remove duplicates with built-in tools<br>
+                                    • Find and replace for fixing errors<br>
+                                    • Sort and filter for quick inspection<br>
+                                    • Data validation rules
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-item" style="border-left: 4px solid #3b82f6; margin-bottom: 20px;">
+                        <div class="flex">
+                            <div style="font-size: 48px;">🐍</div>
+                            <div style="flex: 1;">
+                                <h3 style="color: #1e40af; margin-bottom: 8px;">Python (Pandas)</h3>
+                                <p style="margin-bottom: 12px;"><strong>Best for:</strong> Large datasets, complex transformations, automation</p>
+                                <div style="background: #eff6ff; padding: 12px; border-radius: 4px;">
+                                    <strong>Key Features:</strong><br>
+                                    • Advanced missing value handling<br>
+                                    • Powerful data transformations<br>
+                                    • Statistical outlier detection<br>
+                                    • Scalable to millions of rows
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-item" style="border-left: 4px solid #f59e0b; margin-bottom: 20px;">
+                        <div class="flex">
+                            <div style="font-size: 48px;">🗄️</div>
+                            <div style="flex: 1;">
+                                <h3 style="color: #d97706; margin-bottom: 8px;">SQL</h3>
+                                <p style="margin-bottom: 12px;"><strong>Best for:</strong> Database cleaning, query-based preparation</p>
+                                <div style="background: #fffbeb; padding: 12px; border-radius: 4px;">
+                                    <strong>Key Features:</strong><br>
+                                    • Direct database manipulation<br>
+                                    • Efficient duplicate removal<br>
+                                    • Join and merge operations<br>
+                                    • Aggregate data cleaning
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-item" style="border-left: 4px solid #a855f7;">
+                        <div class="flex">
+                            <div style="font-size: 48px;">🤖</div>
+                            <div style="flex: 1;">
+                                <h3 style="color: #7c3aed; margin-bottom: 8px;">AI Tools (ChatGPT, Copilot, UPDF AI)</h3>
+                                <p style="margin-bottom: 12px;"><strong>Best for:</strong> Assisted cleaning, pattern detection, suggestions</p>
+                                <div style="background: #faf5ff; padding: 12px; border-radius: 4px;">
+                                    <strong>Key Features:</strong><br>
+                                    • Automated error detection<br>
+                                    • Formatting suggestions<br>
+                                    • Data summarization<br>
+                                    • Natural language queries
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `
+            },
+            {
+                title: "Practical Applications",
+                icon: "💼",
+                content: `
+                    <h2>Practical Applications</h2>
+                    <p style="color: #6b7280; margin-bottom: 24px;">Real-world scenarios where data cleaning makes a critical difference.</p>
+
+                    <div class="card-item" style="background: linear-gradient(to right, #eff6ff, #dbeafe); margin-bottom: 20px;">
+                        <div class="flex">
+                            <div class="icon-large">📊</div>
+                            <div>
+                                <h3 style="color: #1e40af; margin-bottom: 8px;">Business Intelligence</h3>
+                                <p><strong>Scenario:</strong> Clean sales data for accurate dashboards</p>
+                                <p style="margin-top: 8px; color: #6b7280;">Remove duplicate transactions, standardize product names, handle missing customer information to ensure sales reports reflect true performance.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-item" style="background: linear-gradient(to right, #f0fdf4, #dcfce7); margin-bottom: 20px;">
+                        <div class="flex">
+                            <div class="icon-large">🏥</div>
+                            <div>
+                                <h3 style="color: #059669; margin-bottom: 8px;">Healthcare</h3>
+                                <p><strong>Scenario:</strong> Standardize patient records for predictive diagnosis</p>
+                                <p style="margin-top: 8px; color: #6b7280;">Unify medical codes, clean vital sign measurements, handle missing lab results to enable accurate disease prediction models.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-item" style="background: linear-gradient(to right, #fffbeb, #fef3c7); margin-bottom: 20px;">
+                        <div class="flex">
+                            <div class="icon-large">💰</div>
+                            <div>
+                                <h3 style="color: #d97706; margin-bottom: 8px;">Finance</h3>
+                                <p><strong>Scenario:</strong> Detect anomalies in transactions to prevent fraud</p>
+                                <p style="margin-top: 8px; color: #6b7280;">Identify outliers in transaction amounts, clean merchant names, remove test transactions to build robust fraud detection systems.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-item" style="background: linear-gradient(to right, #faf5ff, #f3e8ff);">
+                        <div class="flex">
+                            <div class="icon-large">📱</div>
+                            <div>
+                                <h3 style="color: #7c3aed; margin-bottom: 8px;">Social Media</h3>
+                                <p><strong>Scenario:</strong> Normalize text data for sentiment analysis</p>
+                                <p style="margin-top: 8px; color: #6b7280;">Clean emojis, handle special characters, standardize slang, remove spam to accurately gauge customer sentiment and brand perception.</p>
+                            </div>
+                        </div>
+                    </div>
+                `
+            },
+            {
+                title: "Summary & Takeaways",
+                icon: "✅",
+                content: `
+                    <h2>Summary & Takeaways</h2>
+                    
+                    <div class="box box-green" style="margin-bottom: 16px;">
+                        <div class="flex">
+                            <span class="checkmark">✓</span>
+                            <p style="font-size: 18px;">Data cleaning is the foundation of trustworthy analytics and reliable insights</p>
+                        </div>
+                    </div>
+
+                    <div class="box box-green" style="margin-bottom: 16px;">
+                        <div class="flex">
+                            <span class="checkmark">✓</span>
+                            <p style="font-size: 18px;">It involves handling missing values, duplicates, inconsistencies, and outliers systematically</p>
+                        </div>
+                    </div>
+
+                    <div class="box box-green" style="margin-bottom: 16px;">
+                        <div class="flex">
+                            <span class="checkmark">✓</span>
+                            <p style="font-size: 18px;">Prepared data leads to better decisions, stronger models, and clearer insights</p>
+                        </div>
+                    </div>
+
+                    <div class="box box-green">
+                        <div class="flex">
+                            <span class="checkmark">✓</span>
+                            <p style="font-size: 18px;">Choose the right tools based on your data size, complexity, and technical expertise</p>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 32px; padding: 24px; background: linear-gradient(to right, #fef3c7, #dbeafe); border-radius: 8px;">
+                        <h3 style="color: #1e40af; margin-bottom: 12px;">🎯 Key Principles to Remember</h3>
+                        <ul style="margin-left: 24px; line-height: 1.8;">
+                            <li><strong>Prevention is better than cure</strong> - Design data collection with quality in mind</li>
+                            <li><strong>Document everything</strong> - Keep track of cleaning steps for reproducibility</li>
+                            <li><strong>Validate frequently</strong> - Check data quality at multiple stages</li>
+                            <li><strong>Balance perfection with practicality</strong> - 80% clean is often good enough to start</li>
+                            <li><strong>Automate when possible</strong> - Save time with scripts and tools</li>
+                        </ul>
+                    </div>
+
+                    <div class="cta-box">
+                        <h3>📌 Continue Your Learning Journey</h3>
+                        <p style="font-size: 18px; margin-bottom: 24px;">Follow this LinkedIn Learning Series for the next topic: <strong>Data Visualization</strong></p>
+                        <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+                            <a href="https://www.linkedin.com/in/aditya-bhutada94/" target="_blank" class="cta-btn">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                                </svg>
+                                Connect on LinkedIn
+                            </a>
+                            <a href="https://github.com/YOUR-USERNAME" target="_blank" class="cta-btn">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                                </svg>
+                                View on GitHub
+                            </a>
+                        </div>
+                    </div>
+
+                    <div style="text-align: center; margin-top: 32px; padding: 24px; background: #f9fafb; border-radius: 8px;">
+                        <p style="font-size: 18px; color: #6b7280; margin-bottom: 8px;">🎉 Congratulations on completing Part 2!</p>
+                        <p style="color: #9ca3af;">You're now equipped with data cleaning fundamentals</p>
+                        <p style="color: #f59e0b; font-weight: 600; margin-top: 12px;">Next up: Data Visualization →</p>
+                    </div>
+                `
+            }
+        ];
+
+        function renderPage() {
+            const page = pages[currentPage];
+            document.getElementById('pageIcon').textContent = page.icon;
+            document.getElementById('pageNumber').textContent = `Chapter ${currentPage + 1} of ${pages.length}`;
+            document.getElementById('pageTitle').textContent = page.title;
+            document.getElementById('pageContent').innerHTML = page.content;
+            document.getElementById('pageIndicator').textContent = `Page ${currentPage + 1} of ${pages.length}`;
+            
+            document.getElementById('prevBtn').disabled = currentPage === 0;
+            document.getElementById('nextBtn').disabled = currentPage === pages.length - 1;
+            
+            completedPages.add(currentPage);
+            const progress = ((completedPages.size) / pages.length) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+            document.getElementById('progressText').textContent = Math.round(progress) + '% Complete';
+            
+            window.scrollTo(0, 0);
+        }
+
+        function renderMenu() {
+            const menuItems = pages.map((page, index) => `
+                <button class="menu-item ${currentPage === index ? 'active' : ''}" onclick="goToPage(${index})">
+                    <div class="menu-item-content">
+                        <span class="menu-item-icon">${page.icon}</span>
+                        <div style="flex: 1; text-align: left;">
+                            <div class="menu-item-title">${page.title}</div>
+                            <div class="menu-item-subtitle">Chapter ${index + 1}</div>
+                        </div>
+                        ${completedPages.has(index) ? '<span style="color: #10b981; font-size: 20px;">✓</span>' : ''}
+                    </div>
+                </button>
+            `).join('');
+            
+            document.getElementById('menuItems').innerHTML = menuItems;
+        }
+
+        function toggleMenu() {
+            const overlay = document.getElementById('menuOverlay');
+            const sidebar = document.getElementById('menuSidebar');
+            overlay.classList.toggle('active');
+            sidebar.classList.toggle('active');
+        }
+
+        function goToPage(index) {
+            currentPage = index;
+            renderPage();
+            renderMenu();
+            toggleMenu();
+        }
+
+        function nextPage() {
+            if (currentPage < pages.length - 1) {
+                currentPage++;
+                renderPage();
+                renderMenu();
+            }
+        }
+
+        function previousPage() {
+            if (currentPage > 0) {
+                currentPage--;
+                renderPage();
+                renderMenu();
+            }
+        }
+
+        renderPage();
+        renderMenu();
+    </script>
+</body>
+</html>="background: #fef2f2;">
+                        <div class="step-number" style="background: #ef4444;">1</div>
+                        <div>
+                            <h3 style="color: #dc2626;">Missing Values</h3>
+                            <p>Empty cells or incomplete records that leave gaps in your dataset</p>
+                            <div style="background: #fee2e2; padding: 12px; border-radius: 4px; margin-top: 8px; font-size: 14px;">
+                                <strong>Example:</strong> Customer records missing email addresses or phone numbers
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="step-item" style="background: #fff7ed;">
+                        <div class="step-number" style="background: #f97316;">2</div>
+                        <div>
+                            <h3 style="color: #ea580c;">Duplicates</h3>
+                            <p>Repeated entries that distort analysis and inflate metrics</p>
+                            <div style="background: #ffedd5; padding: 12px; border-radius: 4px; margin-top: 8px; font-size: 14px;">
+                                <strong>Example:</strong> Same customer appearing multiple times with slight name variations
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="step-item" style="background: #fffbeb;">
+                        <div class="step-number" style="background: #f59e0b;">3</div>
+                        <div>
+                            <h3 style="color: #d97706;">Inconsistent Formats</h3>
+                            <p>Dates, currencies, or units recorded differently across the dataset</p>
+                            <div style="background: #fef3c7; padding: 12px; border-radius: 4px; margin-top: 8px; font-size: 14px;">
+                                <strong>Example:</strong> Dates as "12/25/2024", "25-Dec-2024", "Dec 25, 2024"
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="step-item" style="background: #faf5ff;">
+                        <div class="step-number" style="background: #a855f7;">4</div>
+                        <div>
+                            <h3 style="color: #7c3aed;">Outliers</h3>
+                            <p>Extreme values that may skew results or indicate data entry errors</p>
+                            <div style="background: #f3e8ff; padding: 12px; border-radius: 4px; margin-top: 8px; font-size: 14px;">
+                                <strong>Example:</strong> Age entered as 999 instead of 99, or salary as $9,999,999
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="step-item" style="background: #f0fdf4;">
+                        <div class="step-number" style="background: #10b981;">5</div>
+                        <div>
+                            <h3 style="color: #059669;">Noise</h3>
+                            <p>Irrelevant or erroneous data points that don't add value to analysis</p>
+                            <div style="background: #dcfce7; padding: 12px; border-radius: 4px; margin-top: 8px; font-size: 14px;">
+                                <strong>Example:</strong> Random characters, test entries, or placeholder values
+                            </div>
+                        </div>
+                    </div>
+                `
+            },
+            {
+                title: "Cleaning Steps",
+                icon: "🛠️",
+                content: `
+                    <h2>Steps in Data Cleaning & Preparation</h2>
+                    <p style="color: #6b7280; margin-bottom: 24px;">A systematic approach to transforming messy data into analysis-ready datasets.</p>
+
+                    <div class="step-item" style="background: #eff6ff;">
+                        <div class="step-number" style="background: #3b82f6;">1</div>
+                        <div>
+                            <h3 style="color: #1e40af;">Data Collection Review</h3>
+                            <p>Verify sources and formats to understand what you're working with</p>
+                        </div>
+                    </div>
+
+                    <div class="step-item" style="background: #f0fdf4;">
+                        <div class="step-number" style="background: #10b981;">2</div>
+                        <div>
+                            <h3 style="color: #059669;">Handling Missing Data</h3>
+                            <p>Fill, drop, or impute values based on the context and impact</p>
+                        </div>
+                    </div>
+
+                    <div class="step-item" style="background: #faf5ff;">
+                        <div class="step-number" style="background: #a855f7;">3</div>
+                        <div>
+                            <h3 style="color: #7c3aed;">Removing Duplicates</h3>
+                            <p>Identify and eliminate repeated records to maintain data integrity</p>
+                        </div>
+                    </div>
+
+                    <div class="step-item" style="background: #fffbeb;">
+                        <div class="step-number" style="background: #f59e0b;">4</div>
+                        <div>
+                            <h3 style="color: #d97706;">Standardizing Formats</h3>
+                            <p>Ensure consistency in dates, units, and categories across the dataset</p>
+                        </div>
+                    </div>
+
+                    <div class="step-item" style="background: #fff7ed;">
+                        <div class="step-number" style="background: #f97316;">5</div>
+                        <div>
+                            <h3 style="color: #ea580c;">Outlier Detection</h3>
+                            <p>Decide whether to keep, adjust, or remove extreme values</p>
+                        </div>
+                    </div>
+
+                    <div class="step-item" style="background: #fef3c7;">
+                        <div class="step-number" style="background: #eab308;">6</div>
+                        <div>
+                            <h3 style="color: #a16207;">Data Transformation</h3>
+                            <p>Normalize, scale, or encode variables for analysis and modeling</p>
+                        </div>
+                    </div>
+
+                    <div class="step-item" style
