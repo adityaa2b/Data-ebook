@@ -27,7 +27,7 @@ https://www.linkedin.com/in/aditya-bhutada94/
 7. Summary & Next Steps - Key takeaways and what's coming next
 
 🚀 Live Demo
-- Visit the live e-book: [Data-ebook](https://adityaa2b.github.io/Data-ebook/)
+- Visit the live e-book: [Data-ebook](https://adityaa2b.github.io/Data-ebook/) | [Data_cleaning-ebook](https://adityaa2b.github.io/Data-ebook/data_cleaning_ebook.html)
 
 💻 Technology Stack
 1. HTML5 - Semantic markup
