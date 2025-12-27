@@ -29,7 +29,7 @@ https://www.linkedin.com/in/aditya-bhutada94/
 7. Summary & Next Steps - Key takeaways and what's coming next
 
 🚀 Live Demo
-- Visit the live e-book: [Data-ebook](https://adityaa2b.github.io/Data-ebook/) | [Data_cleaning-ebook](https://adityaa2b.github.io/Data-ebook/data_cleaning_ebook.html)
+- Visit the live e-book: [Data-ebook](https://adityaa2b.github.io/Data-ebook/) | [Data_cleaning-ebook](https://adityaa2b.github.io/Data-ebook/data_cleaning_ebook.html) | [Data_visualization-ebook](https://adityaa2b.github.io/Data-ebook/data_visualization_ebook.html)
 
 💻 Technology Stack
 1. HTML5 - Semantic markup
@@ -40,7 +40,7 @@ https://www.linkedin.com/in/aditya-bhutada94/
 📥 Installation & Usage
 Option 1: View Online
 
-Simply visit the live [Demo link](https://adityaa2b.github.io/Data-ebook/)
+Simply visit the live [Demo link](https://adityaa2b.github.io/Data-ebook/Data.html)
 
 Option 2: Run Locally
 
@@ -61,16 +61,16 @@ Option 2: Run Locally
    bash
 
        # On macOS
-       open index.html
+       open Data.html
 
        # On Linux
-       xdg-open index.html
+       xdg-open Data.html
 
        # On Windows
-       start index.html
+       start Data.html
 
 Option 3: Download
-- Download the index.html file and open it directly in any modern web browser.
+- Download the Data.html file and open it directly in any modern web browser.
 
 🎓 Learning Outcomes
 
