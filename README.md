@@ -6,6 +6,8 @@ https://adityaa2b.github.io/Data-ebook/Data.html
 
 https://adityaa2b.github.io/Data-ebook/data_cleaning_ebook.html
 
+https://adityaa2b.github.io/Data-ebook/data_visualization_ebook.html
+
 https://www.linkedin.com/in/aditya-bhutada94/
 
 🌟 Features
