@@ -1,0 +1,1205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Security & Privacy - Interactive E-Book</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+            background: linear-gradient(135deg, #DBEAFE 0%, #ffffff 50%, #E0E7FF 100%);
+            min-height: 100vh;
+        }
+        
+        .header {
+            background: white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 16px;
+        }
+        
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        
+        .header-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .header-title h1 {
+            font-size: 20px;
+            color: #1f2937;
+        }
+        
+        .header-title p {
+            font-size: 14px;
+            color: #6b7280;
+        }
+        
+        .menu-btn {
+            background: none;
+            border: none;
+            padding: 8px;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: background 0.2s;
+        }
+        
+        .menu-btn:hover {
+            background: #f3f4f6;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e5e7eb;
+            border-radius: 9999px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(to right, #3b82f6, #6366f1);
+            transition: width 0.5s ease;
+        }
+        
+        .progress-text {
+            text-align: right;
+            font-size: 12px;
+            color: #6b7280;
+            margin-top: 4px;
+        }
+        
+        .menu-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 200;
+            display: none;
+        }
+        
+        .menu-overlay.active {
+            display: block;
+        }
+        
+        .menu-sidebar {
+            position: fixed;
+            right: 0;
+            top: 0;
+            height: 100%;
+            width: 320px;
+            background: white;
+            padding: 24px;
+            overflow-y: auto;
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+            z-index: 201;
+        }
+        
+        .menu-sidebar.active {
+            transform: translateX(0);
+        }
+        
+        .menu-sidebar h2 {
+            font-size: 24px;
+            margin-bottom: 24px;
+            color: #1f2937;
+        }
+        
+        .menu-item {
+            width: 100%;
+            text-align: left;
+            padding: 16px;
+            margin-bottom: 8px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            background: #f9fafb;
+            transition: all 0.2s;
+        }
+        
+        .menu-item:hover {
+            background: #f3f4f6;
+        }
+        
+        .menu-item.active {
+            background: linear-gradient(to right, #3b82f6, #6366f1);
+            color: white;
+            box-shadow: 0 4px 6px rgba(59, 130, 246, 0.3);
+        }
+        
+        .menu-item-content {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .menu-item-icon {
+            font-size: 24px;
+        }
+        
+        .menu-item-title {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        
+        .menu-item-subtitle {
+            font-size: 12px;
+            opacity: 0.75;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 32px 16px;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            padding: 48px;
+            min-height: 600px;
+        }
+        
+        .page-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 2px solid #f3f4f6;
+        }
+        
+        .page-icon {
+            font-size: 48px;
+        }
+        
+        .page-info p {
+            font-size: 14px;
+            color: #6b7280;
+        }
+        
+        .page-info h2 {
+            font-size: 28px;
+            color: #1f2937;
+        }
+        
+        .content {
+            line-height: 1.7;
+        }
+        
+        .content h1 {
+            font-size: 36px;
+            color: #3b82f6;
+            margin-bottom: 16px;
+        }
+        
+        .content h2 {
+            font-size: 28px;
+            color: #1f2937;
+            margin-bottom: 16px;
+        }
+        
+        .content h3 {
+            font-size: 24px;
+            color: #1f2937;
+            margin-bottom: 12px;
+        }
+        
+        .content h4 {
+            font-size: 20px;
+            margin-bottom: 8px;
+        }
+        
+        .content p {
+            font-size: 18px;
+            color: #374151;
+            margin-bottom: 16px;
+        }
+
+        .content ul {
+            margin-left: 24px;
+            margin-top: 12px;
+            line-height: 1.8;
+        }
+
+        .content li {
+            font-size: 18px;
+            color: #374151;
+            margin-bottom: 8px;
+        }
+        
+        .info-box {
+            padding: 24px;
+            border-radius: 8px;
+            margin: 24px 0;
+            border-left: 4px solid;
+        }
+
+        .info-box.blue {
+            background-color: #eff6ff;
+            border-color: #3b82f6;
+        }
+
+        .info-box.indigo {
+            background-color: #eef2ff;
+            border-color: #6366f1;
+        }
+
+        .info-box.green {
+            background-color: #f0fdf4;
+            border-color: #10b981;
+        }
+
+        .info-box.purple {
+            background-color: #faf5ff;
+            border-color: #a855f7;
+        }
+        
+        .grid {
+            display: grid;
+            gap: 16px;
+            margin: 24px 0;
+        }
+        
+        .grid-2 {
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        }
+        
+        .grid-3 {
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        }
+        
+        .card-item {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+        }
+        
+        .card-item:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            transform: translateY(-2px);
+        }
+        
+        .flex-row {
+            display: flex;
+            gap: 16px;
+            align-items: flex-start;
+        }
+        
+        .icon-large {
+            font-size: 48px;
+            flex-shrink: 0;
+        }
+        
+        .step-box {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+            transition: all 0.3s;
+        }
+        
+        .step-box:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        .step-number {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+        
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 32px;
+        }
+        
+        .nav-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .nav-btn:disabled {
+            background: #e5e7eb;
+            color: #9ca3af;
+            cursor: not-allowed;
+        }
+        
+        .nav-btn-primary {
+            background: linear-gradient(to right, #3b82f6, #6366f1);
+            color: white;
+            box-shadow: 0 2px 4px rgba(59, 130, 246, 0.3);
+        }
+        
+        .nav-btn-primary:hover:not(:disabled) {
+            box-shadow: 0 4px 8px rgba(59, 130, 246, 0.4);
+            transform: translateY(-2px);
+        }
+        
+        .page-indicator {
+            text-align: center;
+            color: #6b7280;
+            font-size: 14px;
+        }
+        
+        .cta-box {
+            background: linear-gradient(to right, #3b82f6, #6366f1);
+            color: white;
+            padding: 32px;
+            border-radius: 8px;
+            margin-top: 32px;
+        }
+        
+        .cta-box h3 {
+            color: white;
+            margin-bottom: 16px;
+        }
+        
+        .cta-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: white;
+            color: #3b82f6;
+            padding: 12px 24px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+            margin-right: 12px;
+            margin-bottom: 12px;
+        }
+        
+        .cta-btn:hover {
+            background: #f3f4f6;
+            transform: translateY(-2px);
+        }
+        
+        .checkmark {
+            color: #10b981;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+        
+        .series-badge {
+            background: linear-gradient(to right, #3b82f6, #6366f1);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            display: inline-block;
+            margin-bottom: 16px;
+        }
+
+        .tool-card {
+            border-left: 4px solid;
+            margin-bottom: 20px;
+        }
+        
+        @media (max-width: 768px) {
+            .card {
+                padding: 24px;
+            }
+            
+            .menu-sidebar {
+                width: 100%;
+            }
+            
+            .content h1 {
+                font-size: 28px;
+            }
+            
+            .content h2 {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-content">
+            <div class="header-top">
+                <div class="header-title">
+                    <div style="font-size: 28px;">🔒</div>
+                    <div>
+                        <h1>Data Security & Privacy</h1>
+                        <p>by Aditya Bhutada • Part 6</p>
+                    </div>
+                </div>
+                <button class="menu-btn" onclick="toggleMenu()">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="3" y1="12" x2="21" y2="12"></line>
+                        <line x1="3" y1="6" x2="21" y2="6"></line>
+                        <line x1="3" y1="18" x2="21" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressBar"></div>
+            </div>
+            <div class="progress-text" id="progressText">0% Complete</div>
+        </div>
+    </div>
+
+    <div class="menu-overlay" id="menuOverlay" onclick="toggleMenu()"></div>
+    
+    <div class="menu-sidebar" id="menuSidebar">
+        <h2>Table of Contents</h2>
+        <div id="menuItems"></div>
+    </div>
+
+    <div class="container">
+        <div class="card">
+            <div class="page-header">
+                <span class="page-icon" id="pageIcon">🔒</span>
+                <div class="page-info">
+                    <p id="pageNumber">Chapter 1 of 9</p>
+                    <h2 id="pageTitle">Welcome</h2>
+                </div>
+            </div>
+            <div class="content" id="pageContent"></div>
+        </div>
+
+        <div class="navigation">
+            <button class="nav-btn nav-btn-primary" id="prevBtn" onclick="previousPage()">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="15 18 9 12 15 6"></polyline>
+                </svg>
+                Previous
+            </button>
+            <div class="page-indicator" id="pageIndicator">Page 1 of 9</div>
+            <button class="nav-btn nav-btn-primary" id="nextBtn" onclick="nextPage()">
+                Next
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        let currentPage = 0;
+        let completedPages = new Set();
+
+        const pages = [
+            {
+                title: "Welcome",
+                icon: "🔒",
+                render: function() {
+                    const container = document.createElement('div');
+                    
+                    const center = document.createElement('div');
+                    center.style.textAlign = 'center';
+                    center.style.marginBottom = '32px';
+                    
+                    const badge = document.createElement('span');
+                    badge.className = 'series-badge';
+                    badge.textContent = 'LinkedIn Learning Series • Part 6';
+                    
+                    const h1 = document.createElement('h1');
+                    h1.textContent = 'Data Security & Privacy';
+                    
+                    const subtitle = document.createElement('p');
+                    subtitle.style.fontSize = '22px';
+                    subtitle.style.color = '#3b82f6';
+                    subtitle.style.fontWeight = '600';
+                    subtitle.style.marginTop = '8px';
+                    subtitle.textContent = 'Protecting Information in the Digital Age';
+                    
+                    const author = document.createElement('p');
+                    author.style.fontSize = '18px';
+                    author.style.color = '#9ca3af';
+                    author.style.marginTop = '8px';
+                    author.textContent = 'by Aditya Bhutada';
+                    
+                    center.appendChild(badge);
+                    center.appendChild(h1);
+                    center.appendChild(subtitle);
+                    center.appendChild(author);
+                    
+                    const infoBox = document.createElement('div');
+                    infoBox.className = 'info-box blue';
+                    const infoText = document.createElement('p');
+                    infoText.style.fontSize = '18px';
+                    infoText.textContent = 'Welcome to Part 6! After understanding quality and governance, now learn how to protect data from threats and ensure privacy compliance. Security and privacy are non-negotiable in today\'s digital landscape.';
+                    infoBox.appendChild(infoText);
+                    
+                    const grid = document.createElement('div');
+                    grid.className = 'grid grid-3';
+                    
+                    const card1 = document.createElement('div');
+                    card1.className = 'card-item';
+                    card1.style.borderTop = '4px solid #3b82f6';
+                    card1.innerHTML = '<div style="font-size: 32px; margin-bottom: 8px;">📖</div><div style="font-weight: 600; color: #1f2937;">9 Chapters</div><div style="font-size: 14px; color: #6b7280;">Complete framework</div>';
+                    
+                    const card2 = document.createElement('div');
+                    card2.className = 'card-item';
+                    card2.style.borderTop = '4px solid #6366f1';
+                    card2.innerHTML = '<div style="font-size: 32px; margin-bottom: 8px;">⏱️</div><div style="font-weight: 600; color: #1f2937;">20 min read</div><div style="font-size: 14px; color: #6b7280;">Protection strategies</div>';
+                    
+                    const card3 = document.createElement('div');
+                    card3.className = 'card-item';
+                    card3.style.borderTop = '4px solid #10b981';
+                    card3.innerHTML = '<div style="font-size: 32px; margin-bottom: 8px;">✔</div><div style="font-weight: 600; color: #1f2937;">8 Principles</div><div style="font-size: 14px; color: #6b7280;">Security & privacy</div>';
+                    
+                    grid.appendChild(card1);
+                    grid.appendChild(card2);
+                    grid.appendChild(card3);
+                    
+                    container.appendChild(center);
+                    container.appendChild(infoBox);
+                    container.appendChild(grid);
+                    
+                    return container;
+                }
+            },
+            {
+                title: "Introduction",
+                icon: "📋",
+                render: function() {
+                    const container = document.createElement('div');
+                    
+                    const h2 = document.createElement('h2');
+                    h2.textContent = 'Introduction';
+                    
+                    const infoBox = document.createElement('div');
+                    infoBox.className = 'info-box indigo';
+                    const quote = document.createElement('p');
+                    quote.style.fontSize = '18px';
+                    quote.style.fontStyle = 'italic';
+                    quote.textContent = 'Data Security & Privacy are essential in today\'s interconnected world. With increasing cyber threats and stricter regulations, organizations must safeguard sensitive information while respecting user rights. Strong practices ensure trust, compliance, and resilience.';
+                    infoBox.appendChild(quote);
+                    
+                    const section = document.createElement('div');
+                    section.style.marginTop = '32px';
+                    
+                    const h3 = document.createElement('h3');
+                    h3.style.color = '#3b82f6';
+                    h3.textContent = 'The Digital Protection Challenge';
+                    
+                    const p = document.createElement('p');
+                    p.textContent = 'In an era where data breaches make headlines daily and privacy concerns dominate discussions, organizations must prioritize both security and privacy. These aren\'t just technical requirements—they\'re fundamental to maintaining trust and staying compliant.';
+                    
+                    const ul = document.createElement('ul');
+                    ul.innerHTML = '<li><strong>Security</strong> - Protects data from unauthorized access and threats</li><li><strong>Privacy</strong> - Ensures responsible handling of personal information</li><li><strong>Trust</strong> - Builds confidence with customers and stakeholders</li><li><strong>Compliance</strong> - Meets regulatory requirements like GDPR and HIPAA</li>';
+                    
+                    section.appendChild(h3);
+                    section.appendChild(p);
+                    section.appendChild(ul);
+                    
+                    const insight = document.createElement('div');
+                    insight.className = 'card-item';
+                    insight.style.background = 'linear-gradient(to right, #fef2f2, #fee2e2)';
+                    insight.style.marginTop = '32px';
+                    insight.innerHTML = '<div class="flex-row"><div style="font-size: 48px;">⚠️</div><div><h3 style="color: #991b1b; margin-bottom: 8px;">The Stakes Are High</h3><p>The average cost of a data breach in 2024 reached $4.45 million. Beyond financial losses, breaches damage reputation, erode customer trust, and can result in regulatory penalties of up to 4% of annual revenue under GDPR.</p></div></div>';
+                    
+                    container.appendChild(h2);
+                    container.appendChild(infoBox);
+                    container.appendChild(section);
+                    container.appendChild(insight);
+                    
+                    return container;
+                }
+            },
+            {
+                title: "Why It Matters",
+                icon: "⭐",
+                render: function() {
+                    const container = document.createElement('div');
+                    
+                    const h2 = document.createElement('h2');
+                    h2.textContent = 'Why Security & Privacy Matter';
+                    container.appendChild(h2);
+                    
+                    const grid = document.createElement('div');
+                    grid.className = 'grid';
+                    grid.style.gap = '20px';
+                    
+                    grid.innerHTML = `
+                        <div class="card-item" style="background: linear-gradient(to right, #eff6ff, #dbeafe);">
+                            <div class="flex-row">
+                                <div class="icon-large">🤝</div>
+                                <div>
+                                    <h3 style="color: #1e40af; margin-bottom: 8px;">Trust</h3>
+                                    <p>Customers expect their data to be handled responsibly. Security breaches and privacy violations destroy trust that takes years to build.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-item" style="background: linear-gradient(to right, #eef2ff, #e0e7ff);">
+                            <div class="flex-row">
+                                <div class="icon-large">📜</div>
+                                <div>
+                                    <h3 style="color: #4f46e5; margin-bottom: 8px;">Compliance</h3>
+                                    <p>Regulations like GDPR, HIPAA, and India's DPDP Act mandate strict privacy standards with severe penalties for violations.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-item" style="background: linear-gradient(to right, #f0fdf4, #dcfce7);">
+                            <div class="flex-row">
+                                <div class="icon-large">🛡️</div>
+                                <div>
+                                    <h3 style="color: #059669; margin-bottom: 8px;">Risk Reduction</h3>
+                                    <p>Prevents breaches, fraud, identity theft, and reputational damage that can devastate organizations.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-item" style="background: linear-gradient(to right, #fef3c7, #fde68a);">
+                            <div class="flex-row">
+                                <div class="icon-large">🔄</div>
+                                <div>
+                                    <h3 style="color: #d97706; margin-bottom: 8px;">Business Continuity</h3>
+                                    <p>Protects critical systems from disruption, ransomware, and cyberattacks that can halt operations.</p>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    
+                    const example = document.createElement('div');
+                    example.className = 'info-box blue';
+                    example.style.marginTop = '32px';
+                    example.innerHTML = `
+                        <div class="flex-row">
+                            <div style="font-size: 32px;">💡</div>
+                            <div>
+                                <h3 style="color: #1e40af; margin-bottom: 8px;">Real-World Example: Healthcare Protection</h3>
+                                <p>A healthcare provider encrypts patient records using AES-256 encryption and enforces strict access controls through multi-factor authentication. They maintain audit logs, implement role-based permissions, and conduct regular security assessments to comply with HIPAA privacy laws and protect sensitive medical information.</p>
+                            </div>
+                        </div>
+                    `;
+                    
+                    container.appendChild(grid);
+                    container.appendChild(example);
+                    
+                    return container;
+                }
+            },
+            {
+                title: "Security Principles",
+                icon: "🔐",
+                render: function() {
+                    const container = document.createElement('div');
+                    
+                    const h2 = document.createElement('h2');
+                    h2.textContent = 'Core Principles of Data Security';
+                    
+                    const subtitle = document.createElement('p');
+                    subtitle.style.color = '#6b7280';
+                    subtitle.style.marginBottom = '24px';
+                    subtitle.textContent = 'Five fundamental principles that form the foundation of robust data security.';
+                    
+                    container.appendChild(h2);
+                    container.appendChild(subtitle);
+                    
+                    container.innerHTML += `
+                        <div class="step-box" style="background-color: #eff6ff;">
+                            <div class="step-number" style="background-color: #3b82f6;">1</div>
+                            <div>
+                                <h3 style="color: #1e40af;">Confidentiality</h3>
+                                <p>Only authorized users can access sensitive data through proper authentication, encryption, and access controls.</p>
+                            </div>
+                        </div>
+
+                        <div class="step-box" style="background-color: #eef2ff;">
+                            <div class="step-number" style="background-color: #6366f1;">2</div>
+                            <div>
+                                <h3 style="color: #4f46e5;">Integrity</h3>
+                                <p>Data remains accurate, complete, and unaltered throughout its lifecycle. Checksums and digital signatures verify integrity.</p>
+                            </div>
+                        </div>
+
+                        <div class="step-box" style="background-color: #f0fdf4;">
+                            <div class="step-number" style="background-color: #10b981;">3</div>
+                            <div>
+                                <h3 style="color: #059669;">Availability</h3>
+                                <p>Systems and data are accessible when needed by authorized users, with redundancy and disaster recovery plans.</p>
+                            </div>
+                        </div>
+
+                        <div class="step-box" style="background-color: #fef3c7;">
+                            <div class="step-number" style="background-color: #f59e0b;">4</div>
+                            <div>
+                                <h3 style="color: #d97706;">Authentication & Authorization</h3>
+                                <p>Verifying user identity and controlling access through multi-factor authentication and role-based permissions.</p>
+                            </div>
+                        </div>
+
+                        <div class="step-box" style="background-color: #faf5ff;">
+                            <div class="step-number" style="background-color: #a855f7;">5</div>
+                            <div>
+                                <h3 style="color: #7c3aed;">Encryption</h3>
+                                <p>Securing data both in transit (SSL/TLS) and at rest (AES) using strong cryptographic methods to prevent unauthorized reading.</p>
+                            </div>
+                        </div>
+                    `;
+                    
+                    return container;
+                }
+            },
+            {
+                title: "Privacy Principles",
+                icon: "🔏",
+                render: function() {
+                    const container = document.createElement('div');
+                    
+                    const h2 = document.createElement('h2');
+                    h2.textContent = 'Core Principles of Data Privacy';
+                    
+                    const subtitle = document.createElement('p');
+                    subtitle.style.color = '#6b7280';
+                    subtitle.style.marginBottom = '24px';
+                    subtitle.textContent = 'Five essential principles for ethical and compliant handling of personal data.';
+                    
+                    container.appendChild(h2);
+                    container.appendChild(subtitle);
+                    
+                    container.innerHTML += `
+                        <div class="step-box" style="background-color: #eff6ff;">
+                            <div class="step-number" style="background-color: #3b82f6;">1</div>
+                            <div>
+                                <h3 style="color: #1e40af;">Transparency</h3>
+                                <p>Inform users clearly how their data is collected, used, stored, and shared through privacy policies and notices.</p>
+                            </div>
+                        </div>
+
+                        <div class="step-box" style="background-color: #eef2ff;">
+                            <div class="step-number" style="background-color: #6366f1;">2</div>
+                            <div>
+                                <h3 style="color: #4f46e5;">Consent</h3>
+                                <p>Obtain clear, informed permission before processing personal data. Consent must be freely given and easily withdrawn.</p>
+                            </div>
+                        </div>
+
+                        <div class="step-box" style="background-color: #f0fdf4;">
+                            <div class="step-number" style="background-color: #10b981;">3</div>
+                            <div>
+                                <h3 style="color: #059669;">Minimization</h3>
+                                <p>Collect only the data that is necessary for the specified purpose. Avoid excessive data collection.</p>
+                            </div>
+                        </div>
+
+                        <div class="step-box" style="background-color: #fef3c7;">
+                            <div class="step-number" style="background-color: #f59e0b;">4</div>
+                            <div>
+                                <h3 style="color: #d97706;">User Rights</h3>
+                                <p>Enable users to access, correct, delete, and port their personal data. Support data subject requests promptly.</p>
+                            </div>
+                        </div>
+
+                        <div class="step-box" style="background-color: #faf5ff;">
+                            <div class="step-number" style="background-color: #a855f7;">5</div>
+                            <div>
+                                <h3 style="color: #7c3aed;">Accountability</h3>
+                                <p>Organizations must demonstrate compliance through documentation, audits, and privacy impact assessments.</p>
+                            </div>
+                        </div>
+                    `;
+                    
+                    return container;
+                }
+            },
+            {
+                title: "Tools & Technologies",
+                icon: "🛠️",
+                render: function() {
+                    const container = document.createElement('div');
+                    
+                    container.innerHTML = `
+                        <h2>Tools & Technologies</h2>
+                        <p style="color: #6b7280; margin-bottom: 24px;">Modern solutions for implementing comprehensive security and privacy protection.</p>
+                        
+                        <div class="card-item tool-card" style="border-color: #3b82f6; margin-bottom: 20px;">
+                            <div class="flex-row">
+                                <div style="font-size: 48px;">🔒</div>
+                                <div style="flex: 1;">
+                                    <h3 style="color: #1e40af; margin-bottom: 8px;">Security Tools</h3>
+                                    <p style="margin-bottom: 12px;"><strong>Solutions:</strong> Firewalls, Intrusion Detection Systems (IDS), VPNs</p>
+                                    <div style="background-color: #eff6ff; padding: 12px; border-radius: 4px;">
+                                        Network protection, threat detection, secure remote access, and real-time monitoring of suspicious activities
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card-item tool-card" style="border-color: #6366f1; margin-bottom: 20px;">
+                            <div class="flex-row">
+                                <div style="font-size: 48px;">🌐</div>
+                                <div style="flex: 1;">
+                                    <h3 style="color: #4f46e5; margin-bottom: 8px;">Encryption Standards</h3>
+                                    <p style="margin-bottom: 12px;"><strong>Protocols:</strong> AES, RSA, SSL/TLS</p>
+                                    <div style="background-color: #eef2ff; padding: 12px; border-radius: 4px;">
+                                        Industry-standard encryption for data at rest (AES-256), public-key cryptography (RSA), and secure communications (TLS 1.3)
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card-item tool-card" style="border-color: #10b981; margin-bottom: 20px;">
+                            <div class="flex-row">
+                                <div style="font-size: 48px;">🔑</div>
+                                <div style="flex: 1;">
+                                    <h3 style="color: #059669; margin-bottom: 8px;">Identity Management</h3>
+                                    <p style="margin-bottom: 12px;"><strong>Systems:</strong> Single Sign-On (SSO), Multi-Factor Authentication (MFA)</p>
+                                    <div style="background-color: #f0fdf4; padding: 12px; border-radius: 4px;">
+                                        Streamlined authentication, enhanced security through multiple verification factors, centralized access control
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card-item tool-card" style="border-color: #f59e0b; margin-bottom: 20px;">
+                            <div class="flex-row">
+                                <div style="font-size: 48px;">👤</div>
+                                <div style="flex: 1;">
+                                    <h3 style="color: #d97706; margin-bottom: 8px;">Privacy Platforms</h3>
+                                    <p style="margin-bottom: 12px;"><strong>Tools:</strong> Consent management systems, Data anonymization tools</p>
+                                    <div style="background-color: #fef3c7; padding: 12px; border-radius: 4px;">
+                                        Track and manage user consent, anonymize personal data, support data subject rights, maintain compliance records
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card-item tool-card" style="border-color: #a855f7;">
+                            <div class="flex-row">
+                                <div style="font-size: 48px;">☁️</div>
+                                <div style="flex: 1;">
+                                    <h3 style="color: #7c3aed; margin-bottom: 8px;">Cloud Security</h3>
+                                    <p style="margin-bottom: 12px;"><strong>Services:</strong> AWS Shield, Azure Security Center, Google Cloud Security</p>
+                                    <div style="background-color: #faf5ff; padding: 12px; border-radius: 4px;">
+                                        DDoS protection, threat intelligence, security posture management, compliance monitoring for cloud environments
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    
+                    return container;
+                }
+            },
+            {
+                title: "Practical Applications",
+                icon: "💼",
+                render: function() {
+                    const container = document.createElement('div');
+                    
+                    container.innerHTML = `
+                        <h2>Practical Applications</h2>
+                        <p style="color: #6b7280; margin-bottom: 24px;">How security and privacy protection works across different industries.</p>
+                        
+                        <div class="card-item" style="background: linear-gradient(to right, #fef3c7, #fde68a); margin-bottom: 20px;">
+                            <div class="flex-row">
+                                <div class="icon-large">💰</div>
+                                <div>
+                                    <h3 style="color: #d97706; margin-bottom: 8px;">Finance</h3>
+                                    <p><strong>Application:</strong> Protecting transactions and customer banking details</p>
+                                    <p style="margin-top: 8px; color: #6b7280;">Banks use end-to-end encryption, tokenization for card data, multi-factor authentication, fraud detection systems, and strict access controls to protect financial information and comply with PCI-DSS standards.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card-item" style="background: linear-gradient(to right, #f0fdf4, #dcfce7); margin-bottom: 20px;">
+                            <div class="flex-row">
+                                <div class="icon-large">🏥</div>
+                                <div>
+                                    <h3 style="color: #059669; margin-bottom: 8px;">Healthcare</h3>
+                                    <p><strong>Application:</strong> Securing patient records and medical devices</p>
+                                    <p style="margin-top: 8px; color: #6b7280;">Healthcare providers encrypt electronic health records, implement role-based access, maintain audit trails, secure IoT medical devices, and ensure HIPAA compliance to protect sensitive patient data.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card-item" style="background: linear-gradient(to right, #eff6ff, #dbeafe); margin-bottom: 20px;">
+                            <div class="flex-row">
+                                <div class="icon-large">📱</div>
+                                <div>
+                                    <h3 style="color: #1e40af; margin-bottom: 8px;">Social Media</h3>
+                                    <p><strong>Application:</strong> Protecting user profiles, messages, and preferences</p>
+                                    <p style="margin-top: 8px; color: #6b7280;">Social platforms implement end-to-end encryption for messaging, privacy controls, consent management, data anonymization for analytics, and regular security audits to protect user information.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card-item" style="background: linear-gradient(to right, #fef2f2, #fee2e2); margin-bottom: 20px;">
+                            <div class="flex-row">
+                                <div class="icon-large">🛍️</div>
+                                <div>
+                                    <h3 style="color: #991b1b; margin-bottom: 8px;">Retail</h3>
+                                    <p><strong>Application:</strong> Safeguarding customer purchase histories and loyalty data</p>
+                                    <p style="margin-top: 8px; color: #6b7280;">Retailers secure payment processing, protect customer databases, implement privacy-by-design principles, manage cookie consent, and maintain PCI compliance for safe online transactions.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card-item" style="background: linear-gradient(to right, #eef2ff, #e0e7ff);">
+                            <div class="flex-row">
+                                <div class="icon-large">🏛️</div>
+                                <div>
+                                    <h3 style="color: #4f46e5; margin-bottom: 8px;">Government</h3>
+                                    <p><strong>Application:</strong> Ensuring confidentiality of citizen records and public services</p>
+                                    <p style="margin-top: 8px; color: #6b7280;">Government agencies implement national security standards, protect citizen data, ensure transparent privacy policies, maintain secure communication channels, and comply with data protection regulations.</p>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    
+                    return container;
+                }
+            },
+            {
+                title: "Best Practices",
+                icon: "✨",
+                render: function() {
+                    const container = document.createElement('div');
+                    
+                    const h2 = document.createElement('h2');
+                    h2.textContent = 'Best Practices for Security & Privacy';
+                    
+                    const subtitle = document.createElement('p');
+                    subtitle.style.color = '#6b7280';
+                    subtitle.style.marginBottom = '24px';
+                    subtitle.textContent = 'Five essential practices to build a comprehensive security and privacy program.';
+                    
+                    container.appendChild(h2);
+                    container.appendChild(subtitle);
+                    
+                    container.innerHTML += `
+                        <div class="step-box" style="background-color: #eff6ff;">
+                            <div class="step-number" style="background-color: #3b82f6;">1</div>
+                            <div>
+                                <h3 style="color: #1e40af;">Encrypt Everything</h3>
+                                <p>Implement encryption for data both at rest and in transit using industry-standard algorithms like AES-256 and TLS 1.3</p>
+                            </div>
+                        </div>
+
+                        <div class="step-box" style="background-color: #f0fdf4;">
+                            <div class="step-number" style="background-color: #10b981;">2</div>
+                            <div>
+                                <h3 style="color: #059669;">Implement Least Privilege</h3>
+                                <p>Grant users only the minimal access required to perform their tasks. Review permissions regularly and revoke unused access</p>
+                            </div>
+                        </div>
+
+                        <div class="step-box" style="background-color: #eef2ff;">
+                            <div class="step-number" style="background-color: #6366f1;">3</div>
+                            <div>
+                                <h3 style="color: #4f46e5;">Regular Audits</h3>
+                                <p>Continuously monitor for compliance issues, detect vulnerabilities through penetration testing, and maintain audit logs</p>
+                            </div>
+                        </div>
+
+                        <div class="step-box" style="background-color: #fef3c7;">
+                            <div class="step-number" style="background-color: #f59e0b;">4</div>
+                            <div>
+                                <h3 style="color: #d97706;">Educate Employees</h3>
+                                <p>Train staff regularly on security awareness, phishing detection, and privacy compliance—human error is a major risk factor</p>
+                            </div>
+                        </div>
+
+                        <div class="step-box" style="background-color: #faf5ff;">
+                            <div class="step-number" style="background-color: #a855f7;">5</div>
+                            <div>
+                                <h3 style="color: #7c3aed;">Incident Response Plan</h3>
+                                <p>Prepare for potential breaches with clear protocols, communication strategies, and tested recovery procedures</p>
+                            </div>
+                        </div>
+                    `;
+                    
+                    return container;
+                }
+            },
+            {
+                title: "Summary & Takeaways",
+                icon: "🎓",
+                render: function() {
+                    const container = document.createElement('div');
+                    
+                    container.innerHTML = `
+                        <h2>Summary & Takeaways</h2>
+                        
+                        <div class="info-box green" style="margin-bottom: 16px;">
+                            <div class="flex-row">
+                                <span class="checkmark">✓</span>
+                                <p style="font-size: 18px;">Data Security protects systems and information from unauthorized access and cyber threats</p>
+                            </div>
+                        </div>
+
+                        <div class="info-box green" style="margin-bottom: 16px;">
+                            <div class="flex-row">
+                                <span class="checkmark">✓</span>
+                                <p style="font-size: 18px;">Data Privacy ensures responsible, ethical handling of personal information with user consent</p>
+                            </div>
+                        </div>
+
+                        <div class="info-box green" style="margin-bottom: 16px;">
+                            <div class="flex-row">
+                                <span class="checkmark">✓</span>
+                                <p style="font-size: 18px;">Together, they build trust, ensure compliance, and create organizational resilience</p>
+                            </div>
+                        </div>
+
+                        <div class="info-box green">
+                            <div class="flex-row">
+                                <span class="checkmark">✓</span>
+                                <p style="font-size: 18px;">Strong security and privacy practices are essential for every industry in the digital age</p>
+                            </div>
+                        </div>
+
+                        <div style="margin-top: 32px; padding: 24px; background: linear-gradient(to right, #eff6ff, #eef2ff); border-radius: 8px;">
+                            <h3 style="color: #1e40af; margin-bottom: 12px;">🎯 Key Principles to Remember</h3>
+                            <ul>
+                                <li><strong>Prevention is cheaper than recovery</strong> - Invest in security before breaches happen</li>
+                                <li><strong>Privacy by design</strong> - Build privacy into systems from the start, not as an afterthought</li>
+                                <li><strong>Zero trust architecture</strong> - Verify everything, trust nothing by default</li>
+                                <li><strong>Layered defense</strong> - Use multiple security controls, not just one solution</li>
+                                <li><strong>Continuous improvement</strong> - Security is an ongoing process, not a one-time project</li>
+                            </ul>
+                        </div>
+
+                        <div class="cta-box">
+                            <h3>📌 Continue Your Learning Journey</h3>
+                            <p style="font-size: 18px; margin-bottom: 24px;">Follow this LinkedIn Learning Series for the next topic: <strong>Data Ethics & Responsible AI</strong></p>
+                            <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+                                <a href="https://www.linkedin.com/in/aditya-bhutada94/" target="_blank" class="cta-btn">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                                    </svg>
+                                    Connect on LinkedIn
+                                </a>
+                                <a href="https://github.com/adityaa2b" target="_blank" class="cta-btn">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                                    </svg>
+                                    View on GitHub
+                                </a>
+                            </div>
+                        </div>
+
+                        <div style="text-align: center; margin-top: 32px; padding: 24px; background-color: #f9fafb; border-radius: 8px;">
+                            <p style="font-size: 18px; color: #6b7280; margin-bottom: 8px;">🎉 Congratulations on completing Part 6!</p>
+                            <p style="color: #9ca3af;">You now understand how to protect data and ensure privacy compliance</p>
+                            <p style="color: #3b82f6; font-weight: 600; margin-top: 12px;">Next up: Data Ethics & Responsible AI →</p>
+                        </div>
+                    `;
+                    
+                    return container;
+                }
+            }
+        ];
+
+        function renderPage() {
+            const page = pages[currentPage];
+            document.getElementById('pageIcon').textContent = page.icon;
+            document.getElementById('pageNumber').textContent = `Chapter ${currentPage + 1} of ${pages.length}`;
+            document.getElementById('pageTitle').textContent = page.title;
+            
+            const contentDiv = document.getElementById('pageContent');
+            contentDiv.innerHTML = '';
+            contentDiv.appendChild(page.render());
+            
+            document.getElementById('pageIndicator').textContent = `Page ${currentPage + 1} of ${pages.length}`;
+            
+            document.getElementById('prevBtn').disabled = currentPage === 0;
+            document.getElementById('nextBtn').disabled = currentPage === pages.length - 1;
+            
+            completedPages.add(currentPage);
+            const progress = ((completedPages.size) / pages.length) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+            document.getElementById('progressText').textContent = Math.round(progress) + '% Complete';
+            
+            window.scrollTo(0, 0);
+        }
+
+        function renderMenu() {
+            const menuItems = pages.map((page, index) => `
+                <button class="menu-item ${currentPage === index ? 'active' : ''}" onclick="goToPage(${index})">
+                    <div class="menu-item-content">
+                        <span class="menu-item-icon">${page.icon}</span>
+                        <div style="flex: 1; text-align: left;">
+                            <div class="menu-item-title">${page.title}</div>
+                            <div class="menu-item-subtitle">Chapter ${index + 1}</div>
+                        </div>
+                        ${completedPages.has(index) ? '<span style="color: #10b981; font-size: 20px;">✓</span>' : ''}
+                    </div>
+                </button>
+            `).join('');
+            
+            document.getElementById('menuItems').innerHTML = menuItems;
+        }
+
+        function toggleMenu() {
+            const overlay = document.getElementById('menuOverlay');
+            const sidebar = document.getElementById('menuSidebar');
+            overlay.classList.toggle('active');
+            sidebar.classList.toggle('active');
+        }
+
+        function goToPage(index) {
+            currentPage = index;
+            renderPage();
+            renderMenu();
+            toggleMenu();
+        }
+
+        function nextPage() {
+            if (currentPage < pages.length - 1) {
+                currentPage++;
+                renderPage();
+                renderMenu();
+            }
+        }
+
+        function previousPage() {
+            if (currentPage > 0) {
+                currentPage--;
+                renderPage();
+                renderMenu();
+            }
+        }
+
+        renderPage();
+        renderMenu();
+    </script>
+</body>
+</html>
