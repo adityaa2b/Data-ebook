@@ -1,0 +1,1188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Warehousing - Interactive E-Book</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+            background: linear-gradient(135deg, #DBEAFE 0%, #ffffff 50%, #E0E7FF 100%);
+            min-height: 100vh;
+        }
+        
+        .header {
+            background: white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 16px;
+        }
+        
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        
+        .header-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .header-title h1 {
+            font-size: 20px;
+            color: #1f2937;
+        }
+        
+        .header-title p {
+            font-size: 14px;
+            color: #6b7280;
+        }
+        
+        .menu-btn {
+            background: none;
+            border: none;
+            padding: 8px;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: background 0.2s;
+        }
+        
+        .menu-btn:hover {
+            background: #f3f4f6;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e5e7eb;
+            border-radius: 9999px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(to right, #3b82f6, #6366f1);
+            transition: width 0.5s ease;
+        }
+        
+        .progress-text {
+            text-align: right;
+            font-size: 12px;
+            color: #6b7280;
+            margin-top: 4px;
+        }
+        
+        .menu-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 200;
+            display: none;
+        }
+        
+        .menu-overlay.active {
+            display: block;
+        }
+        
+        .menu-sidebar {
+            position: fixed;
+            right: 0;
+            top: 0;
+            height: 100%;
+            width: 320px;
+            background: white;
+            padding: 24px;
+            overflow-y: auto;
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+            z-index: 201;
+        }
+        
+        .menu-sidebar.active {
+            transform: translateX(0);
+        }
+        
+        .menu-sidebar h2 {
+            font-size: 24px;
+            margin-bottom: 24px;
+            color: #1f2937;
+        }
+        
+        .menu-item {
+            width: 100%;
+            text-align: left;
+            padding: 16px;
+            margin-bottom: 8px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            background: #f9fafb;
+            transition: all 0.2s;
+        }
+        
+        .menu-item:hover {
+            background: #f3f4f6;
+        }
+        
+        .menu-item.active {
+            background: linear-gradient(to right, #3b82f6, #6366f1);
+            color: white;
+            box-shadow: 0 4px 6px rgba(59, 130, 246, 0.3);
+        }
+        
+        .menu-item-content {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .menu-item-icon {
+            font-size: 24px;
+        }
+        
+        .menu-item-title {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        
+        .menu-item-subtitle {
+            font-size: 12px;
+            opacity: 0.75;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 32px 16px;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            padding: 48px;
+            min-height: 600px;
+        }
+        
+        .page-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 2px solid #f3f4f6;
+        }
+        
+        .page-icon {
+            font-size: 48px;
+        }
+        
+        .page-info p {
+            font-size: 14px;
+            color: #6b7280;
+        }
+        
+        .page-info h2 {
+            font-size: 28px;
+            color: #1f2937;
+        }
+        
+        .content {
+            line-height: 1.7;
+        }
+        
+        .content h1 {
+            font-size: 36px;
+            color: #3b82f6;
+            margin-bottom: 16px;
+        }
+        
+        .content h2 {
+            font-size: 28px;
+            color: #1f2937;
+            margin-bottom: 16px;
+        }
+        
+        .content h3 {
+            font-size: 24px;
+            color: #1f2937;
+            margin-bottom: 12px;
+        }
+        
+        .content h4 {
+            font-size: 20px;
+            margin-bottom: 8px;
+        }
+        
+        .content p {
+            font-size: 18px;
+            color: #374151;
+            margin-bottom: 16px;
+        }
+
+        .content ul {
+            margin-left: 24px;
+            margin-top: 12px;
+            line-height: 1.8;
+        }
+
+        .content li {
+            font-size: 18px;
+            color: #374151;
+            margin-bottom: 8px;
+        }
+        
+        .info-box {
+            padding: 24px;
+            border-radius: 8px;
+            margin: 24px 0;
+            border-left: 4px solid;
+        }
+
+        .info-box.blue {
+            background-color: #eff6ff;
+            border-color: #3b82f6;
+        }
+
+        .info-box.indigo {
+            background-color: #eef2ff;
+            border-color: #6366f1;
+        }
+
+        .info-box.green {
+            background-color: #f0fdf4;
+            border-color: #10b981;
+        }
+
+        .info-box.purple {
+            background-color: #faf5ff;
+            border-color: #a855f7;
+        }
+        
+        .grid {
+            display: grid;
+            gap: 16px;
+            margin: 24px 0;
+        }
+        
+        .grid-2 {
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        }
+        
+        .grid-3 {
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        }
+        
+        .card-item {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+        }
+        
+        .card-item:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            transform: translateY(-2px);
+        }
+        
+        .flex-row {
+            display: flex;
+            gap: 16px;
+            align-items: flex-start;
+        }
+        
+        .icon-large {
+            font-size: 48px;
+            flex-shrink: 0;
+        }
+        
+        .step-box {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+            transition: all 0.3s;
+        }
+        
+        .step-box:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        .step-number {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+        
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 32px;
+        }
+        
+        .nav-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .nav-btn:disabled {
+            background: #e5e7eb;
+            color: #9ca3af;
+            cursor: not-allowed;
+        }
+        
+        .nav-btn-primary {
+            background: linear-gradient(to right, #3b82f6, #6366f1);
+            color: white;
+            box-shadow: 0 2px 4px rgba(59, 130, 246, 0.3);
+        }
+        
+        .nav-btn-primary:hover:not(:disabled) {
+            box-shadow: 0 4px 8px rgba(59, 130, 246, 0.4);
+            transform: translateY(-2px);
+        }
+        
+        .page-indicator {
+            text-align: center;
+            color: #6b7280;
+            font-size: 14px;
+        }
+        
+        .cta-box {
+            background: linear-gradient(to right, #3b82f6, #6366f1);
+            color: white;
+            padding: 32px;
+            border-radius: 8px;
+            margin-top: 32px;
+        }
+        
+        .cta-box h3 {
+            color: white;
+            margin-bottom: 16px;
+        }
+        
+        .cta-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: white;
+            color: #3b82f6;
+            padding: 12px 24px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+            margin-right: 12px;
+            margin-bottom: 12px;
+        }
+        
+        .cta-btn:hover {
+            background: #f3f4f6;
+            transform: translateY(-2px);
+        }
+        
+        .checkmark {
+            color: #10b981;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+        
+        .series-badge {
+            background: linear-gradient(to right, #3b82f6, #6366f1);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            display: inline-block;
+            margin-bottom: 16px;
+        }
+
+        .tool-card {
+            border-left: 4px solid;
+            margin-bottom: 20px;
+        }
+        
+        @media (max-width: 768px) {
+            .card {
+                padding: 24px;
+            }
+            
+            .menu-sidebar {
+                width: 100%;
+            }
+            
+            .content h1 {
+                font-size: 28px;
+            }
+            
+            .content h2 {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-content">
+            <div class="header-top">
+                <div class="header-title">
+                    <div style="font-size: 28px;">🏢</div>
+                    <div>
+                        <h1>Data Warehousing</h1>
+                        <p>by Aditya Bhutada • Part 7</p>
+                    </div>
+                </div>
+                <button class="menu-btn" onclick="toggleMenu()">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="3" y1="12" x2="21" y2="12"></line>
+                        <line x1="3" y1="6" x2="21" y2="6"></line>
+                        <line x1="3" y1="18" x2="21" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressBar"></div>
+            </div>
+            <div class="progress-text" id="progressText">0% Complete</div>
+        </div>
+    </div>
+
+    <div class="menu-overlay" id="menuOverlay" onclick="toggleMenu()"></div>
+    
+    <div class="menu-sidebar" id="menuSidebar">
+        <h2>Table of Contents</h2>
+        <div id="menuItems"></div>
+    </div>
+
+    <div class="container">
+        <div class="card">
+            <div class="page-header">
+                <span class="page-icon" id="pageIcon">🏢</span>
+                <div class="page-info">
+                    <p id="pageNumber">Chapter 1 of 10</p>
+                    <h2 id="pageTitle">Welcome</h2>
+                </div>
+            </div>
+            <div class="content" id="pageContent"></div>
+        </div>
+
+        <div class="navigation">
+            <button class="nav-btn nav-btn-primary" id="prevBtn" onclick="previousPage()">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="15 18 9 12 15 6"></polyline>
+                </svg>
+                Previous
+            </button>
+            <div class="page-indicator" id="pageIndicator">Page 1 of 10</div>
+            <button class="nav-btn nav-btn-primary" id="nextBtn" onclick="nextPage()">
+                Next
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        let currentPage = 0;
+        let completedPages = new Set();
+
+        const pages = [
+            {
+                title: "Welcome",
+                icon: "🏢",
+                content: `
+                    <div style="text-align: center; margin-bottom: 32px;">
+                        <span class="series-badge">LinkedIn Learning Series • Part 7</span>
+                        <h1>Data Warehousing</h1>
+                        <p style="font-size: 22px; color: #3b82f6; font-weight: 600; margin-top: 8px;">Centralizing Data for Analytics and Insights</p>
+                        <p style="font-size: 18px; color: #9ca3af; margin-top: 8px;">by Aditya Bhutada</p>
+                    </div>
+                    
+                    <div class="info-box blue">
+                        <p style="font-size: 18px;">Welcome to Part 7! After mastering security and privacy, now learn how to centralize and organize data for powerful analytics. Data warehousing is the foundation of business intelligence and data-driven decision making.</p>
+                    </div>
+                    
+                    <div class="grid grid-3">
+                        <div class="card-item" style="border-top: 4px solid #3b82f6;">
+                            <div style="font-size: 32px; margin-bottom: 8px;">📖</div>
+                            <div style="font-weight: 600; color: #1f2937;">10 Chapters</div>
+                            <div style="font-size: 14px; color: #6b7280;">Complete framework</div>
+                        </div>
+                        <div class="card-item" style="border-top: 4px solid #6366f1;">
+                            <div style="font-size: 32px; margin-bottom: 8px;">⏱️</div>
+                            <div style="font-weight: 600; color: #1f2937;">25 min read</div>
+                            <div style="font-size: 14px; color: #6b7280;">Enterprise architecture</div>
+                        </div>
+                        <div class="card-item" style="border-top: 4px solid #10b981;">
+                            <div style="font-size: 32px; margin-bottom: 8px;">✔</div>
+                            <div style="font-weight: 600; color: #1f2937;">10 Principles</div>
+                            <div style="font-size: 14px; color: #6b7280;">Warehousing best practices</div>
+                        </div>
+                    </div>
+                `
+            },
+            {
+                title: "Introduction",
+                icon: "📋",
+                content: `
+                    <h2>Introduction</h2>
+                    
+                    <div class="info-box indigo">
+                        <p style="font-size: 18px; font-style: italic;">A Data Warehouse is a centralized repository designed to store, integrate, and analyze large volumes of structured data from multiple sources. It enables organizations to make informed decisions by providing a single source of truth for analytics and reporting.</p>
+                    </div>
+                    
+                    <div style="margin-top: 32px;">
+                        <h3 style="color: #3b82f6;">The Power of Centralized Data</h3>
+                        <p>Imagine trying to make strategic business decisions by manually combining data from dozens of different systems, each with its own format and structure. Data warehousing solves this challenge by creating a unified, integrated view of organizational data.</p>
+                        <ul>
+                            <li><strong>Single Source of Truth</strong> - One place for all your analytical data</li>
+                            <li><strong>Historical Analysis</strong> - Track trends and changes over time</li>
+                            <li><strong>Fast Queries</strong> - Optimized for complex analytical queries</li>
+                            <li><strong>Business Intelligence</strong> - Powers dashboards, reports, and insights</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="card-item" style="background: linear-gradient(to right, #eff6ff, #eef2ff); margin-top: 32px;">
+                        <div class="flex-row">
+                            <div style="font-size: 48px;">💡</div>
+                            <div>
+                                <h3 style="color: #1e40af; margin-bottom: 8px;">Why Organizations Need Data Warehouses</h3>
+                                <p>Modern businesses generate data from countless sources—CRM systems, e-commerce platforms, marketing tools, IoT devices, and more. Without a data warehouse, analysts spend 80% of their time just finding and preparing data, leaving only 20% for actual analysis and insights.</p>
+                            </div>
+                        </div>
+                    </div>
+                `
+            },
+            {
+                title: "Why It Matters",
+                icon: "⭐",
+                content: `
+                    <h2>Why Data Warehousing Matters</h2>
+                    
+                    <div class="grid" style="gap: 20px;">
+                        <div class="card-item" style="background: linear-gradient(to right, #eff6ff, #dbeafe);">
+                            <div class="flex-row">
+                                <div class="icon-large">🔗</div>
+                                <div>
+                                    <h3 style="color: #1e40af; margin-bottom: 8px;">Integration</h3>
+                                    <p>Combines data from diverse systems—CRM, ERP, databases, APIs—into one unified platform for comprehensive analysis.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-item" style="background: linear-gradient(to right, #eef2ff, #e0e7ff);">
+                            <div class="flex-row">
+                                <div class="icon-large">✓</div>
+                                <div>
+                                    <h3 style="color: #4f46e5; margin-bottom: 8px;">Consistency</h3>
+                                    <p>Ensures standardized formats, definitions, and business rules for reliable, trustworthy analysis across the organization.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-item" style="background: linear-gradient(to right, #f0fdf4, #dcfce7);">
+                            <div class="flex-row">
+                                <div class="icon-large">⚡</div>
+                                <div>
+                                    <h3 style="color: #059669; margin-bottom: 8px;">Performance</h3>
+                                    <p>Optimized for complex queries and reporting at scale, delivering insights in seconds instead of hours or days.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-item" style="background: linear-gradient(to right, #fef3c7, #fde68a);">
+                            <div class="flex-row">
+                                <div class="icon-large">📊</div>
+                                <div>
+                                    <h3 style="color: #d97706; margin-bottom: 8px;">Decision Support</h3>
+                                    <p>Empowers business intelligence, strategic planning, and data-driven decision making at all organizational levels.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="info-box blue" style="margin-top: 32px;">
+                        <div class="flex-row">
+                            <div style="font-size: 32px;">💡</div>
+                            <div>
+                                <h3 style="color: #1e40af; margin-bottom: 8px;">Real-World Example: Retail Analytics</h3>
+                                <p>A retail company uses a data warehouse to combine sales transactions, inventory levels, customer profiles, and marketing campaigns. This enables real-time dashboards showing which products are selling, inventory that needs replenishment, customer segments for targeted marketing, and revenue forecasts—all from a single integrated view.</p>
+                            </div>
+                        </div>
+                    </div>
+                `
+            },
+            {
+                title: "Core Components",
+                icon: "🔧",
+                content: `
+                    <h2>Core Components of a Data Warehouse</h2>
+                    <p style="color: #6b7280; margin-bottom: 24px;">Five essential building blocks that make up a complete data warehouse architecture.</p>
+                    
+                    <div class="step-box" style="background-color: #eff6ff;">
+                        <div class="step-number" style="background-color: #3b82f6;">1</div>
+                        <div>
+                            <h3 style="color: #1e40af;">Data Sources</h3>
+                            <p>Operational databases, CRM systems, ERP platforms, APIs, external data feeds, and real-time streaming data that feed into the warehouse.</p>
+                        </div>
+                    </div>
+
+                    <div class="step-box" style="background-color: #eef2ff;">
+                        <div class="step-number" style="background-color: #6366f1;">2</div>
+                        <div>
+                            <h3 style="color: #4f46e5;">ETL/ELT Processes</h3>
+                            <p>Extract, Transform, Load (or Extract, Load, Transform) pipelines that clean, standardize, and prepare data for analysis.</p>
+                        </div>
+                    </div>
+
+                    <div class="step-box" style="background-color: #f0fdf4;">
+                        <div class="step-number" style="background-color: #10b981;">3</div>
+                        <div>
+                            <h3 style="color: #059669;">Storage Layer</h3>
+                            <p>Centralized repository (cloud-based or on-premise) optimized for analytical workloads, with columnar storage and compression.</p>
+                        </div>
+                    </div>
+
+                    <div class="step-box" style="background-color: #fef3c7;">
+                        <div class="step-number" style="background-color: #f59e0b;">4</div>
+                        <div>
+                            <h3 style="color: #d97706;">Metadata Layer</h3>
+                            <p>Catalogs that provide context, definitions, lineage, and documentation for all stored data assets.</p>
+                        </div>
+                    </div>
+
+                    <div class="step-box" style="background-color: #faf5ff;">
+                        <div class="step-number" style="background-color: #a855f7;">5</div>
+                        <div>
+                            <h3 style="color: #7c3aed;">Query & Reporting Tools</h3>
+                            <p>Business intelligence platforms, SQL interfaces, and visualization tools that enable users to extract insights from the data.</p>
+                        </div>
+                    </div>
+                `
+            },
+            {
+                title: "Warehouse Types",
+                icon: "🏗️",
+                content: `
+                    <h2>Types of Data Warehouses</h2>
+                    <p style="color: #6b7280; margin-bottom: 24px;">Different warehouse architectures serve different organizational needs and use cases.</p>
+                    
+                    <div class="grid grid-2">
+                        <div class="card-item" style="background: linear-gradient(to right, #eff6ff, #dbeafe); border-top: 4px solid #3b82f6;">
+                            <div style="font-size: 48px; margin-bottom: 12px;">🏢</div>
+                            <h3 style="color: #1e40af; margin-bottom: 8px;">Enterprise Data Warehouse (EDW)</h3>
+                            <p style="margin-bottom: 12px;">Centralized system that serves the entire organization with integrated data from all departments.</p>
+                            <div style="background-color: #dbeafe; padding: 12px; border-radius: 6px; font-size: 16px;">
+                                <strong>Best for:</strong> Large organizations needing comprehensive, organization-wide analytics and reporting
+                            </div>
+                        </div>
+
+                        <div class="card-item" style="background: linear-gradient(to right, #eef2ff, #e0e7ff); border-top: 4px solid #6366f1;">
+                            <div style="font-size: 48px; margin-bottom: 12px;">⚡</div>
+                            <h3 style="color: #4f46e5; margin-bottom: 8px;">Operational Data Store (ODS)</h3>
+                            <p style="margin-bottom: 12px;">Near real-time data repository for current operational reporting and tactical decision making.</p>
+                            <div style="background-color: #e0e7ff; padding: 12px; border-radius: 6px; font-size: 16px;">
+                                <strong>Best for:</strong> Real-time monitoring, operational dashboards, and immediate business needs
+                            </div>
+                        </div>
+
+                        <div class="card-item" style="background: linear-gradient(to right, #f0fdf4, #dcfce7); border-top: 4px solid #10b981;">
+                            <div style="font-size: 48px; margin-bottom: 12px;">📊</div>
+                            <h3 style="color: #059669; margin-bottom: 8px;">Data Marts</h3>
+                            <p style="margin-bottom: 12px;">Subsets of data warehouses focused on specific departments like sales, marketing, or finance.</p>
+                            <div style="background-color: #dcfce7; padding: 12px; border-radius: 6px; font-size: 16px;">
+                                <strong>Best for:</strong> Department-specific analysis with faster query performance and easier management
+                            </div>
+                        </div>
+
+                        <div class="card-item" style="background: linear-gradient(to right, #fef3c7, #fde68a); border-top: 4px solid #f59e0b;">
+                            <div style="font-size: 48px; margin-bottom: 12px;">☁️</div>
+                            <h3 style="color: #d97706; margin-bottom: 8px;">Cloud Data Warehouse</h3>
+                            <p style="margin-bottom: 12px;">Fully managed, elastic warehouses in the cloud with automatic scaling and minimal maintenance.</p>
+                            <div style="background-color: #fde68a; padding: 12px; border-radius: 6px; font-size: 16px;">
+                                <strong>Best for:</strong> Organizations seeking scalability, flexibility, and reduced infrastructure overhead
+                            </div>
+                        </div>
+                    </div>
+                `
+            },
+            {
+                title: "Core Principles",
+                icon: "📐",
+                content: `
+                    <h2>Core Principles of Data Warehousing</h2>
+                    <p style="color: #6b7280; margin-bottom: 24px;">Ten fundamental principles that guide effective data warehouse design and implementation.</p>
+                    
+                    <div class="step-box" style="background-color: #eff6ff;">
+                        <div class="step-number" style="background-color: #3b82f6;">1</div>
+                        <div style="flex: 1;">
+                            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                                <span style="font-size: 24px;">📂</span>
+                                <h3 style="color: #1e40af; margin-bottom: 0;">Subject-Oriented</h3>
+                            </div>
+                            <p>Focus on key business domains (sales, finance, HR) rather than operational processes</p>
+                        </div>
+                    </div>
+                    
+                    <div class="step-box" style="background-color: #eef2ff;">
+                        <div class="step-number" style="background-color: #6366f1;">2</div>
+                        <div style="flex: 1;">
+                            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                                <span style="font-size: 24px;">🔗</span>
+                                <h3 style="color: #4f46e5; margin-bottom: 0;">Integrated</h3>
+                            </div>
+                            <p>Consolidate data from multiple heterogeneous sources into a unified, consistent format</p>
+                        </div>
+                    </div>
+                    
+                    <div class="step-box" style="background-color: #f0fdf4;">
+                        <div class="step-number" style="background-color: #10b981;">3</div>
+                        <div style="flex: 1;">
+                            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                                <span style="font-size: 24px;">⏳</span>
+                                <h3 style="color: #059669; margin-bottom: 0;">Time-Variant</h3>
+                            </div>
+                            <p>Store historical data to enable trend analysis, forecasting, and temporal comparisons</p>
+                        </div>
+                    </div>
+                    
+                    <div class="step-box" style="background-color: #fef3c7;">
+                        <div class="step-number" style="background-color: #f59e0b;">4</div>
+                        <div style="flex: 1;">
+                            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                                <span style="font-size: 24px;">🗄️</span>
+                                <h3 style="color: #d97706; margin-bottom: 0;">Non-Volatile</h3>
+                            </div>
+                            <p>Data is stable—once entered, it is not frequently updated or deleted, ensuring consistency</p>
+                        </div>
+                    </div>
+                    
+                    <div class="step-box" style="background-color: #faf5ff;">
+                        <div class="step-number" style="background-color: #a855f7;">5</div>
+                        <div style="flex: 1;">
+                            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                                <span style="font-size: 24px;">📊</span>
+                                <h3 style="color: #7c3aed; margin-bottom: 0;">Granularity</h3>
+                            </div>
+                            <p>Maintain multiple levels of detail from transaction-level to aggregated summaries</p>
+                        </div>
+                    </div>
+                    
+                    <div class="step-box" style="background-color: #fef2f2;">
+                        <div class="step-number" style="background-color: #ef4444;">6</div>
+                        <div style="flex: 1;">
+                            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                                <span style="font-size: 24px;">🗂️</span>
+                                <h3 style="color: #991b1b; margin-bottom: 0;">Metadata-Driven</h3>
+                            </div>
+                            <p>Use metadata catalogs to provide context, definitions, and lineage for all data</p>
+                        </div>
+                    </div>
+                    
+                    <div class="step-box" style="background-color: #eff6ff;">
+                        <div class="step-number" style="background-color: #3b82f6;">7</div>
+                        <div style="flex: 1;">
+                            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                                <span style="font-size: 24px;">✅</span>
+                                <h3 style="color: #1e40af; margin-bottom: 0;">Data Quality</h3>
+                            </div>
+                            <p>Ensure accuracy, completeness, and consistency during ETL processes and storage</p>
+                        </div>
+                    </div>
+                    
+                    <div class="step-box" style="background-color: #eef2ff;">
+                        <div class="step-number" style="background-color: #6366f1;">8</div>
+                        <div style="flex: 1;">
+                            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                                <span style="font-size: 24px;">🔒</span>
+                                <h3 style="color: #4f46e5; margin-bottom: 0;">Security & Access Control</h3>
+                            </div>
+                            <p>Protect sensitive data with role-based permissions, encryption, and audit trails</p>
+                        </div>
+                    </div>
+                    
+                    <div class="step-box" style="background-color: #f0fdf4;">
+                        <div class="step-number" style="background-color: #10b981;">9</div>
+                        <div style="flex: 1;">
+                            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                                <span style="font-size: 24px;">⚡</span>
+                                <h3 style="color: #059669; margin-bottom: 0;">Performance Optimization</h3>
+                            </div>
+                            <p>Use indexing, partitioning, materialized views, and query tuning for efficient analytics</p>
+                        </div>
+                    </div>
+                    
+                    <div class="step-box" style="background-color: #fef3c7;">
+                        <div class="step-number" style="background-color: #f59e0b;">10</div>
+                        <div style="flex: 1;">
+                            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                                <span style="font-size: 24px;">📈</span>
+                                <h3 style="color: #d97706; margin-bottom: 0;">Scalability & Flexibility</h3>
+                            </div>
+                            <p>Design for growth, supporting new data sources, increased volume, and evolving business needs</p>
+                        </div>
+                    </div>
+                `
+            },
+            {
+                title: "Tools & Technologies",
+                icon: "🛠️",
+                content: `
+                    <h2>Tools & Technologies</h2>
+                    <p style="color: #6b7280; margin-bottom: 24px;">Modern platforms and tools for building and managing enterprise data warehouses.</p>
+                    
+                    <div class="card-item tool-card" style="border-color: #3b82f6; margin-bottom: 20px;">
+                        <div class="flex-row">
+                            <div style="font-size: 48px;">☁️</div>
+                            <div style="flex: 1;">
+                                <h3 style="color: #1e40af; margin-bottom: 8px;">Cloud Warehouses</h3>
+                                <p style="margin-bottom: 12px;"><strong>Platforms:</strong> Snowflake, Google BigQuery, Amazon Redshift, Azure Synapse</p>
+                                <div style="background-color: #eff6ff; padding: 12px; border-radius: 4px;">
+                                    Fully managed, auto-scaling platforms with separation of storage and compute, pay-per-use pricing, and minimal maintenance overhead
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-item tool-card" style="border-color: #6366f1; margin-bottom: 20px;">
+                        <div class="flex-row">
+                            <div style="font-size: 48px;">🏢</div>
+                            <div style="flex: 1;">
+                                <h3 style="color: #4f46e5; margin-bottom: 8px;">Traditional Warehouses</h3>
+                                <p style="margin-bottom: 12px;"><strong>Platforms:</strong> Teradata, Oracle Exadata, IBM Db2 Warehouse</p>
+                                <div style="background-color: #eef2ff; padding: 12px; border-radius: 4px;">
+                                    On-premise solutions offering high performance, enterprise features, and full control over infrastructure and data
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-item tool-card" style="border-color: #10b981; margin-bottom: 20px;">
+                        <div class="flex-row">
+                            <div style="font-size: 48px;">⚙️</div>
+                            <div style="flex: 1;">
+                                <h3 style="color: #059669; margin-bottom: 8px;">ETL Tools</h3>
+                                <p style="margin-bottom: 12px;"><strong>Tools:</strong> Informatica, Talend, Apache Spark, dbt, Fivetran</p>
+                                <div style="background-color: #f0fdf4; padding: 12px; border-radius: 4px;">
+                                    Data integration platforms for extracting, transforming, and loading data from various sources into the warehouse
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-item tool-card" style="border-color: #f59e0b; margin-bottom: 20px;">
+                        <div class="flex-row">
+                            <div style="font-size: 48px;">📊</div>
+                            <div style="flex: 1;">
+                                <h3 style="color: #d97706; margin-bottom: 8px;">BI & Analytics Tools</h3>
+                                <p style="margin-bottom: 12px;"><strong>Tools:</strong> Tableau, Power BI, Qlik, Looker, Metabase</p>
+                                <div style="background-color: #fef3c7; padding: 12px; border-radius: 4px;">
+                                    Visualization and reporting platforms that connect to warehouses for interactive dashboards and insights
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-item tool-card" style="border-color: #a855f7;">
+                        <div class="flex-row">
+                            <div style="font-size: 48px;">🗂️</div>
+                            <div style="flex: 1;">
+                                <h3 style="color: #7c3aed; margin-bottom: 8px;">Data Catalog & Governance</h3>
+                                <p style="margin-bottom: 12px;"><strong>Tools:</strong> Alation, Collibra, Apache Atlas, AWS Glue Catalog</p>
+                                <div style="background-color: #faf5ff; padding: 12px; border-radius: 4px;">
+                                    Metadata management platforms for data discovery, lineage tracking, and governance compliance
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `
+            },
+            {
+                title: "Practical Applications",
+                icon: "💼",
+                content: `
+                    <h2>Practical Applications</h2>
+                    <p style="color: #6b7280; margin-bottom: 24px;">How data warehousing transforms analytics and decision-making across industries.</p>
+                    
+                    <div class="card-item" style="background: linear-gradient(to right, #fef3c7, #fde68a); margin-bottom: 20px;">
+                        <div class="flex-row">
+                            <div class="icon-large">💰</div>
+                            <div>
+                                <h3 style="color: #d97706; margin-bottom: 8px;">Finance</h3>
+                                <p><strong>Application:</strong> Consolidating transaction data for fraud detection and risk analysis</p>
+                                <p style="margin-top: 8px; color: #6b7280;">Financial institutions warehouse transaction history, customer profiles, and market data to identify suspicious patterns, assess credit risk, ensure regulatory compliance, and generate executive reports.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-item" style="background: linear-gradient(to right, #f0fdf4, #dcfce7); margin-bottom: 20px;">
+                        <div class="flex-row">
+                            <div class="icon-large">🏥</div>
+                            <div>
+                                <h3 style="color: #059669; margin-bottom: 8px;">Healthcare</h3>
+                                <p><strong>Application:</strong> Integrating patient records for unified reporting and research</p>
+                                <p style="margin-top: 8px; color: #6b7280;">Healthcare systems centralize electronic health records, lab results, billing data, and treatment outcomes to improve patient care, support clinical research, and optimize hospital operations.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-item" style="background: linear-gradient(to right, #eff6ff, #dbeafe); margin-bottom: 20px;">
+                        <div class="flex-row">
+                            <div class="icon-large">🛍️</div>
+                            <div>
+                                <h3 style="color: #1e40af; margin-bottom: 8px;">Retail</h3>
+                                <p><strong>Application:</strong> Customer segmentation and demand forecasting</p>
+                                <p style="margin-top: 8px; color: #6b7280;">Retailers warehouse point-of-sale data, inventory levels, customer loyalty programs, and web analytics to optimize pricing, predict demand, personalize marketing, and manage supply chains.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-item" style="background: linear-gradient(to right, #fef2f2, #fee2e2); margin-bottom: 20px;">
+                        <div class="flex-row">
+                            <div class="icon-large">📱</div>
+                            <div>
+                                <h3 style="color: #991b1b; margin-bottom: 8px;">Social Media</h3>
+                                <p><strong>Application:</strong> Aggregating engagement metrics for trend analysis</p>
+                                <p style="margin-top: 8px; color: #6b7280;">Social platforms warehouse user interactions, content performance, and demographic data to understand trends, optimize algorithms, measure campaign effectiveness, and improve user experience.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-item" style="background: linear-gradient(to right, #eef2ff, #e0e7ff);">
+                        <div class="flex-row">
+                            <div class="icon-large">🏛️</div>
+                            <div>
+                                <h3 style="color: #4f46e5; margin-bottom: 8px;">Government</h3>
+                                <p><strong>Application:</strong> Centralized citizen data for policy analysis and planning</p>
+                                <p style="margin-top: 8px; color: #6b7280;">Government agencies warehouse census data, public services usage, economic indicators, and program outcomes to inform policy decisions, allocate resources, and measure program effectiveness.</p>
+                            </div>
+                        </div>
+                    </div>
+                `
+            },
+            {
+                title: "Best Practices",
+                icon: "✨",
+                content: `
+                    <h2>Best Practices for Data Warehousing</h2>
+                    <p style="color: #6b7280; margin-bottom: 24px;">Five critical practices to ensure your data warehouse delivers maximum value.</p>
+                    
+                    <div class="step-box" style="background-color: #eff6ff;">
+                        <div class="step-number" style="background-color: #3b82f6;">1</div>
+                        <div>
+                            <h3 style="color: #1e40af;">Design for Scalability</h3>
+                            <p>Anticipate growth in data volume, user count, and query complexity. Use cloud platforms or partitioning strategies to scale efficiently.</p>
+                        </div>
+                    </div>
+
+                    <div class="step-box" style="background-color: #f0fdf4;">
+                        <div class="step-number" style="background-color: #10b981;">2</div>
+                        <div>
+                            <h3 style="color: #059669;">Ensure Data Quality</h3>
+                            <p>Validate, clean, and standardize data during ETL processes. Implement data quality checks and monitoring at every stage.</p>
+                        </div>
+                    </div>
+
+                    <div class="step-box" style="background-color: #eef2ff;">
+                        <div class="step-number" style="background-color: #6366f1;">3</div>
+                        <div>
+                            <h3 style="color: #4f46e5;">Use Metadata Catalogs</h3>
+                            <p>Improve discoverability, governance, and understanding through comprehensive metadata management and documentation.</p>
+                        </div>
+                    </div>
+
+                    <div class="step-box" style="background-color: #fef3c7;">
+                        <div class="step-number" style="background-color: #f59e0b;">4</div>
+                        <div>
+                            <h3 style="color: #d97706;">Optimize Query Performance</h3>
+                            <p>Implement indexing, partitioning, materialized views, and query tuning to maintain fast response times as data grows.</p>
+                        </div>
+                    </div>
+
+                    <div class="step-box" style="background-color: #faf5ff;">
+                        <div class="step-number" style="background-color: #a855f7;">5</div>
+                        <div>
+                            <h3 style="color: #7c3aed;">Secure Access Properly</h3>
+                            <p>Implement role-based permissions, encryption at rest and in transit, audit logging, and regular security reviews.</p>
+                        </div>
+                    </div>
+                `
+            },
+            {
+                title: "Summary & Takeaways",
+                icon: "🎓",
+                content: `
+                    <h2>Summary & Takeaways</h2>
+                    
+                    <div class="info-box green" style="margin-bottom: 16px;">
+                        <div class="flex-row">
+                            <span class="checkmark">✓</span>
+                            <p style="font-size: 18px;">Data Warehousing centralizes and standardizes data from multiple sources for powerful analytics</p>
+                        </div>
+                    </div>
+
+                    <div class="info-box green" style="margin-bottom: 16px;">
+                        <div class="flex-row">
+                            <span class="checkmark">✓</span>
+                            <p style="font-size: 18px;">Core components include data sources, ETL pipelines, storage, metadata, and query tools</p>
+                        </div>
+                    </div>
+
+                    <div class="info-box green" style="margin-bottom: 16px;">
+                        <div class="flex-row">
+                            <span class="checkmark">✓</span>
+                            <p style="font-size: 18px;">Different warehouse types (EDW, ODS, Data Marts) serve enterprise, operational, or departmental needs</p>
+                        </div>
+                    </div>
+
+                    <div class="info-box green">
+                        <div class="flex-row">
+                            <span class="checkmark">✓</span>
+                            <p style="font-size: 18px;">Strong practices ensure scalability, data quality, performance, and security at enterprise scale</p>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 32px; padding: 24px; background: linear-gradient(to right, #eff6ff, #eef2ff); border-radius: 8px;">
+                        <h3 style="color: #1e40af; margin-bottom: 12px;">🎯 Key Principles to Remember</h3>
+                        <ul>
+                            <li><strong>Single source of truth</strong> - Consolidate data to eliminate inconsistencies</li>
+                            <li><strong>Think long-term</strong> - Design for historical analysis and trend tracking</li>
+                            <li><strong>Performance matters</strong> - Optimize for analytical queries, not transactions</li>
+                            <li><strong>Quality first</strong> - Garbage in, garbage out—prioritize data quality</li>
+                            <li><strong>Cloud is compelling</strong> - Modern warehouses offer unmatched scalability and value</li>
+                        </ul>
+                    </div>
+
+                    <div class="cta-box">
+                        <h3>📌 Continue Your Learning Journey</h3>
+                        <p style="font-size: 18px; margin-bottom: 24px;">Follow this LinkedIn Learning Series for the next topic: <strong>Data Visualization Best Practices</strong></p>
+                        <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+                            <a href="https://www.linkedin.com/in/aditya-bhutada94/" target="_blank" class="cta-btn">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                                </svg>
+                                Connect on LinkedIn
+                            </a>
+                            <a href="https://github.com/adityaa2b" target="_blank" class="cta-btn">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                                </svg>
+                                View on GitHub
+                            </a>
+                        </div>
+                    </div>
+
+                    <div style="text-align: center; margin-top: 32px; padding: 24px; background-color: #f9fafb; border-radius: 8px;">
+                        <p style="font-size: 18px; color: #6b7280; margin-bottom: 8px;">🎉 Congratulations on completing Part 7!</p>
+                        <p style="color: #9ca3af;">You now understand how to build centralized data warehouses for analytics</p>
+                        <p style="color: #3b82f6; font-weight: 600; margin-top: 12px;">Next up: Data Visualization Best Practices →</p>
+                    </div>
+                `
+            }
+        ];
+
+        function renderPage() {
+            const page = pages[currentPage];
+            document.getElementById('pageIcon').textContent = page.icon;
+            document.getElementById('pageNumber').textContent = `Chapter ${currentPage + 1} of ${pages.length}`;
+            document.getElementById('pageTitle').textContent = page.title;
+            document.getElementById('pageContent').innerHTML = page.content;
+            document.getElementById('pageIndicator').textContent = `Page ${currentPage + 1} of ${pages.length}`;
+            
+            document.getElementById('prevBtn').disabled = currentPage === 0;
+            document.getElementById('nextBtn').disabled = currentPage === pages.length - 1;
+            
+            completedPages.add(currentPage);
+            const progress = ((completedPages.size) / pages.length) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+            document.getElementById('progressText').textContent = Math.round(progress) + '% Complete';
+            
+            window.scrollTo(0, 0);
+        }
+
+        function renderMenu() {
+            const menuItems = pages.map((page, index) => `
+                <button class="menu-item ${currentPage === index ? 'active' : ''}" onclick="goToPage(${index})">
+                    <div class="menu-item-content">
+                        <span class="menu-item-icon">${page.icon}</span>
+                        <div style="flex: 1; text-align: left;">
+                            <div class="menu-item-title">${page.title}</div>
+                            <div class="menu-item-subtitle">Chapter ${index + 1}</div>
+                        </div>
+                        ${completedPages.has(index) ? '<span style="color: #10b981; font-size: 20px;">✓</span>' : ''}
+                    </div>
+                </button>
+            `).join('');
+            
+            document.getElementById('menuItems').innerHTML = menuItems;
+        }
+
+        function toggleMenu() {
+            const overlay = document.getElementById('menuOverlay');
+            const sidebar = document.getElementById('menuSidebar');
+            overlay.classList.toggle('active');
+            sidebar.classList.toggle('active');
+        }
+
+        function goToPage(index) {
+            currentPage = index;
+            renderPage();
+            renderMenu();
+            toggleMenu();
+        }
+
+        function nextPage() {
+            if (currentPage < pages.length - 1) {
+                currentPage++;
+                renderPage();
+                renderMenu();
+            }
+        }
+
+        function previousPage() {
+            if (currentPage > 0) {
+                currentPage--;
+                renderPage();
+                renderMenu();
+            }
+        }
+
+        renderPage();
+        renderMenu();
+    </script>
+</body>
+</html>
