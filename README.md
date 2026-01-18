@@ -16,6 +16,8 @@ https://adityaa2b.github.io/Data-ebook/data_security_ebook.html
 
 https://adityaa2b.github.io/Data-ebook/data_warehousing_ebook.html
 
+https://adityaa2b.github.io/Data-ebook/data-viz-best-practices_ebook.html
+
 https://www.linkedin.com/in/aditya-bhutada94/
 
 🌟 Features
@@ -37,7 +39,7 @@ https://www.linkedin.com/in/aditya-bhutada94/
 7. Summary & Next Steps - Key takeaways and what's coming next
 
 🚀 Live Demo
-- Visit the live e-book: [Data-ebook](https://adityaa2b.github.io/Data-ebook/) | [Data_cleaning-ebook](https://adityaa2b.github.io/Data-ebook/data_cleaning_ebook.html) | [Data_visualization-ebook](https://adityaa2b.github.io/Data-ebook/data_visualization_ebook.html) | [Data_engineering-ebook](https://adityaa2b.github.io/Data-ebook/data_engineering_ebook.html) | [Data_Quality-ebook](https://adityaa2b.github.io/Data-ebook/data_quality_ebook.html) | [Data_security-ebook](https://adityaa2b.github.io/Data-ebook/data_security_ebook.html) | [Data_warehousing-ebook](https://adityaa2b.github.io/Data-ebook/data_warehousing_ebook.html)
+- Visit the live e-book: [Data-ebook](https://adityaa2b.github.io/Data-ebook/) | [Data_cleaning-ebook](https://adityaa2b.github.io/Data-ebook/data_cleaning_ebook.html) | [Data_visualization-ebook](https://adityaa2b.github.io/Data-ebook/data_visualization_ebook.html) | [Data_engineering-ebook](https://adityaa2b.github.io/Data-ebook/data_engineering_ebook.html) | [Data_Quality-ebook](https://adityaa2b.github.io/Data-ebook/data_quality_ebook.html) | [Data_security-ebook](https://adityaa2b.github.io/Data-ebook/data_security_ebook.html) | [Data_warehousing-ebook](https://adityaa2b.github.io/Data-ebook/data_warehousing_ebook.html) | [Data_viz_best_practices-ebook](https://adityaa2b.github.io/Data-ebook/data-viz-best-practices_ebook.html)
 
 💻 Technology Stack
 1. HTML5 - Semantic markup
