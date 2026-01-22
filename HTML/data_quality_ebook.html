@@ -1,0 +1,1175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Quality & Governance - Interactive E-Book</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+            background: linear-gradient(135deg, #DBEAFE 0%, #ffffff 50%, #E0E7FF 100%);
+            min-height: 100vh;
+        }
+        
+        .header {
+            background: white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 16px;
+        }
+        
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        
+        .header-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .header-title h1 {
+            font-size: 20px;
+            color: #1f2937;
+        }
+        
+        .header-title p {
+            font-size: 14px;
+            color: #6b7280;
+        }
+        
+        .menu-btn {
+            background: none;
+            border: none;
+            padding: 8px;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: background 0.2s;
+        }
+        
+        .menu-btn:hover {
+            background: #f3f4f6;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e5e7eb;
+            border-radius: 9999px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(to right, #3b82f6, #6366f1);
+            transition: width 0.5s ease;
+        }
+        
+        .progress-text {
+            text-align: right;
+            font-size: 12px;
+            color: #6b7280;
+            margin-top: 4px;
+        }
+        
+        .menu-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 200;
+            display: none;
+        }
+        
+        .menu-overlay.active {
+            display: block;
+        }
+        
+        .menu-sidebar {
+            position: fixed;
+            right: 0;
+            top: 0;
+            height: 100%;
+            width: 320px;
+            background: white;
+            padding: 24px;
+            overflow-y: auto;
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+            z-index: 201;
+        }
+        
+        .menu-sidebar.active {
+            transform: translateX(0);
+        }
+        
+        .menu-sidebar h2 {
+            font-size: 24px;
+            margin-bottom: 24px;
+            color: #1f2937;
+        }
+        
+        .menu-item {
+            width: 100%;
+            text-align: left;
+            padding: 16px;
+            margin-bottom: 8px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            background: #f9fafb;
+            transition: all 0.2s;
+        }
+        
+        .menu-item:hover {
+            background: #f3f4f6;
+        }
+        
+        .menu-item.active {
+            background: linear-gradient(to right, #3b82f6, #6366f1);
+            color: white;
+            box-shadow: 0 4px 6px rgba(59, 130, 246, 0.3);
+        }
+        
+        .menu-item-content {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .menu-item-icon {
+            font-size: 24px;
+        }
+        
+        .menu-item-title {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        
+        .menu-item-subtitle {
+            font-size: 12px;
+            opacity: 0.75;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 32px 16px;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            padding: 48px;
+            min-height: 600px;
+        }
+        
+        .page-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 2px solid #f3f4f6;
+        }
+        
+        .page-icon {
+            font-size: 48px;
+        }
+        
+        .page-info p {
+            font-size: 14px;
+            color: #6b7280;
+        }
+        
+        .page-info h2 {
+            font-size: 28px;
+            color: #1f2937;
+        }
+        
+        .content {
+            line-height: 1.7;
+        }
+        
+        .content h1 {
+            font-size: 36px;
+            color: #3b82f6;
+            margin-bottom: 16px;
+        }
+        
+        .content h2 {
+            font-size: 28px;
+            color: #1f2937;
+            margin-bottom: 16px;
+        }
+        
+        .content h3 {
+            font-size: 24px;
+            color: #1f2937;
+            margin-bottom: 12px;
+        }
+        
+        .content h4 {
+            font-size: 20px;
+            margin-bottom: 8px;
+        }
+        
+        .content p {
+            font-size: 18px;
+            color: #374151;
+            margin-bottom: 16px;
+        }
+
+        .content ul {
+            margin-left: 24px;
+            margin-top: 12px;
+            line-height: 1.8;
+        }
+
+        .content li {
+            font-size: 18px;
+            color: #374151;
+            margin-bottom: 8px;
+        }
+        
+        .info-box {
+            padding: 24px;
+            border-radius: 8px;
+            margin: 24px 0;
+            border-left: 4px solid;
+        }
+
+        .info-box.blue {
+            background-color: #eff6ff;
+            border-color: #3b82f6;
+        }
+
+        .info-box.indigo {
+            background-color: #eef2ff;
+            border-color: #6366f1;
+        }
+
+        .info-box.green {
+            background-color: #f0fdf4;
+            border-color: #10b981;
+        }
+
+        .info-box.red {
+            background-color: #fef2f2;
+            border-color: #ef4444;
+        }
+        
+        .grid {
+            display: grid;
+            gap: 16px;
+            margin: 24px 0;
+        }
+        
+        .grid-2 {
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        }
+        
+        .grid-3 {
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        }
+        
+        .card-item {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+        }
+        
+        .card-item:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            transform: translateY(-2px);
+        }
+        
+        .flex-row {
+            display: flex;
+            gap: 16px;
+            align-items: flex-start;
+        }
+        
+        .icon-large {
+            font-size: 48px;
+            flex-shrink: 0;
+        }
+        
+        .step-box {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+            transition: all 0.3s;
+        }
+        
+        .step-box:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        .step-number {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+        
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 32px;
+        }
+        
+        .nav-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .nav-btn:disabled {
+            background: #e5e7eb;
+            color: #9ca3af;
+            cursor: not-allowed;
+        }
+        
+        .nav-btn-primary {
+            background: linear-gradient(to right, #3b82f6, #6366f1);
+            color: white;
+            box-shadow: 0 2px 4px rgba(59, 130, 246, 0.3);
+        }
+        
+        .nav-btn-primary:hover:not(:disabled) {
+            box-shadow: 0 4px 8px rgba(59, 130, 246, 0.4);
+            transform: translateY(-2px);
+        }
+        
+        .page-indicator {
+            text-align: center;
+            color: #6b7280;
+            font-size: 14px;
+        }
+        
+        .cta-box {
+            background: linear-gradient(to right, #3b82f6, #6366f1);
+            color: white;
+            padding: 32px;
+            border-radius: 8px;
+            margin-top: 32px;
+        }
+        
+        .cta-box h3 {
+            color: white;
+            margin-bottom: 16px;
+        }
+        
+        .cta-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: white;
+            color: #3b82f6;
+            padding: 12px 24px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+            margin-right: 12px;
+            margin-bottom: 12px;
+        }
+        
+        .cta-btn:hover {
+            background: #f3f4f6;
+            transform: translateY(-2px);
+        }
+        
+        .checkmark {
+            color: #10b981;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+        
+        .series-badge {
+            background: linear-gradient(to right, #3b82f6, #6366f1);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            display: inline-block;
+            margin-bottom: 16px;
+        }
+
+        .tool-card {
+            border-left: 4px solid;
+            margin-bottom: 20px;
+        }
+        
+        @media (max-width: 768px) {
+            .card {
+                padding: 24px;
+            }
+            
+            .menu-sidebar {
+                width: 100%;
+            }
+            
+            .content h1 {
+                font-size: 28px;
+            }
+            
+            .content h2 {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-content">
+            <div class="header-top">
+                <div class="header-title">
+                    <div style="font-size: 28px;">🛡️</div>
+                    <div>
+                        <h1>Data Quality & Governance</h1>
+                        <p>by Aditya Bhutada • Part 5</p>
+                    </div>
+                </div>
+                <button class="menu-btn" onclick="toggleMenu()">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="3" y1="12" x2="21" y2="12"></line>
+                        <line x1="3" y1="6" x2="21" y2="6"></line>
+                        <line x1="3" y1="18" x2="21" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressBar"></div>
+            </div>
+            <div class="progress-text" id="progressText">0% Complete</div>
+        </div>
+    </div>
+
+    <div class="menu-overlay" id="menuOverlay" onclick="toggleMenu()"></div>
+    
+    <div class="menu-sidebar" id="menuSidebar">
+        <h2>Table of Contents</h2>
+        <div id="menuItems"></div>
+    </div>
+
+    <div class="container">
+        <div class="card">
+            <div class="page-header">
+                <span class="page-icon" id="pageIcon">🛡️</span>
+                <div class="page-info">
+                    <p id="pageNumber">Chapter 1 of 9</p>
+                    <h2 id="pageTitle">Welcome</h2>
+                </div>
+            </div>
+            <div class="content" id="pageContent"></div>
+        </div>
+
+        <div class="navigation">
+            <button class="nav-btn nav-btn-primary" id="prevBtn" onclick="previousPage()">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="15 18 9 12 15 6"></polyline>
+                </svg>
+                Previous
+            </button>
+            <div class="page-indicator" id="pageIndicator">Page 1 of 9</div>
+            <button class="nav-btn nav-btn-primary" id="nextBtn" onclick="nextPage()">
+                Next
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        let currentPage = 0;
+        let completedPages = new Set();
+
+        const pages = [
+            {
+                title: "Welcome",
+                icon: "🛡️",
+                render: function() {
+                    const container = document.createElement('div');
+                    
+                    const center = document.createElement('div');
+                    center.style.textAlign = 'center';
+                    center.style.marginBottom = '32px';
+                    
+                    const badge = document.createElement('span');
+                    badge.className = 'series-badge';
+                    badge.textContent = 'LinkedIn Learning Series • Part 5';
+                    
+                    const h1 = document.createElement('h1');
+                    h1.textContent = 'Data Quality & Governance';
+                    
+                    const subtitle = document.createElement('p');
+                    subtitle.style.fontSize = '22px';
+                    subtitle.style.color = '#3b82f6';
+                    subtitle.style.fontWeight = '600';
+                    subtitle.style.marginTop = '8px';
+                    subtitle.textContent = 'Ensuring Trustworthy and Compliant Data Systems';
+                    
+                    const author = document.createElement('p');
+                    author.style.fontSize = '18px';
+                    author.style.color = '#9ca3af';
+                    author.style.marginTop = '8px';
+                    author.textContent = 'by Aditya Bhutada';
+                    
+                    center.appendChild(badge);
+                    center.appendChild(h1);
+                    center.appendChild(subtitle);
+                    center.appendChild(author);
+                    
+                    const infoBox = document.createElement('div');
+                    infoBox.className = 'info-box blue';
+                    const infoText = document.createElement('p');
+                    infoText.style.fontSize = '18px';
+                    infoText.textContent = 'Welcome to Part 5! After building infrastructure, now learn how to ensure your data is trustworthy, compliant, and governed properly. Quality and governance are what separate amateur data systems from enterprise-grade solutions.';
+                    infoBox.appendChild(infoText);
+                    
+                    const grid = document.createElement('div');
+                    grid.className = 'grid grid-3';
+                    
+                    const card1 = document.createElement('div');
+                    card1.className = 'card-item';
+                    card1.style.borderTop = '4px solid #3b82f6';
+                    card1.innerHTML = '<div style="font-size: 32px; margin-bottom: 8px;">📖</div><div style="font-weight: 600; color: #1f2937;">9 Chapters</div><div style="font-size: 14px; color: #6b7280;">Complete framework</div>';
+                    
+                    const card2 = document.createElement('div');
+                    card2.className = 'card-item';
+                    card2.style.borderTop = '4px solid #6366f1';
+                    card2.innerHTML = '<div style="font-size: 32px; margin-bottom: 8px;">⏱️</div><div style="font-weight: 600; color: #1f2937;">22 min read</div><div style="font-size: 14px; color: #6b7280;">Enterprise practices</div>';
+                    
+                    const card3 = document.createElement('div');
+                    card3.className = 'card-item';
+                    card3.style.borderTop = '4px solid #10b981';
+                    card3.innerHTML = '<div style="font-size: 32px; margin-bottom: 8px;">✓</div><div style="font-weight: 600; color: #1f2937;">5 Dimensions</div><div style="font-size: 14px; color: #6b7280;">Quality framework</div>';
+                    
+                    grid.appendChild(card1);
+                    grid.appendChild(card2);
+                    grid.appendChild(card3);
+                    
+                    container.appendChild(center);
+                    container.appendChild(infoBox);
+                    container.appendChild(grid);
+                    
+                    return container;
+                }
+            },
+            {
+                title: "Introduction",
+                icon: "📋",
+                render: function() {
+                    const container = document.createElement('div');
+                    
+                    const h2 = document.createElement('h2');
+                    h2.textContent = 'Introduction';
+                    
+                    const infoBox = document.createElement('div');
+                    infoBox.className = 'info-box indigo';
+                    const quote = document.createElement('p');
+                    quote.style.fontSize = '18px';
+                    quote.style.fontStyle = 'italic';
+                    quote.textContent = 'Data Quality & Governance are critical pillars of modern data management. High-quality data ensures accuracy and reliability, while governance establishes rules, policies, and accountability for how data is used. Together, they safeguard trust, compliance, and business value.';
+                    infoBox.appendChild(quote);
+                    
+                    const section = document.createElement('div');
+                    section.style.marginTop = '32px';
+                    
+                    const h3 = document.createElement('h3');
+                    h3.style.color = '#3b82f6';
+                    h3.textContent = 'The Foundation of Trust';
+                    
+                    const p = document.createElement('p');
+                    p.textContent = 'Imagine making critical business decisions based on data that is incomplete, inconsistent, or outdated. The consequences could be catastrophic. Data quality and governance work together to prevent these scenarios.';
+                    
+                    const ul = document.createElement('ul');
+                    ul.innerHTML = '<li><strong>Quality</strong> - Ensures data is accurate, complete, and reliable</li><li><strong>Governance</strong> - Establishes who owns, accesses, and manages data</li><li><strong>Compliance</strong> - Ensures adherence to regulations like GDPR and HIPAA</li><li><strong>Accountability</strong> - Creates clear ownership and responsibility</li>';
+                    
+                    section.appendChild(h3);
+                    section.appendChild(p);
+                    section.appendChild(ul);
+                    
+                    const insight = document.createElement('div');
+                    insight.className = 'card-item';
+                    insight.style.background = 'linear-gradient(to right, #eff6ff, #eef2ff)';
+                    insight.style.marginTop = '32px';
+                    insight.innerHTML = '<div class="flex-row"><div style="font-size: 48px;">⚠️</div><div><h3 style="color: #1e40af; margin-bottom: 8px;">The Cost of Poor Quality</h3><p>IBM estimates that poor data quality costs the US economy $3.1 trillion annually. Bad data leads to failed projects, compliance violations, lost customers, and damaged reputation.</p></div></div>';
+                    
+                    container.appendChild(h2);
+                    container.appendChild(infoBox);
+                    container.appendChild(section);
+                    container.appendChild(insight);
+                    
+                    return container;
+                }
+            },
+            {
+                title: "Why It Matters",
+                icon: "⭐",
+                render: function() {
+                    const container = document.createElement('div');
+                    
+                    const h2 = document.createElement('h2');
+                    h2.textContent = 'Why Data Quality & Governance Matter';
+                    container.appendChild(h2);
+                    
+                    const grid = document.createElement('div');
+                    grid.className = 'grid';
+                    grid.style.gap = '20px';
+                    
+                    grid.innerHTML = `
+                        <div class="card-item" style="background: linear-gradient(to right, #eff6ff, #dbeafe);">
+                            <div class="flex-row">
+                                <div class="icon-large">✓</div>
+                                <div>
+                                    <h3 style="color: #1e40af; margin-bottom: 8px;">Accuracy</h3>
+                                    <p>Reliable data drives better decisions, prevents costly mistakes, and builds confidence in analytics</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-item" style="background: linear-gradient(to right, #eef2ff, #e0e7ff);">
+                            <div class="flex-row">
+                                <div class="icon-large">📜</div>
+                                <div>
+                                    <h3 style="color: #4f46e5; margin-bottom: 8px;">Compliance</h3>
+                                    <p>Governance ensures adherence to regulations (GDPR, HIPAA, CCPA) and avoids hefty fines</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-item" style="background: linear-gradient(to right, #f0fdf4, #dcfce7);">
+                            <div class="flex-row">
+                                <div class="icon-large">🤝</div>
+                                <div>
+                                    <h3 style="color: #059669; margin-bottom: 8px;">Trust</h3>
+                                    <p>Builds confidence among stakeholders, customers, and regulatory bodies in your data practices</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-item" style="background: linear-gradient(to right, #fef3c7, #fde68a);">
+                            <div class="flex-row">
+                                <div class="icon-large">⚡</div>
+                                <div>
+                                    <h3 style="color: #d97706; margin-bottom: 8px;">Efficiency</h3>
+                                    <p>Reduces errors and duplication across systems, streamlines operations, and saves resources</p>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    
+                    const example = document.createElement('div');
+                    example.className = 'info-box blue';
+                    example.style.marginTop = '32px';
+                    example.innerHTML = `
+                        <div class="flex-row">
+                            <div style="font-size: 32px;">💡</div>
+                            <div>
+                                <h3 style="color: #1e40af; margin-bottom: 8px;">Real-World Example: Banking Compliance</h3>
+                                <p>A bank ensures customer records are accurate and governed by strict compliance rules to prevent fraud. Every transaction is validated, customer data is encrypted, access is logged, and audit trails are maintained. This protects both the bank and its customers while meeting regulatory requirements.</p>
+                            </div>
+                        </div>
+                    `;
+                    
+                    container.appendChild(grid);
+                    container.appendChild(example);
+                    
+                    return container;
+                }
+            },
+            {
+                title: "Data Quality Dimensions",
+                icon: "📏",
+                render: function() {
+                    const container = document.createElement('div');
+                    
+                    const h2 = document.createElement('h2');
+                    h2.textContent = 'Dimensions of Data Quality';
+                    
+                    const subtitle = document.createElement('p');
+                    subtitle.style.color = '#6b7280';
+                    subtitle.style.marginBottom = '24px';
+                    subtitle.textContent = 'Five critical dimensions that define high-quality data.';
+                    
+                    container.appendChild(h2);
+                    container.appendChild(subtitle);
+                    
+                    const dimensions = [
+                        { num: 1, title: 'Completeness', desc: 'All required data fields are filled with no missing values', bg: '#eff6ff', numBg: '#3b82f6', color: '#1e40af', exBg: '#dbeafe' },
+                        { num: 2, title: 'Consistency', desc: 'Data is uniform across all systems and sources without contradictions', bg: '#eef2ff', numBg: '#6366f1', color: '#4f46e5', exBg: '#e0e7ff' },
+                        { num: 3, title: 'Validity', desc: 'Data conforms to defined formats, rules, and business logic', bg: '#f0fdf4', numBg: '#10b981', color: '#059669', exBg: '#dcfce7' },
+                        { num: 4, title: 'Accuracy', desc: 'Data reflects real-world values correctly and is free from errors', bg: '#fef3c7', numBg: '#f59e0b', color: '#d97706', exBg: '#fde68a' },
+                        { num: 5, title: 'Timeliness', desc: 'Data is up-to-date and available when needed for decisions', bg: '#faf5ff', numBg: '#a855f7', color: '#7c3aed', exBg: '#f3e8ff' }
+                    ];
+                    
+                    dimensions.forEach(dim => {
+                        const box = document.createElement('div');
+                        box.className = 'step-box';
+                        box.style.backgroundColor = dim.bg;
+                        
+                        const num = document.createElement('div');
+                        num.className = 'step-number';
+                        num.style.backgroundColor = dim.numBg;
+                        num.textContent = dim.num;
+                        
+                        const content = document.createElement('div');
+                        
+                        const h3 = document.createElement('h3');
+                        h3.style.color = dim.color;
+                        h3.textContent = dim.title;
+                        
+                        const p = document.createElement('p');
+                        p.textContent = dim.desc;
+                        
+                        content.appendChild(h3);
+                        content.appendChild(p);
+                        
+                        box.appendChild(num);
+                        box.appendChild(content);
+                        
+                        container.appendChild(box);
+                    });
+                    
+                    return container;
+                }
+            },
+            {
+                title: "Governance Elements",
+                icon: "🏛️",
+                render: function() {
+                    const container = document.createElement('div');
+                    
+                    const h2 = document.createElement('h2');
+                    h2.textContent = 'Key Elements of Data Governance';
+                    
+                    const subtitle = document.createElement('p');
+                    subtitle.style.color = '#6b7280';
+                    subtitle.style.marginBottom = '24px';
+                    subtitle.textContent = 'Five essential components that create a robust governance framework.';
+                    
+                    container.appendChild(h2);
+                    container.appendChild(subtitle);
+                    
+                    container.innerHTML += `
+                        <div class="step-box" style="background-color: #eff6ff;">
+                            <div class="step-number" style="background-color: #3b82f6;">1</div>
+                            <div>
+                                <h3 style="color: #1e40af;">Policies & Standards</h3>
+                                <p>Define rules for data usage, management, retention, and disposal</p>
+                            </div>
+                        </div>
+
+                        <div class="step-box" style="background-color: #eef2ff;">
+                            <div class="step-number" style="background-color: #6366f1;">2</div>
+                            <div>
+                                <h3 style="color: #4f46e5;">Roles & Responsibilities</h3>
+                                <p>Assign ownership through data stewards, custodians, and owners</p>
+                            </div>
+                        </div>
+
+                        <div class="step-box" style="background-color: #f0fdf4;">
+                            <div class="step-number" style="background-color: #10b981;">3</div>
+                            <div>
+                                <h3 style="color: #059669;">Data Catalogs</h3>
+                                <p>Centralized metadata repositories for data discovery and lineage</p>
+                            </div>
+                        </div>
+
+                        <div class="step-box" style="background-color: #fef3c7;">
+                            <div class="step-number" style="background-color: #f59e0b;">4</div>
+                            <div>
+                                <h3 style="color: #d97706;">Access Control</h3>
+                                <p>Ensure secure and authorized data usage with proper permissions</p>
+                            </div>
+                        </div>
+
+                        <div class="step-box" style="background-color: #faf5ff;">
+                            <div class="step-number" style="background-color: #a855f7;">5</div>
+                            <div>
+                                <h3 style="color: #7c3aed;">Compliance Monitoring</h3>
+                                <p>Track adherence to regulations and internal policies continuously</p>
+                            </div>
+                        </div>
+                    `;
+                    
+                    return container;
+                }
+            },
+            {
+                title: "Tools & Technologies",
+                icon: "🛠️",
+                render: function() {
+                    const container = document.createElement('div');
+                    
+                    container.innerHTML = `
+                        <h2>Tools & Technologies</h2>
+                        <p style="color: #6b7280; margin-bottom: 24px;">Modern platforms for ensuring data quality and governance at scale.</p>
+                        
+                        <div class="card-item tool-card" style="border-color: #3b82f6; margin-bottom: 20px;">
+                            <div class="flex-row">
+                                <div style="font-size: 48px;">✓</div>
+                                <div style="flex: 1;">
+                                    <h3 style="color: #1e40af; margin-bottom: 8px;">Data Quality Tools</h3>
+                                    <p style="margin-bottom: 12px;"><strong>Platforms:</strong> Talend, Informatica, Trifacta</p>
+                                    <div style="background-color: #eff6ff; padding: 12px; border-radius: 4px;">
+                                        Automated profiling, validation, cleansing, and monitoring of data quality metrics
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card-item tool-card" style="border-color: #6366f1; margin-bottom: 20px;">
+                            <div class="flex-row">
+                                <div style="font-size: 48px;">🏛️</div>
+                                <div style="flex: 1;">
+                                    <h3 style="color: #4f46e5; margin-bottom: 8px;">Governance Platforms</h3>
+                                    <p style="margin-bottom: 12px;"><strong>Platforms:</strong> Collibra, Alation, Apache Atlas</p>
+                                    <div style="background-color: #eef2ff; padding: 12px; border-radius: 4px;">
+                                        Data catalogs, lineage tracking, policy management, and collaboration tools
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card-item tool-card" style="border-color: #10b981; margin-bottom: 20px;">
+                            <div class="flex-row">
+                                <div style="font-size: 48px;">☁️</div>
+                                <div style="flex: 1;">
+                                    <h3 style="color: #059669; margin-bottom: 8px;">Cloud Services</h3>
+                                    <p style="margin-bottom: 12px;"><strong>Services:</strong> AWS Glue Data Catalog, Azure Purview, Google Data Catalog</p>
+                                    <div style="background-color: #f0fdf4; padding: 12px; border-radius: 4px;">
+                                        Managed services for metadata management and data discovery in cloud environments
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card-item tool-card" style="border-color: #f59e0b;">
+                            <div class="flex-row">
+                                <div style="font-size: 48px;">📊</div>
+                                <div style="flex: 1;">
+                                    <h3 style="color: #d97706; margin-bottom: 8px;">Monitoring & Auditing</h3>
+                                    <p style="margin-bottom: 12px;"><strong>Tools:</strong> Automated dashboards for compliance tracking</p>
+                                    <div style="background-color: #fef3c7; padding: 12px; border-radius: 4px;">
+                                        Real-time monitoring, audit logs, alerting systems, and compliance reporting
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    
+                    return container;
+                }
+            },
+            {
+                title: "Practical Applications",
+                icon: "💼",
+                render: function() {
+                    const container = document.createElement('div');
+                    
+                    container.innerHTML = `
+                        <h2>Practical Applications</h2>
+                        <p style="color: #6b7280; margin-bottom: 24px;">How quality and governance transform data practices across industries.</p>
+                        
+                        <div class="card-item" style="background: linear-gradient(to right, #fef3c7, #fde68a); margin-bottom: 20px;">
+                            <div class="flex-row">
+                                <div class="icon-large">💰</div>
+                                <div>
+                                    <h3 style="color: #d97706; margin-bottom: 8px;">Finance</h3>
+                                    <p><strong>Application:</strong> Compliance with anti-money laundering regulations</p>
+                                    <p style="margin-top: 8px; color: #6b7280;">Banks implement strict governance frameworks to track transactions, validate customer identities, maintain audit trails, and report suspicious activities to regulatory bodies.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card-item" style="background: linear-gradient(to right, #f0fdf4, #dcfce7); margin-bottom: 20px;">
+                            <div class="flex-row">
+                                <div class="icon-large">🏥</div>
+                                <div>
+                                    <h3 style="color: #059669; margin-bottom: 8px;">Healthcare</h3>
+                                    <p><strong>Application:</strong> Ensuring patient data accuracy across hospitals</p>
+                                    <p style="margin-top: 8px; color: #6b7280;">Healthcare systems maintain data quality to prevent medical errors, ensure HIPAA compliance, protect patient privacy, and enable accurate diagnoses and treatments.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card-item" style="background: linear-gradient(to right, #eff6ff, #dbeafe); margin-bottom: 20px;">
+                            <div class="flex-row">
+                                <div class="icon-large">🛍️</div>
+                                <div>
+                                    <h3 style="color: #1e40af; margin-bottom: 8px;">Retail</h3>
+                                    <p><strong>Application:</strong> Clean customer data for personalized marketing</p>
+                                    <p style="margin-top: 8px; color: #6b7280;">Retailers deduplicate customer records, validate contact information, maintain consent records, and ensure data quality for targeted campaigns and customer analytics.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card-item" style="background: linear-gradient(to right, #eef2ff, #e0e7ff);">
+                            <div class="flex-row">
+                                <div class="icon-large">🏛️</div>
+                                <div>
+                                    <h3 style="color: #4f46e5; margin-bottom: 8px;">Government</h3>
+                                    <p><strong>Application:</strong> Transparent governance for census and public records</p>
+                                    <p style="margin-top: 8px; color: #6b7280;">Government agencies maintain high-quality public data, ensure transparency, protect citizen privacy, and enable public access while maintaining security and compliance.</p>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    
+                    return container;
+                }
+            },
+            {
+                title: "Best Practices",
+                icon: "✨",
+                render: function() {
+                    const container = document.createElement('div');
+                    
+                    const h2 = document.createElement('h2');
+                    h2.textContent = 'Best Practices for Quality & Governance';
+                    
+                    const subtitle = document.createElement('p');
+                    subtitle.style.color = '#6b7280';
+                    subtitle.style.marginBottom = '24px';
+                    subtitle.textContent = 'Five principles to build a strong data quality and governance framework.';
+                    
+                    container.appendChild(h2);
+                    container.appendChild(subtitle);
+                    
+                    container.innerHTML += `
+                        <div class="step-box" style="background-color: #eff6ff;">
+                            <div class="step-number" style="background-color: #3b82f6;">1</div>
+                            <div>
+                                <h3 style="color: #1e40af;">Define Clear Ownership</h3>
+                                <p>Assign data stewards for accountability and decision-making authority</p>
+                            </div>
+                        </div>
+
+                        <div class="step-box" style="background-color: #f0fdf4;">
+                            <div class="step-number" style="background-color: #10b981;">2</div>
+                            <div>
+                                <h3 style="color: #059669;">Automate Validation</h3>
+                                <p>Use tools to check data quality continuously and catch issues early</p>
+                            </div>
+                        </div>
+
+                        <div class="step-box" style="background-color: #eef2ff;">
+                            <div class="step-number" style="background-color: #6366f1;">3</div>
+                            <div>
+                                <h3 style="color: #4f46e5;">Document Policies</h3>
+                                <p>Make governance rules accessible, transparent, and easy to understand</p>
+                            </div>
+                        </div>
+
+                        <div class="step-box" style="background-color: #fef3c7;">
+                            <div class="step-number" style="background-color: #f59e0b;">4</div>
+                            <div>
+                                <h3 style="color: #d97706;">Train Teams</h3>
+                                <p>Build awareness of data quality and governance importance across the organization</p>
+                            </div>
+                        </div>
+
+                        <div class="step-box" style="background-color: #faf5ff;">
+                            <div class="step-number" style="background-color: #a855f7;">5</div>
+                            <div>
+                                <h3 style="color: #7c3aed;">Monitor & Improve</h3>
+                                <p>Continuously track metrics, audit compliance, and refine processes</p>
+                            </div>
+                        </div>
+                    `;
+                    
+                    return container;
+                }
+            },
+            {
+                title: "Summary & Takeaways",
+                icon: "🎓",
+                render: function() {
+                    const container = document.createElement('div');
+                    
+                    container.innerHTML = `
+                        <h2>Summary & Takeaways</h2>
+                        
+                        <div class="info-box green" style="margin-bottom: 16px;">
+                            <div class="flex-row">
+                                <span class="checkmark">✓</span>
+                                <p style="font-size: 18px;">Data Quality ensures accuracy, consistency, completeness, validity, and timeliness</p>
+                            </div>
+                        </div>
+
+                        <div class="info-box green" style="margin-bottom: 16px;">
+                            <div class="flex-row">
+                                <span class="checkmark">✓</span>
+                                <p style="font-size: 18px;">Governance establishes rules, roles, policies, and compliance frameworks</p>
+                            </div>
+                        </div>
+
+                        <div class="info-box green" style="margin-bottom: 16px;">
+                            <div class="flex-row">
+                                <span class="checkmark">✓</span>
+                                <p style="font-size: 18px;">Together, they build trust, efficiency, and regulatory alignment</p>
+                            </div>
+                        </div>
+
+                        <div class="info-box green">
+                            <div class="flex-row">
+                                <span class="checkmark">✓</span>
+                                <p style="font-size: 18px;">Strong practices empower organizations to maximize the value of their data</p>
+                            </div>
+                        </div>
+
+                        <div style="margin-top: 32px; padding: 24px; background: linear-gradient(to right, #eff6ff, #eef2ff); border-radius: 8px;">
+                            <h3 style="color: #1e40af; margin-bottom: 12px;">🎯 Key Principles to Remember</h3>
+                            <ul>
+                                <li><strong>Quality is not optional</strong> - Bad data costs more than quality initiatives</li>
+                                <li><strong>Governance needs buy-in</strong> - Executive support is critical for success</li>
+                                <li><strong>Automation is essential</strong> - Manual quality checks don't scale</li>
+                                <li><strong>Culture matters</strong> - Everyone is responsible for data quality</li>
+                                <li><strong>Start small, expand</strong> - Don't try to govern everything at once</li>
+                            </ul>
+                        </div>
+
+                        <div class="cta-box">
+                            <h3>📌 Continue Your Learning Journey</h3>
+                            <p style="font-size: 18px; margin-bottom: 24px;">Follow this LinkedIn Learning Series for the next topic: <strong>Data Security & Privacy</strong></p>
+                            <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+                                <a href="https://www.linkedin.com/in/aditya-bhutada94/" target="_blank" class="cta-btn">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                                    </svg>
+                                    Connect on LinkedIn
+                                </a>
+                                <a href="https://github.com/YOUR-USERNAME" target="_blank" class="cta-btn">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                                    </svg>
+                                    View on GitHub
+                                </a>
+                            </div>
+                        </div>
+
+                        <div style="text-align: center; margin-top: 32px; padding: 24px; background-color: #f9fafb; border-radius: 8px;">
+                            <p style="font-size: 18px; color: #6b7280; margin-bottom: 8px;">🎉 Congratulations on completing Part 5!</p>
+                            <p style="color: #9ca3af;">You now understand how to ensure data quality and governance</p>
+                            <p style="color: #3b82f6; font-weight: 600; margin-top: 12px;">Next up: Data Security & Privacy →</p>
+                        </div>
+                    `;
+                    
+                    return container;
+                }
+            }
+        ];
+
+        function renderPage() {
+            const page = pages[currentPage];
+            document.getElementById('pageIcon').textContent = page.icon;
+            document.getElementById('pageNumber').textContent = `Chapter ${currentPage + 1} of ${pages.length}`;
+            document.getElementById('pageTitle').textContent = page.title;
+            
+            const contentDiv = document.getElementById('pageContent');
+            contentDiv.innerHTML = '';
+            contentDiv.appendChild(page.render());
+            
+            document.getElementById('pageIndicator').textContent = `Page ${currentPage + 1} of ${pages.length}`;
+            
+            document.getElementById('prevBtn').disabled = currentPage === 0;
+            document.getElementById('nextBtn').disabled = currentPage === pages.length - 1;
+            
+            completedPages.add(currentPage);
+            const progress = ((completedPages.size) / pages.length) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+            document.getElementById('progressText').textContent = Math.round(progress) + '% Complete';
+            
+            window.scrollTo(0, 0);
+        }
+
+        function renderMenu() {
+            const menuItems = pages.map((page, index) => `
+                <button class="menu-item ${currentPage === index ? 'active' : ''}" onclick="goToPage(${index})">
+                    <div class="menu-item-content">
+                        <span class="menu-item-icon">${page.icon}</span>
+                        <div style="flex: 1; text-align: left;">
+                            <div class="menu-item-title">${page.title}</div>
+                            <div class="menu-item-subtitle">Chapter ${index + 1}</div>
+                        </div>
+                        ${completedPages.has(index) ? '<span style="color: #10b981; font-size: 20px;">✓</span>' : ''}
+                    </div>
+                </button>
+            `).join('');
+            
+            document.getElementById('menuItems').innerHTML = menuItems;
+        }
+
+        function toggleMenu() {
+            const overlay = document.getElementById('menuOverlay');
+            const sidebar = document.getElementById('menuSidebar');
+            overlay.classList.toggle('active');
+            sidebar.classList.toggle('active');
+        }
+
+        function goToPage(index) {
+            currentPage = index;
+            renderPage();
+            renderMenu();
+            toggleMenu();
+        }
+
+        function nextPage() {
+            if (currentPage < pages.length - 1) {
+                currentPage++;
+                renderPage();
+                renderMenu();
+            }
+        }
+
+        function previousPage() {
+            if (currentPage > 0) {
+                currentPage--;
+                renderPage();
+                renderMenu();
+            }
+        }
+
+        renderPage();
+        renderMenu();
+    </script>
+</body>
+</html>

@@ -1,0 +1,1277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Visualization - Interactive E-Book</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+            background: linear-gradient(135deg, #E0E7FF 0%, #ffffff 50%, #DBEAFE 100%);
+            min-height: 100vh;
+        }
+        
+        .header {
+            background: white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 16px;
+        }
+        
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        
+        .header-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .header-title h1 {
+            font-size: 20px;
+            color: #1f2937;
+        }
+        
+        .header-title p {
+            font-size: 14px;
+            color: #6b7280;
+        }
+        
+        .menu-btn {
+            background: none;
+            border: none;
+            padding: 8px;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: background 0.2s;
+        }
+        
+        .menu-btn:hover {
+            background: #f3f4f6;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e5e7eb;
+            border-radius: 9999px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(to right, #6366f1, #3b82f6);
+            transition: width 0.5s ease;
+        }
+        
+        .progress-text {
+            text-align: right;
+            font-size: 12px;
+            color: #6b7280;
+            margin-top: 4px;
+        }
+        
+        .menu-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 200;
+            display: none;
+        }
+        
+        .menu-overlay.active {
+            display: block;
+        }
+        
+        .menu-sidebar {
+            position: fixed;
+            right: 0;
+            top: 0;
+            height: 100%;
+            width: 320px;
+            background: white;
+            padding: 24px;
+            overflow-y: auto;
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+            z-index: 201;
+        }
+        
+        .menu-sidebar.active {
+            transform: translateX(0);
+        }
+        
+        .menu-sidebar h2 {
+            font-size: 24px;
+            margin-bottom: 24px;
+            color: #1f2937;
+        }
+        
+        .menu-item {
+            width: 100%;
+            text-align: left;
+            padding: 16px;
+            margin-bottom: 8px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            background: #f9fafb;
+            transition: all 0.2s;
+        }
+        
+        .menu-item:hover {
+            background: #f3f4f6;
+        }
+        
+        .menu-item.active {
+            background: linear-gradient(to right, #6366f1, #3b82f6);
+            color: white;
+            box-shadow: 0 4px 6px rgba(99, 102, 241, 0.3);
+        }
+        
+        .menu-item-content {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .menu-item-icon {
+            font-size: 24px;
+        }
+        
+        .menu-item-title {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        
+        .menu-item-subtitle {
+            font-size: 12px;
+            opacity: 0.75;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 32px 16px;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            padding: 48px;
+            min-height: 600px;
+        }
+        
+        .page-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 2px solid #f3f4f6;
+        }
+        
+        .page-icon {
+            font-size: 48px;
+        }
+        
+        .page-info p {
+            font-size: 14px;
+            color: #6b7280;
+        }
+        
+        .page-info h2 {
+            font-size: 28px;
+            color: #1f2937;
+        }
+        
+        .content {
+            line-height: 1.7;
+        }
+        
+        .content h1 {
+            font-size: 36px;
+            color: #6366f1;
+            margin-bottom: 16px;
+        }
+        
+        .content h2 {
+            font-size: 28px;
+            color: #1f2937;
+            margin-bottom: 16px;
+        }
+        
+        .content h3 {
+            font-size: 24px;
+            color: #1f2937;
+            margin-bottom: 12px;
+        }
+        
+        .content h4 {
+            font-size: 20px;
+            margin-bottom: 8px;
+        }
+        
+        .content p {
+            font-size: 18px;
+            color: #374151;
+            margin-bottom: 16px;
+        }
+
+        .content ul {
+            margin-left: 24px;
+            margin-top: 12px;
+            line-height: 1.8;
+        }
+
+        .content li {
+            font-size: 18px;
+            color: #374151;
+            margin-bottom: 8px;
+        }
+        
+        .info-box {
+            padding: 24px;
+            border-radius: 8px;
+            margin: 24px 0;
+            border-left: 4px solid;
+        }
+
+        .info-box.indigo {
+            background-color: #eef2ff;
+            border-color: #6366f1;
+        }
+
+        .info-box.blue {
+            background-color: #eff6ff;
+            border-color: #3b82f6;
+        }
+
+        .info-box.green {
+            background-color: #f0fdf4;
+            border-color: #10b981;
+        }
+
+        .info-box.purple {
+            background-color: #faf5ff;
+            border-color: #a855f7;
+        }
+        
+        .grid {
+            display: grid;
+            gap: 16px;
+            margin: 24px 0;
+        }
+        
+        .grid-2 {
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        }
+        
+        .grid-3 {
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        }
+        
+        .card-item {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+        }
+        
+        .card-item:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            transform: translateY(-2px);
+        }
+        
+        .flex-row {
+            display: flex;
+            gap: 16px;
+            align-items: flex-start;
+        }
+        
+        .icon-large {
+            font-size: 48px;
+            flex-shrink: 0;
+        }
+        
+        .viz-card {
+            padding: 24px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            transition: all 0.3s;
+        }
+
+        .viz-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+        }
+        
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 32px;
+        }
+        
+        .nav-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .nav-btn:disabled {
+            background: #e5e7eb;
+            color: #9ca3af;
+            cursor: not-allowed;
+        }
+        
+        .nav-btn-primary {
+            background: linear-gradient(to right, #6366f1, #3b82f6);
+            color: white;
+            box-shadow: 0 2px 4px rgba(99, 102, 241, 0.3);
+        }
+        
+        .nav-btn-primary:hover:not(:disabled) {
+            box-shadow: 0 4px 8px rgba(99, 102, 241, 0.4);
+            transform: translateY(-2px);
+        }
+        
+        .page-indicator {
+            text-align: center;
+            color: #6b7280;
+            font-size: 14px;
+        }
+        
+        .cta-box {
+            background: linear-gradient(to right, #6366f1, #3b82f6);
+            color: white;
+            padding: 32px;
+            border-radius: 8px;
+            margin-top: 32px;
+        }
+        
+        .cta-box h3 {
+            color: white;
+            margin-bottom: 16px;
+        }
+        
+        .cta-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: white;
+            color: #6366f1;
+            padding: 12px 24px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+            margin-right: 12px;
+            margin-bottom: 12px;
+        }
+        
+        .cta-btn:hover {
+            background: #f3f4f6;
+            transform: translateY(-2px);
+        }
+        
+        .checkmark {
+            color: #10b981;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+        
+        .series-badge {
+            background: linear-gradient(to right, #6366f1, #3b82f6);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            display: inline-block;
+            margin-bottom: 16px;
+        }
+
+        .practice-tip {
+            background-color: #f0fdf4;
+            border-left: 4px solid #10b981;
+            padding: 16px;
+            border-radius: 4px;
+            margin-top: 12px;
+        }
+        
+        @media (max-width: 768px) {
+            .card {
+                padding: 24px;
+            }
+            
+            .menu-sidebar {
+                width: 100%;
+            }
+            
+            .content h1 {
+                font-size: 28px;
+            }
+            
+            .content h2 {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-content">
+            <div class="header-top">
+                <div class="header-title">
+                    <div style="font-size: 28px;">📊</div>
+                    <div>
+                        <h1>Data Visualization</h1>
+                        <p>by Aditya Bhutada • Part 3</p>
+                    </div>
+                </div>
+                <button class="menu-btn" onclick="toggleMenu()">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="3" y1="12" x2="21" y2="12"></line>
+                        <line x1="3" y1="6" x2="21" y2="6"></line>
+                        <line x1="3" y1="18" x2="21" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressBar"></div>
+            </div>
+            <div class="progress-text" id="progressText">0% Complete</div>
+        </div>
+    </div>
+
+    <div class="menu-overlay" id="menuOverlay" onclick="toggleMenu()"></div>
+    
+    <div class="menu-sidebar" id="menuSidebar">
+        <h2>Table of Contents</h2>
+        <div id="menuItems"></div>
+    </div>
+
+    <div class="container">
+        <div class="card">
+            <div class="page-header">
+                <span class="page-icon" id="pageIcon">📊</span>
+                <div class="page-info">
+                    <p id="pageNumber">Chapter 1 of 8</p>
+                    <h2 id="pageTitle">Welcome</h2>
+                </div>
+            </div>
+            <div class="content" id="pageContent"></div>
+        </div>
+
+        <div class="navigation">
+            <button class="nav-btn nav-btn-primary" id="prevBtn" onclick="previousPage()">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="15 18 9 12 15 6"></polyline>
+                </svg>
+                Previous
+            </button>
+            <div class="page-indicator" id="pageIndicator">Page 1 of 8</div>
+            <button class="nav-btn nav-btn-primary" id="nextBtn" onclick="nextPage()">
+                Next
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        let currentPage = 0;
+        let completedPages = new Set();
+
+        function createCard(content, gradient) {
+            const card = document.createElement('div');
+            card.className = 'card-item';
+            card.style.background = gradient;
+            card.appendChild(content);
+            return card;
+        }
+
+        function createFlexRow(icon, content) {
+            const row = document.createElement('div');
+            row.className = 'flex-row';
+            
+            const iconDiv = document.createElement('div');
+            iconDiv.className = 'icon-large';
+            iconDiv.textContent = icon;
+            
+            row.appendChild(iconDiv);
+            row.appendChild(content);
+            return row;
+        }
+
+        const pages = [
+            {
+                title: "Welcome",
+                icon: "📊",
+                render: function() {
+                    const container = document.createElement('div');
+                    
+                    const center = document.createElement('div');
+                    center.style.textAlign = 'center';
+                    center.style.marginBottom = '32px';
+                    
+                    const badge = document.createElement('span');
+                    badge.className = 'series-badge';
+                    badge.textContent = 'LinkedIn Learning Series • Part 3';
+                    
+                    const h1 = document.createElement('h1');
+                    h1.textContent = 'Data Visualization';
+                    
+                    const subtitle = document.createElement('p');
+                    subtitle.style.fontSize = '22px';
+                    subtitle.style.color = '#6366f1';
+                    subtitle.style.fontWeight = '600';
+                    subtitle.style.marginTop = '8px';
+                    subtitle.textContent = 'Transforming Data into Clear Insights';
+                    
+                    const author = document.createElement('p');
+                    author.style.fontSize = '18px';
+                    author.style.color = '#9ca3af';
+                    author.style.marginTop = '8px';
+                    author.textContent = 'by Aditya Bhutada';
+                    
+                    center.appendChild(badge);
+                    center.appendChild(h1);
+                    center.appendChild(subtitle);
+                    center.appendChild(author);
+                    
+                    const infoBox = document.createElement('div');
+                    infoBox.className = 'info-box indigo';
+                    const infoText = document.createElement('p');
+                    infoText.style.fontSize = '18px';
+                    infoText.textContent = 'Welcome to Part 3! After learning about data fundamentals and cleaning, now discover how to bring your data to life through effective visualizations that tell compelling stories.';
+                    infoBox.appendChild(infoText);
+                    
+                    const grid = document.createElement('div');
+                    grid.className = 'grid grid-3';
+                    
+                    const cards = [
+                        { icon: '📖', title: '8 Chapters', desc: 'Complete guide', color: '#6366f1' },
+                        { icon: '⏱️', title: '18 min read', desc: 'Visual learning', color: '#3b82f6' },
+                        { icon: '📊', title: '6 Chart Types', desc: 'Best practices', color: '#10b981' }
+                    ];
+                    
+                    cards.forEach(c => {
+                        const card = document.createElement('div');
+                        card.className = 'card-item';
+                        card.style.borderTop = `4px solid ${c.color}`;
+                        
+                        const cardIcon = document.createElement('div');
+                        cardIcon.style.fontSize = '32px';
+                        cardIcon.style.marginBottom = '8px';
+                        cardIcon.textContent = c.icon;
+                        
+                        const cardTitle = document.createElement('div');
+                        cardTitle.style.fontWeight = '600';
+                        cardTitle.style.color = '#1f2937';
+                        cardTitle.textContent = c.title;
+                        
+                        const cardDesc = document.createElement('div');
+                        cardDesc.style.fontSize = '14px';
+                        cardDesc.style.color = '#6b7280';
+                        cardDesc.textContent = c.desc;
+                        
+                        card.appendChild(cardIcon);
+                        card.appendChild(cardTitle);
+                        card.appendChild(cardDesc);
+                        
+                        grid.appendChild(card);
+                    });
+                    
+                    container.appendChild(center);
+                    container.appendChild(infoBox);
+                    container.appendChild(grid);
+                    
+                    return container;
+                }
+            },
+            {
+                title: "Introduction",
+                icon: "💡",
+                render: function() {
+                    const container = document.createElement('div');
+                    
+                    const h2 = document.createElement('h2');
+                    h2.textContent = 'Introduction';
+                    
+                    const infoBox = document.createElement('div');
+                    infoBox.className = 'info-box blue';
+                    const quote = document.createElement('p');
+                    quote.style.fontSize = '18px';
+                    quote.style.fontStyle = 'italic';
+                    quote.textContent = 'Data visualization is the practice of representing information visually through charts, graphs, and dashboards. It helps transform complex datasets into clear, actionable insights that are easier to understand and communicate.';
+                    infoBox.appendChild(quote);
+                    
+                    const section = document.createElement('div');
+                    section.style.marginTop = '32px';
+                    
+                    const h3 = document.createElement('h3');
+                    h3.style.color = '#6366f1';
+                    h3.textContent = 'The Power of Visual Communication';
+                    
+                    const p = document.createElement('p');
+                    p.textContent = 'Humans process visual information 60,000 times faster than text. Effective data visualization leverages this by:';
+                    
+                    const ul = document.createElement('ul');
+                    const listItems = [
+                        '<strong>Revealing patterns</strong> that are hidden in raw data',
+                        '<strong>Simplifying complexity</strong> for faster comprehension',
+                        '<strong>Enabling comparisons</strong> across categories and time',
+                        '<strong>Driving action</strong> through clear, compelling narratives'
+                    ];
+                    
+                    listItems.forEach(item => {
+                        const li = document.createElement('li');
+                        li.innerHTML = item;
+                        ul.appendChild(li);
+                    });
+                    
+                    section.appendChild(h3);
+                    section.appendChild(p);
+                    section.appendChild(ul);
+                    
+                    const insightCard = document.createElement('div');
+                    insightCard.className = 'card-item';
+                    insightCard.style.background = 'linear-gradient(to right, #eef2ff, #dbeafe)';
+                    insightCard.style.marginTop = '32px';
+                    
+                    const insightContent = document.createElement('div');
+                    
+                    const insightTitle = document.createElement('h3');
+                    insightTitle.style.color = '#4f46e5';
+                    insightTitle.style.marginBottom = '8px';
+                    insightTitle.textContent = 'From Data to Decisions';
+                    
+                    const insightText = document.createElement('p');
+                    insightText.textContent = 'Good visualizations don\'t just show data—they tell a story. They guide viewers to insights, highlight what matters, and inspire action. Whether it\'s a simple bar chart or complex dashboard, the goal is always clarity and impact.';
+                    
+                    insightContent.appendChild(insightTitle);
+                    insightContent.appendChild(insightText);
+                    
+                    const insightRow = createFlexRow('🎯', insightContent);
+                    insightCard.appendChild(insightRow);
+                    
+                    container.appendChild(h2);
+                    container.appendChild(infoBox);
+                    container.appendChild(section);
+                    container.appendChild(insightCard);
+                    
+                    return container;
+                }
+            },
+            {
+                title: "Why It Matters",
+                icon: "⭐",
+                render: function() {
+                    const container = document.createElement('div');
+                    
+                    const h2 = document.createElement('h2');
+                    h2.textContent = 'Why Data Visualization Matters';
+                    container.appendChild(h2);
+                    
+                    const grid = document.createElement('div');
+                    grid.className = 'grid';
+                    grid.style.gap = '20px';
+                    
+                    const reasons = [
+                        { icon: '✨', title: 'Clarity', desc: 'Simplifies complex data into digestible visuals that anyone can understand at a glance', gradient: 'linear-gradient(to right, #eef2ff, #e0e7ff)', color: '#4f46e5' },
+                        { icon: '⚡', title: 'Decision-Making', desc: 'Enables faster, evidence-based business decisions by highlighting trends and patterns', gradient: 'linear-gradient(to right, #dbeafe, #bfdbfe)', color: '#1e40af' },
+                        { icon: '📖', title: 'Storytelling', desc: 'Turns raw numbers into compelling narratives that engage and persuade audiences', gradient: 'linear-gradient(to right, #f0fdf4, #dcfce7)', color: '#059669' }
+                    ];
+                    
+                    reasons.forEach(r => {
+                        const card = document.createElement('div');
+                        card.className = 'card-item';
+                        card.style.background = r.gradient;
+                        
+                        const content = document.createElement('div');
+                        const title = document.createElement('h3');
+                        title.style.color = r.color;
+                        title.style.marginBottom = '8px';
+                        title.textContent = r.title;
+                        
+                        const desc = document.createElement('p');
+                        desc.textContent = r.desc;
+                        
+                        content.appendChild(title);
+                        content.appendChild(desc);
+                        
+                        const row = createFlexRow(r.icon, content);
+                        card.appendChild(row);
+                        grid.appendChild(card);
+                    });
+                    
+                    const exampleBox = document.createElement('div');
+                    exampleBox.className = 'info-box indigo';
+                    exampleBox.style.marginTop = '32px';
+                    
+                    const exContent = document.createElement('div');
+                    const exTitle = document.createElement('h3');
+                    exTitle.style.color = '#4f46e5';
+                    exTitle.style.marginBottom = '8px';
+                    exTitle.textContent = 'Real-World Example';
+                    
+                    const exText = document.createElement('p');
+                    exText.textContent = 'A sales dashboard showing monthly revenue trends helps managers spot growth opportunities quickly. Instead of scanning spreadsheets with thousands of rows, a line chart reveals patterns instantly—identifying which months performed well, which products are trending, and where to focus efforts next quarter.';
+                    
+                    exContent.appendChild(exTitle);
+                    exContent.appendChild(exText);
+                    
+                    const exRow = createFlexRow('💡', exContent);
+                    exampleBox.appendChild(exRow);
+                    
+                    container.appendChild(grid);
+                    container.appendChild(exampleBox);
+                    
+                    return container;
+                }
+            },
+            {
+                title: "Visualization Types",
+                icon: "📈",
+                render: function() {
+                    const container = document.createElement('div');
+                    
+                    const h2 = document.createElement('h2');
+                    h2.textContent = 'Common Visualization Types';
+                    
+                    const subtitle = document.createElement('p');
+                    subtitle.style.color = '#6b7280';
+                    subtitle.style.marginBottom = '24px';
+                    subtitle.textContent = 'Each chart type serves a specific purpose. Choosing the right one is key to effective communication.';
+                    
+                    container.appendChild(h2);
+                    container.appendChild(subtitle);
+                    
+                    const vizTypes = [
+                        { icon: '📊', title: 'Bar Charts', purpose: 'Compare categories or track changes over time', useCase: 'Perfect for comparing sales across regions, product performance, or survey results', bg: 'linear-gradient(135deg, #eef2ff, #e0e7ff)', color: '#4f46e5' },
+                        { icon: '📈', title: 'Line Charts', purpose: 'Show trends and patterns across time series', useCase: 'Ideal for stock prices, website traffic over months, or temperature changes', bg: 'linear-gradient(135deg, #dbeafe, #bfdbfe)', color: '#1e40af' },
+                        { icon: '🥧', title: 'Pie Charts', purpose: 'Display proportions and percentages', useCase: 'Best for showing market share, budget allocation, or demographic breakdowns', bg: 'linear-gradient(135deg, #fef3c7, #fde68a)', color: '#d97706' },
+                        { icon: '🔵', title: 'Scatter Plots', purpose: 'Reveal relationships between two variables', useCase: 'Excellent for correlation analysis, such as height vs weight, or ad spend vs revenue', bg: 'linear-gradient(135deg, #f0fdf4, #dcfce7)', color: '#059669' },
+                        { icon: '🌡️', title: 'Heatmaps', purpose: 'Highlight intensity or frequency in large datasets', useCase: 'Great for website click patterns, correlation matrices, or geographic data', bg: 'linear-gradient(135deg, #fef2f2, #fee2e2)', color: '#dc2626' },
+                        { icon: '📊', title: 'Dashboards', purpose: 'Combine multiple visuals for holistic monitoring', useCase: 'Essential for executive summaries, KPI tracking, or real-time operations monitoring', bg: 'linear-gradient(135deg, #faf5ff, #f3e8ff)', color: '#7c3aed' }
+                    ];
+                    
+                    vizTypes.forEach(viz => {
+                        const card = document.createElement('div');
+                        card.className = 'viz-card';
+                        card.style.background = viz.bg;
+                        
+                        const header = document.createElement('div');
+                        header.className = 'flex-row';
+                        header.style.marginBottom = '12px';
+                        
+                        const icon = document.createElement('div');
+                        icon.style.fontSize = '40px';
+                        icon.textContent = viz.icon;
+                        
+                        const titleDiv = document.createElement('div');
+                        const title = document.createElement('h3');
+                        title.style.color = viz.color;
+                        title.style.marginBottom = '4px';
+                        title.textContent = viz.title;
+                        titleDiv.appendChild(title);
+                        
+                        header.appendChild(icon);
+                        header.appendChild(titleDiv);
+                        
+                        const purpose = document.createElement('p');
+                        purpose.style.fontWeight = '600';
+                        purpose.style.marginBottom = '8px';
+                        purpose.textContent = viz.purpose;
+                        
+                        const useCase = document.createElement('div');
+                        useCase.className = 'practice-tip';
+                        
+                        const strong = document.createElement('strong');
+                        strong.textContent = 'When to use: ';
+                        useCase.appendChild(strong);
+                        useCase.appendChild(document.createTextNode(viz.useCase));
+                        
+                        card.appendChild(header);
+                        card.appendChild(purpose);
+                        card.appendChild(useCase);
+                        
+                        container.appendChild(card);
+                    });
+                    
+                    return container;
+                }
+            },
+            {
+                title: "Best Practices",
+                icon: "✅",
+                render: function() {
+                    const container = document.createElement('div');
+                    
+                    const h2 = document.createElement('h2');
+                    h2.textContent = 'Best Practices for Effective Visualization';
+                    
+                    const subtitle = document.createElement('p');
+                    subtitle.style.color = '#6b7280';
+                    subtitle.style.marginBottom = '24px';
+                    subtitle.textContent = 'Follow these principles to create visualizations that communicate clearly and drive action.';
+                    
+                    container.appendChild(h2);
+                    container.appendChild(subtitle);
+                    
+                    const practices = [
+                        { title: 'Choose the Right Chart', desc: 'Match visualization type to the data story you want to tell', tip: 'Ask yourself: Am I comparing, showing trends, revealing relationships, or displaying parts of a whole?', icon: '🎯', color: '#4f46e5' },
+                        { title: 'Keep It Simple', desc: 'Avoid clutter and unnecessary elements that distract from insights', tip: 'Remove gridlines, excessive colors, 3D effects, and decorative elements. Less is more.', icon: '✨', color: '#1e40af' },
+                        { title: 'Use Consistent Colors', desc: 'Reinforce meaning and improve readability through thoughtful color choices', tip: 'Use the same color for the same category across charts. Reserve bright colors for key insights.', icon: '🎨', color: '#059669' },
+                        { title: 'Highlight Key Insights', desc: 'Guide the audience to the most important findings', tip: 'Use annotations, bold colors, or callout boxes to draw attention to critical data points.', icon: '⭐', color: '#d97706' },
+                        { title: 'Ensure Accuracy', desc: 'Never distort scales or proportions—credibility matters', tip: 'Start bar charts at zero, use consistent scales, and label axes clearly. Misleading visuals destroy trust.', icon: '📏', color: '#dc2626' }
+                    ];
+                    
+                    practices.forEach(practice => {
+                        const box = document.createElement('div');
+                        box.className = 'info-box blue';
+                        box.style.marginBottom = '20px';
+                        
+                        const content = document.createElement('div');
+                        const title = document.createElement('h3');
+                        title.style.color = practice.color;
+                        title.style.marginBottom = '4px';
+                        title.textContent = practice.title;
+                        content.appendChild(title);
+                        
+                        const row = createFlexRow(practice.icon, content);
+                        box.appendChild(row);
+                        
+                        const desc = document.createElement('p');
+                        desc.style.fontWeight = '600';
+                        desc.style.marginBottom = '8px';
+                        desc.textContent = practice.desc;
+                        
+                        const tip = document.createElement('div');
+                        tip.className = 'practice-tip';
+                        const tipStrong = document.createElement('strong');
+                        tipStrong.textContent = '💡 Pro Tip: ';
+                        tip.appendChild(tipStrong);
+                        tip.appendChild(document.createTextNode(practice.tip));
+                        
+                        box.appendChild(desc);
+                        box.appendChild(tip);
+                        
+                        container.appendChild(box);
+                    });
+                    
+                    return container;
+                }
+            },
+            {
+                title: "Tools & Software",
+                icon: "🛠️",
+                render: function() {
+                    const container = document.createElement('div');
+                    
+                    const h2 = document.createElement('h2');
+                    h2.textContent = 'Tools for Data Visualization';
+                    
+                    const subtitle = document.createElement('p');
+                    subtitle.style.color = '#6b7280';
+                    subtitle.style.marginBottom = '24px';
+                    subtitle.textContent = 'From simple charts to interactive dashboards—choose tools that match your skill level and project needs.';
+                    
+                    container.appendChild(h2);
+                    container.appendChild(subtitle);
+                    
+                    const tools = [
+                        { icon: '📊', title: 'Excel / Google Sheets', best: 'Quick charts and graphs for reports and presentations', features: ['Built-in chart templates', 'Easy data manipulation', 'Suitable for small to medium datasets', 'No coding required'], bg: 'linear-gradient(135deg, #f0fdf4, #dcfce7)', border: '#10b981', color: '#059669', featBg: '#f0fdf4' },
+                        { icon: '📈', title: 'Tableau / Power BI', best: 'Advanced dashboards and interactive visuals', features: ['Drag-and-drop interface', 'Real-time data connections', 'Interactive filters and drill-downs', 'Enterprise-grade dashboards'], bg: 'linear-gradient(135deg, #eef2ff, #e0e7ff)', border: '#6366f1', color: '#4f46e5', featBg: '#eef2ff' },
+                        { icon: '🐍', title: 'Python (Matplotlib, Seaborn, Plotly)', best: 'Custom, programmatic visualizations', features: ['Complete customization control', 'Integration with data analysis workflows', 'Automation and reproducibility', 'Advanced statistical plots'], bg: 'linear-gradient(135deg, #dbeafe, #bfdbfe)', border: '#3b82f6', color: '#1e40af', featBg: '#dbeafe' },
+                        { icon: '📐', title: 'R (ggplot2)', best: 'Statistical and scientific visualization', features: ['Publication-quality graphics', 'Statistical analysis integration', 'Academic and research standard', 'Highly customizable aesthetics'], bg: 'linear-gradient(135deg, #fef3c7, #fde68a)', border: '#d97706', color: '#d97706', featBg: '#fef3c7' },
+                        { icon: '🤖', title: 'AI Tools (Copilot, ChatGPT)', best: 'Generate explanations and suggest chart types', features: ['Automated chart recommendations', 'Natural language queries', 'Summarize visual insights', 'Generate code for visualizations'], bg: 'linear-gradient(135deg, #faf5ff, #f3e8ff)', border: '#a855f7', color: '#7c3aed', featBg: '#faf5ff' }
+                    ];
+                    
+                    tools.forEach(tool => {
+                        const card = document.createElement('div');
+                        card.className = 'viz-card';
+                        card.style.background = tool.bg;
+                        card.style.borderLeft = `4px solid ${tool.border}`;
+                        
+                        const content = document.createElement('div');
+                        content.style.flex = '1';
+                        
+                        const title = document.createElement('h3');
+                        title.style.color = tool.color;
+                        title.style.marginBottom = '8px';
+                        title.textContent = tool.title;
+                        
+                        const bestFor = document.createElement('p');
+                        bestFor.style.marginBottom = '12px';
+                        const bestStrong = document.createElement('strong');
+                        bestStrong.textContent = 'Best for: ';
+                        bestFor.appendChild(bestStrong);
+                        bestFor.appendChild(document.createTextNode(tool.best));
+                        
+                        const featBox = document.createElement('div');
+                        featBox.style.backgroundColor = tool.featBg;
+                        featBox.style.padding = '12px';
+                        featBox.style.borderRadius = '4px';
+                        
+                        const featTitle = document.createElement('strong');
+                        featTitle.textContent = 'Features:';
+                        featBox.appendChild(featTitle);
+                        featBox.appendChild(document.createElement('br'));
+                        
+                        tool.features.forEach(feat => {
+                            featBox.appendChild(document.createTextNode('• ' + feat));
+                            featBox.appendChild(document.createElement('br'));
+                        });
+                        
+                        content.appendChild(title);
+                        content.appendChild(bestFor);
+                        content.appendChild(featBox);
+                        
+                        const row = createFlexRow(tool.icon, content);
+                        card.appendChild(row);
+                        
+                        container.appendChild(card);
+                    });
+                    
+                    return container;
+                }
+            },
+            {
+                title: "Practical Applications",
+                icon: "💼",
+                render: function() {
+                    const container = document.createElement('div');
+                    
+                    const h2 = document.createElement('h2');
+                    h2.textContent = 'Practical Applications';
+                    
+                    const subtitle = document.createElement('p');
+                    subtitle.style.color = '#6b7280';
+                    subtitle.style.marginBottom = '24px';
+                    subtitle.textContent = 'See how data visualization transforms decision-making across industries.';
+                    
+                    container.appendChild(h2);
+                    container.appendChild(subtitle);
+                    
+                    const apps = [
+                        { icon: '📊', title: 'Business Intelligence', app: 'Dashboards for KPIs and performance tracking', desc: 'Track sales performance, monitor customer acquisition costs, visualize conversion funnels, and identify revenue trends—all in real-time dashboards that keep leadership informed.', gradient: 'linear-gradient(to right, #eef2ff, #dbeafe)', color: '#4f46e5' },
+                        { icon: '🏥', title: 'Healthcare', app: 'Visualizing patient outcomes and treatment effectiveness', desc: 'Track patient vitals over time, compare treatment outcomes, visualize disease spread patterns, and monitor hospital resource utilization for better patient care.', gradient: 'linear-gradient(to right, #f0fdf4, #dcfce7)', color: '#059669' },
+                        { icon: '💰', title: 'Finance', app: 'Trend charts for stock prices, fraud detection heatmaps', desc: 'Visualize market trends, detect unusual transaction patterns through heatmaps, analyze portfolio performance, and monitor risk exposure across investments.', gradient: 'linear-gradient(to right, #fef3c7, #fde68a)', color: '#d97706' },
+                        { icon: '📱', title: 'Social Media', app: 'Engagement graphs, sentiment analysis visuals', desc: 'Track post engagement over time, visualize follower growth, analyze sentiment trends, identify viral content patterns, and optimize posting schedules.', gradient: 'linear-gradient(to right, #faf5ff, #f3e8ff)', color: '#7c3aed' }
+                    ];
+                    
+                    apps.forEach(a => {
+                        const card = document.createElement('div');
+                        card.className = 'card-item';
+                        card.style.background = a.gradient;
+                        card.style.marginBottom = '20px';
+                        
+                        const content = document.createElement('div');
+                        
+                        const title = document.createElement('h3');
+                        title.style.color = a.color;
+                        title.style.marginBottom = '8px';
+                        title.textContent = a.title;
+                        
+                        const appP = document.createElement('p');
+                        const appStrong = document.createElement('strong');
+                        appStrong.textContent = 'Application: ';
+                        appP.appendChild(appStrong);
+                        appP.appendChild(document.createTextNode(a.app));
+                        
+                        const descP = document.createElement('p');
+                        descP.style.marginTop = '8px';
+                        descP.style.color = '#6b7280';
+                        descP.textContent = a.desc;
+                        
+                        content.appendChild(title);
+                        content.appendChild(appP);
+                        content.appendChild(descP);
+                        
+                        const row = createFlexRow(a.icon, content);
+                        card.appendChild(row);
+                        
+                        container.appendChild(card);
+                    });
+                    
+                    return container;
+                }
+            },
+            {
+                title: "Summary & Takeaways",
+                icon: "🎓",
+                render: function() {
+                    const container = document.createElement('div');
+                    
+                    const h2 = document.createElement('h2');
+                    h2.textContent = 'Summary & Takeaways';
+                    container.appendChild(h2);
+                    
+                    const takeaways = [
+                        'Visualization bridges the gap between raw data and actionable insights',
+                        'Choosing the right chart and following best practices ensures clarity and impact',
+                        'Tools like Tableau, Power BI, and Python libraries make visualization powerful and accessible',
+                        'Effective visualizations tell stories that drive decisions and inspire action'
+                    ];
+                    
+                    takeaways.forEach(text => {
+                        const box = document.createElement('div');
+                        box.className = 'info-box green';
+                        box.style.marginBottom = '16px';
+                        
+                        const check = document.createElement('span');
+                        check.className = 'checkmark';
+                        check.textContent = '✓';
+                        
+                        const p = document.createElement('p');
+                        p.style.fontSize = '18px';
+                        p.textContent = text;
+                        
+                        const row = document.createElement('div');
+                        row.className = 'flex-row';
+                        row.appendChild(check);
+                        row.appendChild(p);
+                        
+                        box.appendChild(row);
+                        container.appendChild(box);
+                    });
+                    
+                    const rulesBox = document.createElement('div');
+                    rulesBox.style.marginTop = '32px';
+                    rulesBox.style.padding = '24px';
+                    rulesBox.style.background = 'linear-gradient(to right, #eef2ff, #dbeafe)';
+                    rulesBox.style.borderRadius = '8px';
+                    
+                    const rulesTitle = document.createElement('h3');
+                    rulesTitle.style.color = '#4f46e5';
+                    rulesTitle.style.marginBottom = '12px';
+                    rulesTitle.textContent = '🎯 Golden Rules of Data Visualization';
+                    
+                    const rulesList = document.createElement('ul');
+                    const rules = [
+                        '<strong>Know your audience</strong> - Design for their level of data literacy',
+                        '<strong>Tell one story at a time</strong> - Don\'t overwhelm with multiple insights',
+                        '<strong>Context is crucial</strong> - Always provide labels, legends, and explanations',
+                        '<strong>Test and iterate</strong> - Get feedback before sharing widely',
+                        '<strong>Accessibility matters</strong> - Use colorblind-friendly palettes and clear labels'
+                    ];
+                    
+                    rules.forEach(rule => {
+                        const li = document.createElement('li');
+                        li.innerHTML = rule;
+                        rulesList.appendChild(li);
+                    });
+                    
+                    rulesBox.appendChild(rulesTitle);
+                    rulesBox.appendChild(rulesList);
+                    
+                    const ctaBox = document.createElement('div');
+                    ctaBox.className = 'cta-box';
+                    
+                    const ctaTitle = document.createElement('h3');
+                    ctaTitle.textContent = '📌 Continue Your Learning Journey';
+                    
+                    const ctaText = document.createElement('p');
+                    ctaText.style.fontSize = '18px';
+                    ctaText.style.marginBottom = '24px';
+                    ctaText.textContent = 'Follow this LinkedIn Learning Series for the next topic: ';
+                    const ctaStrong = document.createElement('strong');
+                    ctaStrong.textContent = 'Data Engineering';
+                    ctaText.appendChild(ctaStrong);
+                    
+                    const btnContainer = document.createElement('div');
+                    btnContainer.style.display = 'flex';
+                    btnContainer.style.gap = '12px';
+                    btnContainer.style.flexWrap = 'wrap';
+                    
+                    const linkedinBtn = document.createElement('a');
+                    linkedinBtn.href = 'https://www.linkedin.com/in/aditya-bhutada94/';
+                    linkedinBtn.target = '_blank';
+                    linkedinBtn.className = 'cta-btn';
+                    linkedinBtn.innerHTML = '<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg> Connect on LinkedIn';
+                    
+                    const githubBtn = document.createElement('a');
+                    githubBtn.href = 'https://github.com/adityaa2b';
+                    githubBtn.target = '_blank';
+                    githubBtn.className = 'cta-btn';
+                    githubBtn.innerHTML = '<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg> View on GitHub';
+                    
+                    btnContainer.appendChild(linkedinBtn);
+                    btnContainer.appendChild(githubBtn);
+                    
+                    ctaBox.appendChild(ctaTitle);
+                    ctaBox.appendChild(ctaText);
+                    ctaBox.appendChild(btnContainer);
+                    
+                    const congrats = document.createElement('div');
+                    congrats.style.textAlign = 'center';
+                    congrats.style.marginTop = '32px';
+                    congrats.style.padding = '24px';
+                    congrats.style.backgroundColor = '#f9fafb';
+                    congrats.style.borderRadius = '8px';
+                    
+                    const congratsTitle = document.createElement('p');
+                    congratsTitle.style.fontSize = '18px';
+                    congratsTitle.style.color = '#6b7280';
+                    congratsTitle.style.marginBottom = '8px';
+                    congratsTitle.textContent = '🎉 Congratulations on completing Part 3!';
+                    
+                    const congratsText = document.createElement('p');
+                    congratsText.style.color = '#9ca3af';
+                    congratsText.textContent = 'You now know how to transform data into compelling visual stories';
+                    
+                    const nextUp = document.createElement('p');
+                    nextUp.style.color = '#6366f1';
+                    nextUp.style.fontWeight = '600';
+                    nextUp.style.marginTop = '12px';
+                    nextUp.textContent = 'Next up: Data Engineering →';
+                    
+                    congrats.appendChild(congratsTitle);
+                    congrats.appendChild(congratsText);
+                    congrats.appendChild(nextUp);
+                    
+                    container.appendChild(rulesBox);
+                    container.appendChild(ctaBox);
+                    container.appendChild(congrats);
+                    
+                    return container;
+                }
+            }
+        ];
+
+        function renderPage() {
+            const page = pages[currentPage];
+            document.getElementById('pageIcon').textContent = page.icon;
+            document.getElementById('pageNumber').textContent = `Chapter ${currentPage + 1} of ${pages.length}`;
+            document.getElementById('pageTitle').textContent = page.title;
+            
+            const contentDiv = document.getElementById('pageContent');
+            contentDiv.innerHTML = '';
+            contentDiv.appendChild(page.render());
+            
+            document.getElementById('pageIndicator').textContent = `Page ${currentPage + 1} of ${pages.length}`;
+            
+            document.getElementById('prevBtn').disabled = currentPage === 0;
+            document.getElementById('nextBtn').disabled = currentPage === pages.length - 1;
+            
+            completedPages.add(currentPage);
+            const progress = ((completedPages.size) / pages.length) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+            document.getElementById('progressText').textContent = Math.round(progress) + '% Complete';
+            
+            window.scrollTo(0, 0);
+        }
+
+        function renderMenu() {
+            const menuItems = pages.map((page, index) => {
+                const btn = document.createElement('button');
+                btn.className = 'menu-item' + (currentPage === index ? ' active' : '');
+                btn.onclick = () => goToPage(index);
+                
+                const content = document.createElement('div');
+                content.className = 'menu-item-content';
+                
+                const icon = document.createElement('span');
+                icon.className = 'menu-item-icon';
+                icon.textContent = page.icon;
+                
+                const textDiv = document.createElement('div');
+                textDiv.style.flex = '1';
+                textDiv.style.textAlign = 'left';
+                
+                const title = document.createElement('div');
+                title.className = 'menu-item-title';
+                title.textContent = page.title;
+                
+                const subtitle = document.createElement('div');
+                subtitle.className = 'menu-item-subtitle';
+                subtitle.textContent = `Chapter ${index + 1}`;
+                
+                textDiv.appendChild(title);
+                textDiv.appendChild(subtitle);
+                
+                content.appendChild(icon);
+                content.appendChild(textDiv);
+                
+                if (completedPages.has(index)) {
+                    const check = document.createElement('span');
+                    check.style.color = '#10b981';
+                    check.style.fontSize = '20px';
+                    check.textContent = '✓';
+                    content.appendChild(check);
+                }
+                
+                btn.appendChild(content);
+                return btn;
+            });
+            
+            const menuDiv = document.getElementById('menuItems');
+            menuDiv.innerHTML = '';
+            menuItems.forEach(item => menuDiv.appendChild(item));
+        }
+
+        function toggleMenu() {
+            const overlay = document.getElementById('menuOverlay');
+            const sidebar = document.getElementById('menuSidebar');
+            overlay.classList.toggle('active');
+            sidebar.classList.toggle('active');
+        }
+
+        function goToPage(index) {
+            currentPage = index;
+            renderPage();
+            renderMenu();
+            toggleMenu();
+        }
+
+        function nextPage() {
+            if (currentPage < pages.length - 1) {
+                currentPage++;
+                renderPage();
+                renderMenu();
+            }
+        }
+
+        function previousPage() {
+            if (currentPage > 0) {
+                currentPage--;
+                renderPage();
+                renderMenu();
+            }
+        }
+
+        renderPage();
+        renderMenu();
+    </script>
+</body>
+</html>
