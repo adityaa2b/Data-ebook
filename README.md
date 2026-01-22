@@ -4,19 +4,21 @@ An interactive web-based e-book designed for the LinkedIn Learning Series, cover
 
 https://adityaa2b.github.io/Data-ebook/Data.html
 
-https://adityaa2b.github.io/Data-ebook/data_cleaning_ebook.html
+https://adityaa2b.github.io/Data-ebook/HTML/data_ebook.html
 
-https://adityaa2b.github.io/Data-ebook/data_visualization_ebook.html
+https://adityaa2b.github.io/Data-ebook/HTML/data_cleaning_ebook.html
 
-https://adityaa2b.github.io/Data-ebook/data_engineering_ebook.html
+https://adityaa2b.github.io/Data-ebook/HTML/data_visualization_ebook.html
 
-https://adityaa2b.github.io/Data-ebook/data_quality_ebook.html
+https://adityaa2b.github.io/Data-ebook/HTML/data_engineering_ebook.html
 
-https://adityaa2b.github.io/Data-ebook/data_security_ebook.html
+https://adityaa2b.github.io/Data-ebook/HTML/data_quality_ebook.html
 
-https://adityaa2b.github.io/Data-ebook/data_warehousing_ebook.html
+https://adityaa2b.github.io/Data-ebook/HTML/data_security_ebook.html
 
-https://adityaa2b.github.io/Data-ebook/data-viz-best-practices_ebook.html
+https://adityaa2b.github.io/Data-ebook/HTML/data_warehousing_ebook.html
+
+https://adityaa2b.github.io/Data-ebook/HTML/data-viz-best-practices_ebook.html
 
 https://www.linkedin.com/in/aditya-bhutada94/
 
@@ -39,7 +41,7 @@ https://www.linkedin.com/in/aditya-bhutada94/
 7. Summary & Next Steps - Key takeaways and what's coming next
 
 🚀 Live Demo
-- Visit the live e-book: [Data-ebook](https://adityaa2b.github.io/Data-ebook/HTML/Data_ebook.html) | [Data_cleaning-ebook](https://adityaa2b.github.io/Data-ebook/HTML/data_cleaning_ebook.html) | [Data_visualization-ebook](https://adityaa2b.github.io/Data-ebook/HTML/data_visualization_ebook.html) | [Data_engineering-ebook](https://adityaa2b.github.io/Data-ebook/HTML/data_engineering_ebook.html) | [Data_Quality-ebook](https://adityaa2b.github.io/Data-ebook/HTML/data_quality_ebook.html) | [Data_security-ebook](https://adityaa2b.github.io/Data-ebook/HTML/data_security_ebook.html) | [Data_warehousing-ebook](https://adityaa2b.github.io/Data-ebook/HTML/data_warehousing_ebook.html) | [Data_viz_best_practices-ebook](https://adityaa2b.github.io/Data-ebook/HTML/data-viz-best-practices_ebook.html)
+- Visit the live e-book: [Data-ebook](https://adityaa2b.github.io/Data-ebook/HTML/data_ebook.html) | [Data_cleaning-ebook](https://adityaa2b.github.io/Data-ebook/HTML/data_cleaning_ebook.html) | [Data_visualization-ebook](https://adityaa2b.github.io/Data-ebook/HTML/data_visualization_ebook.html) | [Data_engineering-ebook](https://adityaa2b.github.io/Data-ebook/HTML/data_engineering_ebook.html) | [Data_Quality-ebook](https://adityaa2b.github.io/Data-ebook/HTML/data_quality_ebook.html) | [Data_security-ebook](https://adityaa2b.github.io/Data-ebook/HTML/data_security_ebook.html) | [Data_warehousing-ebook](https://adityaa2b.github.io/Data-ebook/HTML/data_warehousing_ebook.html) | [Data_viz_best_practices-ebook](https://adityaa2b.github.io/Data-ebook/HTML/data-viz-best-practices_ebook.html)
 
 💻 Technology Stack
 1. HTML5 - Semantic markup
@@ -50,7 +52,7 @@ https://www.linkedin.com/in/aditya-bhutada94/
 📥 Installation & Usage
 Option 1: View Online
 
-Simply visit the live [Demo link](https://adityaa2b.github.io/Data-ebook/HTML/Data_ebook.html)
+Simply visit the live [Demo link](https://adityaa2b.github.io/Data-ebook/HTML/data_ebook.html)
 
 Option 2: Run Locally
 
@@ -71,16 +73,16 @@ Option 2: Run Locally
    bash
 
        # On macOS
-       open Data_ebook.html
+       open data_ebook.html
 
        # On Linux
-       xdg-open Data_ebook.html
+       xdg-open data_ebook.html
 
        # On Windows
-       start Data_ebook.html
+       start data_ebook.html
 
 Option 3: Download
-- Download the Data.html file and open it directly in any modern web browser.
+- Download the data_ebook.html file and open it directly in any modern web browser.
 
 🎓 Learning Outcomes
 
