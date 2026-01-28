@@ -1,0 +1,1107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Modelling - Interactive E-Book</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+            background: linear-gradient(135deg, #DBEAFE 0%, #ffffff 50%, #E0E7FF 100%);
+            min-height: 100vh;
+        }
+        
+        .header {
+            background: white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 16px;
+        }
+        
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        
+        .header-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .header-title h1 {
+            font-size: 20px;
+            color: #1f2937;
+        }
+        
+        .header-title p {
+            font-size: 14px;
+            color: #6b7280;
+        }
+        
+        .menu-btn {
+            background: none;
+            border: none;
+            padding: 8px;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: background 0.2s;
+        }
+        
+        .menu-btn:hover {
+            background: #f3f4f6;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e5e7eb;
+            border-radius: 9999px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(to right, #3b82f6, #6366f1);
+            transition: width 0.5s ease;
+        }
+        
+        .progress-text {
+            text-align: right;
+            font-size: 12px;
+            color: #6b7280;
+            margin-top: 4px;
+        }
+        
+        .menu-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 200;
+            display: none;
+        }
+        
+        .menu-overlay.active {
+            display: block;
+        }
+        
+        .menu-sidebar {
+            position: fixed;
+            right: 0;
+            top: 0;
+            height: 100%;
+            width: 320px;
+            background: white;
+            padding: 24px;
+            overflow-y: auto;
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+            z-index: 201;
+        }
+        
+        .menu-sidebar.active {
+            transform: translateX(0);
+        }
+        
+        .menu-sidebar h2 {
+            font-size: 24px;
+            margin-bottom: 24px;
+            color: #1f2937;
+        }
+        
+        .menu-item {
+            width: 100%;
+            text-align: left;
+            padding: 16px;
+            margin-bottom: 8px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            background: #f9fafb;
+            transition: all 0.2s;
+        }
+        
+        .menu-item:hover {
+            background: #f3f4f6;
+        }
+        
+        .menu-item.active {
+            background: linear-gradient(to right, #3b82f6, #6366f1);
+            color: white;
+            box-shadow: 0 4px 6px rgba(59, 130, 246, 0.3);
+        }
+        
+        .menu-item-content {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .menu-item-icon {
+            font-size: 24px;
+        }
+        
+        .menu-item-title {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        
+        .menu-item-subtitle {
+            font-size: 12px;
+            opacity: 0.75;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 32px 16px;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            padding: 48px;
+            min-height: 600px;
+        }
+        
+        .page-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 2px solid #f3f4f6;
+        }
+        
+        .page-icon {
+            font-size: 48px;
+        }
+        
+        .page-info p {
+            font-size: 14px;
+            color: #6b7280;
+        }
+        
+        .page-info h2 {
+            font-size: 28px;
+            color: #1f2937;
+        }
+        
+        .content {
+            line-height: 1.7;
+        }
+        
+        .content h1 {
+            font-size: 36px;
+            color: #3b82f6;
+            margin-bottom: 16px;
+        }
+        
+        .content h2 {
+            font-size: 28px;
+            color: #1f2937;
+            margin-bottom: 16px;
+        }
+        
+        .content h3 {
+            font-size: 24px;
+            color: #1f2937;
+            margin-bottom: 12px;
+        }
+        
+        .content h4 {
+            font-size: 20px;
+            margin-bottom: 8px;
+        }
+        
+        .content p {
+            font-size: 18px;
+            color: #374151;
+            margin-bottom: 16px;
+        }
+
+        .content ul {
+            margin-left: 24px;
+            margin-top: 12px;
+            line-height: 1.8;
+        }
+
+        .content li {
+            font-size: 18px;
+            color: #374151;
+            margin-bottom: 8px;
+        }
+        
+        .info-box {
+            padding: 24px;
+            border-radius: 8px;
+            margin: 24px 0;
+            border-left: 4px solid;
+        }
+
+        .info-box.blue {
+            background-color: #eff6ff;
+            border-color: #3b82f6;
+        }
+
+        .info-box.indigo {
+            background-color: #eef2ff;
+            border-color: #6366f1;
+        }
+
+        .info-box.green {
+            background-color: #f0fdf4;
+            border-color: #10b981;
+        }
+
+        .info-box.purple {
+            background-color: #faf5ff;
+            border-color: #a855f7;
+        }
+
+        .info-box.yellow {
+            background-color: #fef3c7;
+            border-color: #f59e0b;
+        }
+        
+        .grid {
+            display: grid;
+            gap: 16px;
+            margin: 24px 0;
+        }
+        
+        .grid-2 {
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        }
+        
+        .grid-3 {
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        }
+        
+        .card-item {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+        }
+        
+        .card-item:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            transform: translateY(-2px);
+        }
+        
+        .flex-row {
+            display: flex;
+            gap: 16px;
+            align-items: flex-start;
+        }
+        
+        .icon-large {
+            font-size: 48px;
+            flex-shrink: 0;
+        }
+        
+        .step-box {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+            transition: all 0.3s;
+        }
+        
+        .step-box:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        .step-number {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+        
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 32px;
+        }
+        
+        .nav-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .nav-btn:disabled {
+            background: #e5e7eb;
+            color: #9ca3af;
+            cursor: not-allowed;
+        }
+        
+        .nav-btn-primary {
+            background: linear-gradient(to right, #3b82f6, #6366f1);
+            color: white;
+            box-shadow: 0 2px 4px rgba(59, 130, 246, 0.3);
+        }
+        
+        .nav-btn-primary:hover:not(:disabled) {
+            box-shadow: 0 4px 8px rgba(59, 130, 246, 0.4);
+            transform: translateY(-2px);
+        }
+        
+        .page-indicator {
+            text-align: center;
+            color: #6b7280;
+            font-size: 14px;
+        }
+        
+        .cta-box {
+            background: linear-gradient(to right, #3b82f6, #6366f1);
+            color: white;
+            padding: 32px;
+            border-radius: 8px;
+            margin-top: 32px;
+        }
+        
+        .cta-box h3 {
+            color: white;
+            margin-bottom: 16px;
+        }
+        
+        .cta-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: white;
+            color: #3b82f6;
+            padding: 12px 24px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+            margin-right: 12px;
+            margin-bottom: 12px;
+        }
+        
+        .cta-btn:hover {
+            background: #f3f4f6;
+            transform: translateY(-2px);
+        }
+        
+        .checkmark {
+            color: #10b981;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+        
+        .series-badge {
+            background: linear-gradient(to right, #3b82f6, #6366f1);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            display: inline-block;
+            margin-bottom: 16px;
+        }
+
+        .tool-card {
+            border-left: 4px solid;
+            margin-bottom: 20px;
+        }
+
+        .model-diagram {
+            background: #f9fafb;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 24px;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .model-visual {
+            font-size: 64px;
+            margin: 16px 0;
+        }
+        
+        @media (max-width: 768px) {
+            .card {
+                padding: 24px;
+            }
+            
+            .menu-sidebar {
+                width: 100%;
+            }
+            
+            .content h1 {
+                font-size: 28px;
+            }
+            
+            .content h2 {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-content">
+            <div class="header-top">
+                <div class="header-title">
+                    <div style="font-size: 28px;">📐</div>
+                    <div>
+                        <h1>Data Modelling</h1>
+                        <p>by Aditya Bhutada • Part 9</p>
+                    </div>
+                </div>
+                <button class="menu-btn" onclick="toggleMenu()">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="3" y1="12" x2="21" y2="12"></line>
+                        <line x1="3" y1="6" x2="21" y2="6"></line>
+                        <line x1="3" y1="18" x2="21" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressBar"></div>
+            </div>
+            <div class="progress-text" id="progressText">0% Complete</div>
+        </div>
+    </div>
+
+    <div class="menu-overlay" id="menuOverlay" onclick="toggleMenu()"></div>
+    
+    <div class="menu-sidebar" id="menuSidebar">
+        <h2>Table of Contents</h2>
+        <div id="menuItems"></div>
+    </div>
+
+    <div class="container">
+        <div class="card">
+            <div class="page-header">
+                <span class="page-icon" id="pageIcon">📐</span>
+                <div class="page-info">
+                    <p id="pageNumber">Chapter 1 of 9</p>
+                    <h2 id="pageTitle">Welcome</h2>
+                </div>
+            </div>
+            <div class="content" id="pageContent"></div>
+        </div>
+
+        <div class="navigation">
+            <button class="nav-btn nav-btn-primary" id="prevBtn" onclick="previousPage()">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="15 18 9 12 15 6"></polyline>
+                </svg>
+                Previous
+            </button>
+            <div class="page-indicator" id="pageIndicator">Page 1 of 9</div>
+            <button class="nav-btn nav-btn-primary" id="nextBtn" onclick="nextPage()">
+                Next
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        let currentPage = 0;
+        let completedPages = new Set();
+
+        const pages = [
+            {
+                title: "Welcome",
+                icon: "📐",
+                content: `
+                    <div style="text-align: center; margin-bottom: 32px;">
+                        <span class="series-badge">LinkedIn Learning Series • Part 9</span>
+                        <h1>Data Modelling</h1>
+                        <p style="font-size: 22px; color: #3b82f6; font-weight: 600; margin-top: 8px;">Designing Structures for Efficient Data Management</p>
+                        <p style="font-size: 18px; color: #9ca3af; margin-top: 8px;">by Aditya Bhutada</p>
+                    </div>
+                    
+                    <div class="info-box blue">
+                        <p style="font-size: 18px;">Welcome to Part 9! After mastering visualization techniques, now learn how to design the underlying structures that make efficient data management possible. Data modelling is the blueprint that guides how data is stored, accessed, and related.</p>
+                    </div>
+                    
+                    <div class="grid grid-3">
+                        <div class="card-item" style="border-top: 4px solid #3b82f6;">
+                            <div style="font-size: 32px; margin-bottom: 8px;">📖</div>
+                            <div style="font-weight: 600; color: #1f2937;">9 Chapters</div>
+                            <div style="font-size: 14px; color: #6b7280;">Complete framework</div>
+                        </div>
+                        <div class="card-item" style="border-top: 4px solid #6366f1;">
+                            <div style="font-size: 32px; margin-bottom: 8px;">⏱️</div>
+                            <div style="font-weight: 600; color: #1f2937;">25 min read</div>
+                            <div style="font-size: 14px; color: #6b7280;">Design principles</div>
+                        </div>
+                        <div class="card-item" style="border-top: 4px solid #10b981;">
+                            <div style="font-size: 32px; margin-bottom: 8px;">✔</div>
+                            <div style="font-weight: 600; color: #1f2937;">6 Principles</div>
+                            <div style="font-size: 14px; color: #6b7280;">Modelling fundamentals</div>
+                        </div>
+                    </div>
+                `
+            },
+            {
+                title: "Introduction",
+                icon: "📋",
+                content: `
+                    <h2>Introduction</h2>
+                    
+                    <div class="info-box indigo">
+                        <p style="font-size: 18px; font-style: italic;">Data Modelling is the process of creating a visual representation of data structures and relationships. It defines how data is stored, connected, and accessed, serving as the blueprint for databases, warehouses, and analytical systems. A well-designed data model is the foundation of every successful data system.</p>
+                    </div>
+                    
+                    <div style="margin-top: 32px;">
+                        <h3 style="color: #3b82f6;">The Blueprint of Data Systems</h3>
+                        <p>Just as architects create blueprints before constructing buildings, data professionals create models before implementing databases. These models communicate how data elements relate to each other, ensuring everyone—from developers to business analysts—shares the same understanding of the data landscape.</p>
+                        <ul>
+                            <li><strong>Structure</strong> - Defines how data is organized and stored</li>
+                            <li><strong>Relationships</strong> - Shows how different data elements connect</li>
+                            <li><strong>Constraints</strong> - Enforces rules to maintain data integrity</li>
+                            <li><strong>Communication</strong> - Bridges technical and business perspectives</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="card-item" style="background: linear-gradient(to right, #eff6ff, #eef2ff); margin-top: 32px;">
+                        <div class="flex-row">
+                            <div style="font-size: 48px;">💡</div>
+                            <div>
+                                <h3 style="color: #1e40af; margin-bottom: 8px;">Why Data Modelling Matters</h3>
+                                <p>Without proper data modelling, databases become chaotic. Data gets duplicated, relationships break, queries slow down, and maintenance becomes a nightmare. A well-designed model prevents these issues from the start, saving countless hours of troubleshooting and refactoring later.</p>
+                            </div>
+                        </div>
+                    </div>
+                `
+            },
+            {
+                title: "Why It Matters",
+                icon: "⭐",
+                content: `
+                    <h2>Why Data Modelling Matters</h2>
+                    
+                    <div class="grid" style="gap: 20px;">
+                        <div class="card-item" style="background: linear-gradient(to right, #eff6ff, #dbeafe);">
+                            <div class="flex-row">
+                                <div class="icon-large">🔍</div>
+                                <div>
+                                    <h3 style="color: #1e40af; margin-bottom: 8px;">Clarity</h3>
+                                    <p>Provides a clear structure for data storage and retrieval. Everyone understands what data exists, where it lives, and how it connects—eliminating confusion and misunderstandings.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-item" style="background: linear-gradient(to right, #eef2ff, #e0e7ff);">
+                            <div class="flex-row">
+                                <div class="icon-large">✓</div>
+                                <div>
+                                    <h3 style="color: #4f46e5; margin-bottom: 8px;">Consistency</h3>
+                                    <p>Ensures uniform definitions across systems. Customer IDs mean the same thing everywhere, dates follow the same format, and business rules apply consistently.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-item" style="background: linear-gradient(to right, #f0fdf4, #dcfce7);">
+                            <div class="flex-row">
+                                <div class="icon-large">⚡</div>
+                                <div>
+                                    <h3 style="color: #059669; margin-bottom: 8px;">Efficiency</h3>
+                                    <p>Optimizes queries and reduces redundancy. Well-modelled data means faster queries, less storage waste, and better overall system performance.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-item" style="background: linear-gradient(to right, #fef3c7, #fde68a);">
+                            <div class="flex-row">
+                                <div class="icon-large">📈</div>
+                                <div>
+                                    <h3 style="color: #d97706; margin-bottom: 8px;">Scalability</h3>
+                                    <p>Supports future growth and evolving business needs. A solid model adapts to new requirements without requiring complete rebuilds.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="info-box blue" style="margin-top: 32px;">
+                        <div class="flex-row">
+                            <div style="font-size: 32px;">💡</div>
+                            <div>
+                                <h3 style="color: #1e40af; margin-bottom: 8px;">Real-World Example: Retail Data Model</h3>
+                                <p>A retail company models customer, product, and sales data with clear relationships. The model defines that each sale links to one customer and multiple products, products belong to categories, and customers have addresses. This structure streamlines reporting, ensures data consistency, and makes it easy to answer questions like "What products do customers in a specific region buy most frequently?"</p>
+                            </div>
+                        </div>
+                    </div>
+                `
+            },
+            {
+                title: "Core Principles",
+                icon: "🎯",
+                content: `
+                    <h2>Core Principles of Data Modelling</h2>
+                    <p style="color: #6b7280; margin-bottom: 24px;">Six fundamental principles that guide effective data model design.</p>
+                    
+                    <div class="step-box" style="background-color: #eff6ff;">
+                        <div class="step-number" style="background-color: #3b82f6;">1</div>
+                        <div>
+                            <h3 style="color: #1e40af;">Entity-Relationship (ER)</h3>
+                            <p>Define entities (tables) and relationships (links) between them. Entities represent real-world objects like customers, orders, or products. Relationships show how these entities connect—one customer can have many orders.</p>
+                        </div>
+                    </div>
+
+                    <div class="step-box" style="background-color: #eef2ff;">
+                        <div class="step-number" style="background-color: #6366f1;">2</div>
+                        <div>
+                            <h3 style="color: #4f46e5;">Normalization</h3>
+                            <p>Reduce redundancy by organizing data into logical groups. Break data into separate tables to eliminate duplication. For example, store customer addresses once rather than repeating them in every order record.</p>
+                        </div>
+                    </div>
+
+                    <div class="step-box" style="background-color: #f0fdf4;">
+                        <div class="step-number" style="background-color: #10b981;">3</div>
+                        <div>
+                            <h3 style="color: #059669;">Denormalization</h3>
+                            <p>Simplify queries by combining tables when performance is critical. While normalization reduces redundancy, sometimes combining data improves query speed for analytics and reporting.</p>
+                        </div>
+                    </div>
+
+                    <div class="step-box" style="background-color: #fef3c7;">
+                        <div class="step-number" style="background-color: #f59e0b;">4</div>
+                        <div>
+                            <h3 style="color: #d97706;">Keys & Constraints</h3>
+                            <p>Use primary, foreign, and unique keys to enforce integrity. Primary keys uniquely identify records, foreign keys link related tables, and constraints ensure data follows business rules.</p>
+                        </div>
+                    </div>
+
+                    <div class="step-box" style="background-color: #faf5ff;">
+                        <div class="step-number" style="background-color: #a855f7;">5</div>
+                        <div>
+                            <h3 style="color: #7c3aed;">Abstraction Levels</h3>
+                            <p>Create conceptual, logical, and physical models for different stakeholders. Business users need high-level concepts, while developers need implementation details. Use the right level for each audience.</p>
+                        </div>
+                    </div>
+
+                    <div class="step-box" style="background-color: #fef2f2;">
+                        <div class="step-number" style="background-color: #ef4444;">6</div>
+                        <div>
+                            <h3 style="color: #991b1b;">Documentation</h3>
+                            <p>Maintain metadata and diagrams for clarity and governance. Document what each field means, where data comes from, and what business rules apply. Good documentation is as important as the model itself.</p>
+                        </div>
+                    </div>
+                `
+            },
+            {
+                title: "Model Types",
+                icon: "🏗️",
+                content: `
+                    <h2>Types of Data Models</h2>
+                    <p style="color: #6b7280; margin-bottom: 24px;">Five essential model types, each serving different purposes in the data lifecycle.</p>
+                    
+                    <div class="model-diagram">
+                        <div class="model-visual">🏛️</div>
+                        <h3 style="color: #1e40af; margin-bottom: 8px;">Conceptual Model</h3>
+                        <p><strong>Purpose:</strong> High-level overview of entities and relationships</p>
+                        <p style="color: #6b7280; margin-top: 8px;">The most abstract level, showing what data exists and how it relates without technical details. Perfect for communicating with business stakeholders and executives who need to understand the big picture.</p>
+                    </div>
+
+                    <div class="model-diagram">
+                        <div class="model-visual">📐</div>
+                        <h3 style="color: #4f46e5; margin-bottom: 8px;">Logical Model</h3>
+                        <p><strong>Purpose:</strong> Detailed attributes, keys, and constraints</p>
+                        <p style="color: #6b7280; margin-top: 8px;">More detailed than conceptual, showing specific attributes, data types, primary keys, and relationships. Database-independent but detailed enough for developers to understand structure. The bridge between business and technical views.</p>
+                    </div>
+
+                    <div class="model-diagram">
+                        <div class="model-visual">⚙️</div>
+                        <h3 style="color: #059669; margin-bottom: 8px;">Physical Model</h3>
+                        <p><strong>Purpose:</strong> Implementation details for databases (indexes, partitions)</p>
+                        <p style="color: #6b7280; margin-top: 8px;">The most detailed level, specifying exactly how data will be stored in a specific database system. Includes indexes, partitions, storage parameters, and performance optimizations.</p>
+                    </div>
+
+                    <div class="model-diagram">
+                        <div class="model-visual">📊</div>
+                        <h3 style="color: #d97706; margin-bottom: 8px;">Dimensional Model</h3>
+                        <p><strong>Purpose:</strong> Star and snowflake schemas for analytics and BI</p>
+                        <p style="color: #6b7280; margin-top: 8px;">Optimized for analytics and reporting with fact tables (measurements) and dimension tables (context). Star schemas keep dimensions denormalized for speed, while snowflake schemas normalize them for storage efficiency.</p>
+                    </div>
+
+                    <div class="model-diagram">
+                        <div class="model-visual">🌳</div>
+                        <h3 style="color: #7c3aed; margin-bottom: 8px;">Hierarchical & Network Models</h3>
+                        <p><strong>Purpose:</strong> Legacy structures for specialized use cases</p>
+                        <p style="color: #6b7280; margin-top: 8px;">Older model types still used in specific contexts. Hierarchical models organize data in tree structures, while network models allow more complex many-to-many relationships. Common in mainframe systems and specialized applications.</p>
+                    </div>
+                `
+            },
+            {
+                title: "Tools & Technologies",
+                icon: "🛠️",
+                content: `
+                    <h2>Tools & Technologies</h2>
+                    <p style="color: #6b7280; margin-bottom: 24px;">Modern platforms and tools for creating, managing, and documenting data models.</p>
+                    
+                    <div class="card-item tool-card" style="border-color: #3b82f6; margin-bottom: 20px;">
+                        <div class="flex-row">
+                            <div style="font-size: 48px;">🎨</div>
+                            <div style="flex: 1;">
+                                <h3 style="color: #1e40af; margin-bottom: 8px;">Professional Modelling Tools</h3>
+                                <p style="margin-bottom: 12px;"><strong>Tools:</strong> ERwin Data Modeler, PowerDesigner, ER/Studio</p>
+                                <div style="background-color: #eff6ff; padding: 12px; border-radius: 4px;">
+                                    Enterprise-grade tools with advanced features for reverse engineering existing databases, forward engineering to create databases from models, version control, and team collaboration.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-item tool-card" style="border-color: #6366f1; margin-bottom: 20px;">
+                        <div class="flex-row">
+                            <div style="font-size: 48px;">☁️</div>
+                            <div style="flex: 1;">
+                                <h3 style="color: #4f46e5; margin-bottom: 8px;">Cloud-Based Diagramming</h3>
+                                <p style="margin-bottom: 12px;"><strong>Platforms:</strong> Lucidchart, dbdiagram.io, draw.io, Miro</p>
+                                <div style="background-color: #eef2ff; padding: 12px; border-radius: 4px;">
+                                    Web-based collaborative tools perfect for distributed teams. Create ER diagrams with drag-and-drop interfaces, share in real-time, and integrate with documentation platforms. Many offer free tiers for small teams.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-item tool-card" style="border-color: #10b981; margin-bottom: 20px;">
+                        <div class="flex-row">
+                            <div style="font-size: 48px;">💼</div>
+                            <div style="flex: 1;">
+                                <h3 style="color: #059669; margin-bottom: 8px;">Office Suite Tools</h3>
+                                <p style="margin-bottom: 12px;"><strong>Software:</strong> Microsoft Visio, OmniGraffle</p>
+                                <div style="background-color: #f0fdf4; padding: 12px; border-radius: 4px;">
+                                    Traditional diagramming software with extensive shape libraries and templates for creating professional ER diagrams. Integrates well with Office applications for documentation and presentations.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-item tool-card" style="border-color: #f59e0b; margin-bottom: 20px;">
+                        <div class="flex-row">
+                            <div style="font-size: 48px;">🗄️</div>
+                            <div style="flex: 1;">
+                                <h3 style="color: #d97706; margin-bottom: 8px;">Database-Specific Tools</h3>
+                                <p style="margin-bottom: 12px;"><strong>Tools:</strong> MySQL Workbench, pgAdmin, SQL Server Management Studio</p>
+                                <div style="background-color: #fef3c7; padding: 12px; border-radius: 4px;">
+                                    Built-in modelling tools within database management systems. Perfect for quick models, reverse engineering existing databases, and immediate implementation. Free and tightly integrated with their respective databases.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-item tool-card" style="border-color: #a855f7;">
+                        <div class="flex-row">
+                            <div style="font-size: 48px;">📝</div>
+                            <div style="flex: 1;">
+                                <h3 style="color: #7c3aed; margin-bottom: 8px;">Code-Based Modelling</h3>
+                                <p style="margin-bottom: 12px;"><strong>Tools:</strong> PlantUML, Mermaid, dbml (Database Markup Language)</p>
+                                <div style="background-color: #faf5ff; padding: 12px; border-radius: 4px;">
+                                    Define models as code, enabling version control, automated diagram generation, and integration with CI/CD pipelines. Perfect for developers who prefer text-based workflows and infrastructure-as-code approaches.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `
+            },
+            {
+                title: "Practical Applications",
+                icon: "💼",
+                content: `
+                    <h2>Practical Applications</h2>
+                    <p style="color: #6b7280; margin-bottom: 24px;">How data modelling transforms system design across different industries.</p>
+                    
+                    <div class="card-item" style="background: linear-gradient(to right, #fef3c7, #fde68a); margin-bottom: 20px;">
+                        <div class="flex-row">
+                            <div class="icon-large">💰</div>
+                            <div>
+                                <h3 style="color: #d97706; margin-bottom: 8px;">Finance</h3>
+                                <p><strong>Application:</strong> Modelling transactions, accounts, and compliance data</p>
+                                <p style="margin-top: 8px; color: #6b7280;">Financial institutions model complex relationships between accounts, transactions, customers, and regulatory requirements. Models ensure accurate transaction recording, support fraud detection, enable audit trails, and maintain compliance with financial regulations like SOX and Basel III.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-item" style="background: linear-gradient(to right, #f0fdf4, #dcfce7); margin-bottom: 20px;">
+                        <div class="flex-row">
+                            <div class="icon-large">🏥</div>
+                            <div>
+                                <h3 style="color: #059669; margin-bottom: 8px;">Healthcare</h3>
+                                <p><strong>Application:</strong> Patient records, treatments, and outcomes</p>
+                                <p style="margin-top: 8px; color: #6b7280;">Healthcare systems model patient demographics, medical histories, diagnoses, treatments, medications, and outcomes. Proper modelling ensures patient safety, supports treatment decisions, enables research, and maintains HIPAA compliance for protected health information.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-item" style="background: linear-gradient(to right, #eff6ff, #dbeafe); margin-bottom: 20px;">
+                        <div class="flex-row">
+                            <div class="icon-large">📱</div>
+                            <div>
+                                <h3 style="color: #1e40af; margin-bottom: 8px;">Social Media</h3>
+                                <p><strong>Application:</strong> User profiles, posts, and engagement metrics</p>
+                                <p style="margin-top: 8px; color: #6b7280;">Social platforms model users, connections, content, interactions, and recommendations. Models handle billions of relationships efficiently, support real-time feeds, enable targeted advertising, and power recommendation algorithms that keep users engaged.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-item" style="background: linear-gradient(to right, #fef2f2, #fee2e2); margin-bottom: 20px;">
+                        <div class="flex-row">
+                            <div class="icon-large">🛍️</div>
+                            <div>
+                                <h3 style="color: #991b1b; margin-bottom: 8px;">Retail</h3>
+                                <p><strong>Application:</strong> Customer, product, and sales relationships</p>
+                                <p style="margin-top: 8px; color: #6b7280;">Retailers model products, inventory, customers, orders, and shipments. Well-designed models enable accurate inventory tracking, support omnichannel experiences, power recommendation engines, and provide insights for demand forecasting and pricing optimization.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-item" style="background: linear-gradient(to right, #eef2ff, #e0e7ff);">
+                        <div class="flex-row">
+                            <div class="icon-large">🏛️</div>
+                            <div>
+                                <h3 style="color: #4f46e5; margin-bottom: 8px;">Government</h3>
+                                <p><strong>Application:</strong> Census and citizen data structures</p>
+                                <p style="margin-top: 8px; color: #6b7280;">Government agencies model citizen records, services, benefits, and infrastructure. Models support everything from tax collection to social services, enable policy analysis, maintain election systems, and ensure data security for sensitive citizen information.</p>
+                            </div>
+                        </div>
+                    </div>
+                `
+            },
+            {
+                title: "Best Practices",
+                icon: "✨",
+                content: `
+                    <h2>Best Practices for Data Modelling</h2>
+                    <p style="color: #6b7280; margin-bottom: 24px;">Five essential practices to create robust, maintainable data models.</p>
+                    
+                    <div class="step-box" style="background-color: #eff6ff;">
+                        <div class="step-number" style="background-color: #3b82f6;">1</div>
+                        <div>
+                            <h3 style="color: #1e40af;">Start with Business Requirements</h3>
+                            <p>Align models with organizational goals and business processes. Don't start with technology—start with understanding what the business needs to accomplish. Model the business first, then map it to technical implementation.</p>
+                        </div>
+                    </div>
+
+                    <div class="step-box" style="background-color: #f0fdf4;">
+                        <div class="step-number" style="background-color: #10b981;">2</div>
+                        <div>
+                            <h3 style="color: #059669;">Iterate and Refine</h3>
+                            <p>Models evolve as data and needs change. Don't expect to get everything perfect on the first attempt. Review regularly, gather feedback, and refine based on real-world usage and changing requirements.</p>
+                        </div>
+                    </div>
+
+                    <div class="step-box" style="background-color: #eef2ff;">
+                        <div class="step-number" style="background-color: #6366f1;">3</div>
+                        <div>
+                            <h3 style="color: #4f46e5;">Balance Normalization and Performance</h3>
+                            <p>Choose based on use case—OLTP systems benefit from normalization, while OLAP systems often need denormalization. Understand your access patterns and optimize accordingly. Don't blindly follow rules; make informed trade-offs.</p>
+                        </div>
+                    </div>
+
+                    <div class="step-box" style="background-color: #fef3c7;">
+                        <div class="step-number" style="background-color: #f59e0b;">4</div>
+                        <div>
+                            <h3 style="color: #d97706;">Document Thoroughly</h3>
+                            <p>Ensure clarity for developers and analysts. Document entity definitions, attribute meanings, business rules, and design decisions. Good documentation is as valuable as the model itself—it preserves institutional knowledge.</p>
+                        </div>
+                    </div>
+
+                    <div class="step-box" style="background-color: #faf5ff;">
+                        <div class="step-number" style="background-color: #a855f7;">5</div>
+                        <div>
+                            <h3 style="color: #7c3aed;">Validate with Stakeholders</h3>
+                            <p>Confirm accuracy and usability with both technical and business teams. Models only work if they accurately represent business reality and can be implemented efficiently. Get feedback early and often.</p>
+                        </div>
+                    </div>
+                `
+            },
+            {
+                title: "Summary & Takeaways",
+                icon: "🎓",
+                content: `
+                    <h2>Summary & Takeaways</h2>
+                    
+                    <div class="info-box green" style="margin-bottom: 16px;">
+                        <div class="flex-row">
+                            <span class="checkmark">✓</span>
+                            <p style="font-size: 18px;">Data Modelling provides the blueprint for organizing and structuring data systems effectively</p>
+                        </div>
+                    </div>
+
+                    <div class="info-box green" style="margin-bottom: 16px;">
+                        <div class="flex-row">
+                            <span class="checkmark">✓</span>
+                            <p style="font-size: 18px;">Conceptual, logical, and physical models serve different audiences and purposes throughout development</p>
+                        </div>
+                    </div>
+
+                    <div class="info-box green" style="margin-bottom: 16px;">
+                        <div class="flex-row">
+                            <span class="checkmark">✓</span>
+                            <p style="font-size: 18px;">Core principles like normalization, keys, and constraints ensure data integrity and system performance</p>
+                        </div>
+                    </div>
+
+                    <div class="info-box green">
+                        <div class="flex-row">
+                            <span class="checkmark">✓</span>
+                            <p style="font-size: 18px;">Strong modelling practices enable scalability, efficiency, and clarity across all data systems</p>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 32px; padding: 24px; background: linear-gradient(to right, #eff6ff, #eef2ff); border-radius: 8px;">
+                        <h3 style="color: #1e40af; margin-bottom: 12px;">🎯 Key Principles to Remember</h3>
+                        <ul>
+                            <li><strong>Model the business first</strong> - Understand requirements before designing structures</li>
+                            <li><strong>Choose the right abstraction</strong> - Use conceptual for strategy, logical for design, physical for implementation</li>
+                            <li><strong>Balance is key</strong> - Normalize for data integrity, denormalize for performance when needed</li>
+                            <li><strong>Document everything</strong> - Future you (and your team) will thank you</li>
+                            <li><strong>Iterate continuously</strong> - Models evolve with business needs</li>
+                            <li><strong>Validate constantly</strong> - Get feedback from all stakeholders</li>
+                        </ul>
+                    </div>
+
+                    <div class="info-box yellow" style="margin-top: 24px;">
+                        <div class="flex-row">
+                            <div style="font-size: 32px;">🏗️</div>
+                            <div>
+                                <h3 style="color: #d97706; margin-bottom: 8px;">The Golden Rule of Data Modelling</h3>
+                                <p><strong>"A good data model is a conversation starter, not a conversation ender."</strong></p>
+                                <p style="margin-top: 8px;">Your model should facilitate discussion between business and technical teams, reveal hidden assumptions, and evolve through collaboration. The best models emerge from dialogue, not isolation.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="cta-box">
+                        <h3>📌 Continue Your Learning Journey</h3>
+                        <p style="font-size: 18px; margin-bottom: 24px;">You've now completed all 9 parts of this comprehensive LinkedIn Learning Series on Data Management! From fundamentals to advanced modelling, you've built a complete understanding of modern data practices.</p>
+                        <p style="margin-bottom: 24px;">Ready to apply these skills? Connect with me on LinkedIn for more insights, project collaborations, and future learning content.</p>
+                        <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+                            <a href="https://www.linkedin.com/in/aditya-bhutada94/" target="_blank" class="cta-btn">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                                </svg>
+                                Connect on LinkedIn
+                            </a>
+                            <a href="https://github.com/adityaa2b" target="_blank" class="cta-btn">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                                </svg>
+                                View on GitHub
+                            </a>
+                        </div>
+                    </div>
+
+                    <div style="text-align: center; margin-top: 32px; padding: 24px; background-color: #f9fafb; border-radius: 8px;">
+                        <p style="font-size: 18px; color: #6b7280; margin-bottom: 8px;">🎉 Congratulations on completing the entire series!</p>
+                        <p style="color: #9ca3af;">You now have a comprehensive understanding of modern data management practices</p>
+                        <p style="color: #3b82f6; font-weight: 600; margin-top: 12px;">Thank you for learning with me! Keep building amazing things with data! 🚀</p>
+                    </div>
+                `
+            }
+        ];
+
+        function renderPage() {
+            const page = pages[currentPage];
+            document.getElementById('pageIcon').textContent = page.icon;
+            document.getElementById('pageNumber').textContent = `Chapter ${currentPage + 1} of ${pages.length}`;
+            document.getElementById('pageTitle').textContent = page.title;
+            document.getElementById('pageContent').innerHTML = page.content;
+            document.getElementById('pageIndicator').textContent = `Page ${currentPage + 1} of ${pages.length}`;
+            
+            document.getElementById('prevBtn').disabled = currentPage === 0;
+            document.getElementById('nextBtn').disabled = currentPage === pages.length - 1;
+            
+            completedPages.add(currentPage);
+            const progress = ((completedPages.size) / pages.length) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+            document.getElementById('progressText').textContent = Math.round(progress) + '% Complete';
+            
+            window.scrollTo(0, 0);
+        }
+
+        function renderMenu() {
+            const menuItems = pages.map((page, index) => `
+                <button class="menu-item ${currentPage === index ? 'active' : ''}" onclick="goToPage(${index})">
+                    <div class="menu-item-content">
+                        <span class="menu-item-icon">${page.icon}</span>
+                        <div style="flex: 1; text-align: left;">
+                            <div class="menu-item-title">${page.title}</div>
+                            <div class="menu-item-subtitle">Chapter ${index + 1}</div>
+                        </div>
+                        ${completedPages.has(index) ? '<span style="color: #10b981; font-size: 20px;">✓</span>' : ''}
+                    </div>
+                </button>
+            `).join('');
+            
+            document.getElementById('menuItems').innerHTML = menuItems;
+        }
+
+        function toggleMenu() {
+            const overlay = document.getElementById('menuOverlay');
+            const sidebar = document.getElementById('menuSidebar');
+            overlay.classList.toggle('active');
+            sidebar.classList.toggle('active');
+        }
+
+        function goToPage(index) {
+            currentPage = index;
+            renderPage();
+            renderMenu();
+            toggleMenu();
+        }
+
+        function nextPage() {
+            if (currentPage < pages.length - 1) {
+                currentPage++;
+                renderPage();
+                renderMenu();
+            }
+        }
+
+        function previousPage() {
+            if (currentPage > 0) {
+                currentPage--;
+                renderPage();
+                renderMenu();
+            }
+        }
+
+        renderPage();
+        renderMenu();
+    </script>
+</body>
+</html>
