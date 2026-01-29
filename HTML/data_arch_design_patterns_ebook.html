@@ -1,0 +1,1193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Architecture & Design Patterns - Interactive E-Book</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+            background: linear-gradient(135deg, #DBEAFE 0%, #ffffff 50%, #E0E7FF 100%);
+            min-height: 100vh;
+        }
+        
+        .header {
+            background: white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 16px;
+        }
+        
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        
+        .header-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .header-title h1 {
+            font-size: 20px;
+            color: #1f2937;
+        }
+        
+        .header-title p {
+            font-size: 14px;
+            color: #6b7280;
+        }
+        
+        .menu-btn {
+            background: none;
+            border: none;
+            padding: 8px;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: background 0.2s;
+        }
+        
+        .menu-btn:hover {
+            background: #f3f4f6;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e5e7eb;
+            border-radius: 9999px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(to right, #3b82f6, #6366f1);
+            transition: width 0.5s ease;
+        }
+        
+        .progress-text {
+            text-align: right;
+            font-size: 12px;
+            color: #6b7280;
+            margin-top: 4px;
+        }
+        
+        .menu-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 200;
+            display: none;
+        }
+        
+        .menu-overlay.active {
+            display: block;
+        }
+        
+        .menu-sidebar {
+            position: fixed;
+            right: 0;
+            top: 0;
+            height: 100%;
+            width: 320px;
+            background: white;
+            padding: 24px;
+            overflow-y: auto;
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+            z-index: 201;
+        }
+        
+        .menu-sidebar.active {
+            transform: translateX(0);
+        }
+        
+        .menu-sidebar h2 {
+            font-size: 24px;
+            margin-bottom: 24px;
+            color: #1f2937;
+        }
+        
+        .menu-item {
+            width: 100%;
+            text-align: left;
+            padding: 16px;
+            margin-bottom: 8px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            background: #f9fafb;
+            transition: all 0.2s;
+        }
+        
+        .menu-item:hover {
+            background: #f3f4f6;
+        }
+        
+        .menu-item.active {
+            background: linear-gradient(to right, #3b82f6, #6366f1);
+            color: white;
+            box-shadow: 0 4px 6px rgba(59, 130, 246, 0.3);
+        }
+        
+        .menu-item-content {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .menu-item-icon {
+            font-size: 24px;
+        }
+        
+        .menu-item-title {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        
+        .menu-item-subtitle {
+            font-size: 12px;
+            opacity: 0.75;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 32px 16px;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            padding: 48px;
+            min-height: 600px;
+        }
+        
+        .page-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 2px solid #f3f4f6;
+        }
+        
+        .page-icon {
+            font-size: 48px;
+        }
+        
+        .page-info p {
+            font-size: 14px;
+            color: #6b7280;
+        }
+        
+        .page-info h2 {
+            font-size: 28px;
+            color: #1f2937;
+        }
+        
+        .content {
+            line-height: 1.7;
+        }
+        
+        .content h1 {
+            font-size: 36px;
+            color: #3b82f6;
+            margin-bottom: 16px;
+        }
+        
+        .content h2 {
+            font-size: 28px;
+            color: #1f2937;
+            margin-bottom: 16px;
+        }
+        
+        .content h3 {
+            font-size: 24px;
+            color: #1f2937;
+            margin-bottom: 12px;
+        }
+        
+        .content h4 {
+            font-size: 20px;
+            margin-bottom: 8px;
+        }
+        
+        .content p {
+            font-size: 18px;
+            color: #374151;
+            margin-bottom: 16px;
+        }
+
+        .content ul {
+            margin-left: 24px;
+            margin-top: 12px;
+            line-height: 1.8;
+        }
+
+        .content li {
+            font-size: 18px;
+            color: #374151;
+            margin-bottom: 8px;
+        }
+        
+        .info-box {
+            padding: 24px;
+            border-radius: 8px;
+            margin: 24px 0;
+            border-left: 4px solid;
+        }
+
+        .info-box.blue {
+            background-color: #eff6ff;
+            border-color: #3b82f6;
+        }
+
+        .info-box.indigo {
+            background-color: #eef2ff;
+            border-color: #6366f1;
+        }
+
+        .info-box.green {
+            background-color: #f0fdf4;
+            border-color: #10b981;
+        }
+
+        .info-box.purple {
+            background-color: #faf5ff;
+            border-color: #a855f7;
+        }
+
+        .info-box.yellow {
+            background-color: #fef3c7;
+            border-color: #f59e0b;
+        }
+        
+        .grid {
+            display: grid;
+            gap: 16px;
+            margin: 24px 0;
+        }
+        
+        .grid-2 {
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        }
+        
+        .grid-3 {
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        }
+        
+        .card-item {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+        }
+        
+        .card-item:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            transform: translateY(-2px);
+        }
+        
+        .flex-row {
+            display: flex;
+            gap: 16px;
+            align-items: flex-start;
+        }
+        
+        .icon-large {
+            font-size: 48px;
+            flex-shrink: 0;
+        }
+        
+        .step-box {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+            transition: all 0.3s;
+        }
+        
+        .step-box:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        .step-number {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+        
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 32px;
+        }
+        
+        .nav-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .nav-btn:disabled {
+            background: #e5e7eb;
+            color: #9ca3af;
+            cursor: not-allowed;
+        }
+        
+        .nav-btn-primary {
+            background: linear-gradient(to right, #3b82f6, #6366f1);
+            color: white;
+            box-shadow: 0 2px 4px rgba(59, 130, 246, 0.3);
+        }
+        
+        .nav-btn-primary:hover:not(:disabled) {
+            box-shadow: 0 4px 8px rgba(59, 130, 246, 0.4);
+            transform: translateY(-2px);
+        }
+        
+        .page-indicator {
+            text-align: center;
+            color: #6b7280;
+            font-size: 14px;
+        }
+        
+        .cta-box {
+            background: linear-gradient(to right, #3b82f6, #6366f1);
+            color: white;
+            padding: 32px;
+            border-radius: 8px;
+            margin-top: 32px;
+        }
+        
+        .cta-box h3 {
+            color: white;
+            margin-bottom: 16px;
+        }
+        
+        .cta-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: white;
+            color: #3b82f6;
+            padding: 12px 24px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+            margin-right: 12px;
+            margin-bottom: 12px;
+        }
+        
+        .cta-btn:hover {
+            background: #f3f4f6;
+            transform: translateY(-2px);
+        }
+        
+        .checkmark {
+            color: #10b981;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+        
+        .series-badge {
+            background: linear-gradient(to right, #3b82f6, #6366f1);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            display: inline-block;
+            margin-bottom: 16px;
+        }
+
+        .tool-card {
+            border-left: 4px solid;
+            margin-bottom: 20px;
+        }
+
+        .pattern-diagram {
+            background: #f9fafb;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 24px;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .pattern-visual {
+            font-size: 64px;
+            margin: 16px 0;
+        }
+        
+        @media (max-width: 768px) {
+            .card {
+                padding: 24px;
+            }
+            
+            .menu-sidebar {
+                width: 100%;
+            }
+            
+            .content h1 {
+                font-size: 28px;
+            }
+            
+            .content h2 {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-content">
+            <div class="header-top">
+                <div class="header-title">
+                    <div style="font-size: 28px;">🏛️</div>
+                    <div>
+                        <h1>Data Architecture & Design Patterns</h1>
+                        <p>by Aditya Bhutada • Part 10</p>
+                    </div>
+                </div>
+                <button class="menu-btn" onclick="toggleMenu()">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="3" y1="12" x2="21" y2="12"></line>
+                        <line x1="3" y1="6" x2="21" y2="6"></line>
+                        <line x1="3" y1="18" x2="21" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressBar"></div>
+            </div>
+            <div class="progress-text" id="progressText">0% Complete</div>
+        </div>
+    </div>
+
+    <div class="menu-overlay" id="menuOverlay" onclick="toggleMenu()"></div>
+    
+    <div class="menu-sidebar" id="menuSidebar">
+        <h2>Table of Contents</h2>
+        <div id="menuItems"></div>
+    </div>
+
+    <div class="container">
+        <div class="card">
+            <div class="page-header">
+                <span class="page-icon" id="pageIcon">🏛️</span>
+                <div class="page-info">
+                    <p id="pageNumber">Chapter 1 of 10</p>
+                    <h2 id="pageTitle">Welcome</h2>
+                </div>
+            </div>
+            <div class="content" id="pageContent"></div>
+        </div>
+
+        <div class="navigation">
+            <button class="nav-btn nav-btn-primary" id="prevBtn" onclick="previousPage()">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="15 18 9 12 15 6"></polyline>
+                </svg>
+                Previous
+            </button>
+            <div class="page-indicator" id="pageIndicator">Page 1 of 10</div>
+            <button class="nav-btn nav-btn-primary" id="nextBtn" onclick="nextPage()">
+                Next
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        let currentPage = 0;
+        let completedPages = new Set();
+
+        const pages = [
+            {
+                title: "Welcome",
+                icon: "🏛️",
+                content: `
+                    <div style="text-align: center; margin-bottom: 32px;">
+                        <span class="series-badge">LinkedIn Learning Series • Part 10</span>
+                        <h1>Data Architecture & Design Patterns</h1>
+                        <p style="font-size: 22px; color: #3b82f6; font-weight: 600; margin-top: 8px;">Blueprints for Scalable and Reliable Data Systems</p>
+                        <p style="font-size: 18px; color: #9ca3af; margin-top: 8px;">by Aditya Bhutada</p>
+                    </div>
+                    
+                    <div class="info-box blue">
+                        <p style="font-size: 18px;">Welcome to Part 10! After learning data modelling fundamentals, now discover how to architect complete data systems using proven design patterns. Architecture is the art of building systems that scale, adapt, and endure.</p>
+                    </div>
+                    
+                    <div class="grid grid-3">
+                        <div class="card-item" style="border-top: 4px solid #3b82f6;">
+                            <div style="font-size: 32px; margin-bottom: 8px;">📖</div>
+                            <div style="font-weight: 600; color: #1f2937;">10 Chapters</div>
+                            <div style="font-size: 14px; color: #6b7280;">Complete framework</div>
+                        </div>
+                        <div class="card-item" style="border-top: 4px solid #6366f1;">
+                            <div style="font-size: 32px; margin-bottom: 8px;">⏱️</div>
+                            <div style="font-weight: 600; color: #1f2937;">30 min read</div>
+                            <div style="font-size: 14px; color: #6b7280;">Architecture patterns</div>
+                        </div>
+                        <div class="card-item" style="border-top: 4px solid #10b981;">
+                            <div style="font-size: 32px; margin-bottom: 8px;">✔</div>
+                            <div style="font-weight: 600; color: #1f2937;">7 Patterns</div>
+                            <div style="font-size: 14px; color: #6b7280;">Design solutions</div>
+                        </div>
+                    </div>
+                `
+            },
+            {
+                title: "Introduction",
+                icon: "📋",
+                content: `
+                    <h2>Introduction</h2>
+                    
+                    <div class="info-box indigo">
+                        <p style="font-size: 18px; font-style: italic;">Data Architecture defines the structure and organization of data systems, while Design Patterns provide reusable solutions to common challenges in data engineering. Together, they ensure scalability, reliability, and efficiency in modern data ecosystems. Architecture is the foundation that determines whether your data systems will thrive or struggle as your organization grows.</p>
+                    </div>
+                    
+                    <div style="margin-top: 32px;">
+                        <h3 style="color: #3b82f6;">The Foundation of Data Systems</h3>
+                        <p>Every successful data system starts with solid architecture. Just as a building needs a strong foundation and blueprint, data systems need well-designed architecture and proven patterns. These decisions made early determine how easily you can scale, adapt to new requirements, and maintain reliability as your data grows.</p>
+                        <ul>
+                            <li><strong>Blueprint</strong> - Defines overall system structure and component relationships</li>
+                            <li><strong>Patterns</strong> - Provides tested solutions to recurring challenges</li>
+                            <li><strong>Scalability</strong> - Ensures systems grow with business needs</li>
+                            <li><strong>Reliability</strong> - Guarantees consistent performance under varying conditions</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="card-item" style="background: linear-gradient(to right, #eff6ff, #eef2ff); margin-top: 32px;">
+                        <div class="flex-row">
+                            <div style="font-size: 48px;">💡</div>
+                            <div>
+                                <h3 style="color: #1e40af; margin-bottom: 8px;">Why Architecture Matters</h3>
+                                <p>Poor architecture decisions cost companies millions. Systems that can't scale require complete rebuilds. Inflexible designs prevent innovation. Security vulnerabilities emerge from architectural flaws. Good architecture isn't just about making things work—it's about making them work well, scale gracefully, and adapt to the future.</p>
+                            </div>
+                        </div>
+                    </div>
+                `
+            },
+            {
+                title: "Why It Matters",
+                icon: "⭐",
+                content: `
+                    <h2>Why Data Architecture & Design Patterns Matter</h2>
+                    
+                    <div class="grid" style="gap: 20px;">
+                        <div class="card-item" style="background: linear-gradient(to right, #eff6ff, #dbeafe);">
+                            <div class="flex-row">
+                                <div class="icon-large">🛡️</div>
+                                <div>
+                                    <h3 style="color: #1e40af; margin-bottom: 8px;">Resilience</h3>
+                                    <p>Ensures systems can recover from failures gracefully. Well-architected systems handle component failures, network issues, and unexpected load spikes without complete system breakdown.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-item" style="background: linear-gradient(to right, #eef2ff, #e0e7ff);">
+                            <div class="flex-row">
+                                <div class="icon-large">✓</div>
+                                <div>
+                                    <h3 style="color: #4f46e5; margin-bottom: 8px;">Consistency</h3>
+                                    <p>Provides standardized approaches across teams. Design patterns create a shared language, enabling teams to collaborate effectively and maintain systems efficiently.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-item" style="background: linear-gradient(to right, #f0fdf4, #dcfce7);">
+                            <div class="flex-row">
+                                <div class="icon-large">⚡</div>
+                                <div>
+                                    <h3 style="color: #059669; margin-bottom: 8px;">Efficiency</h3>
+                                    <p>Reduces complexity with proven design solutions. Rather than reinventing the wheel, teams leverage battle-tested patterns that solve common problems effectively.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-item" style="background: linear-gradient(to right, #fef3c7, #fde68a);">
+                            <div class="flex-row">
+                                <div class="icon-large">📈</div>
+                                <div>
+                                    <h3 style="color: #d97706; margin-bottom: 8px;">Scalability</h3>
+                                    <p>Supports growing data volumes and diverse sources. Good architecture anticipates growth, allowing systems to scale horizontally and vertically as needed.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-item" style="background: linear-gradient(to right, #fef2f2, #fee2e2);">
+                            <div class="flex-row">
+                                <div class="icon-large">💼</div>
+                                <div>
+                                    <h3 style="color: #991b1b; margin-bottom: 8px;">Business Value</h3>
+                                    <p>Enables faster insights and innovation. Well-designed architecture accelerates time-to-market, reduces operational costs, and unlocks new business opportunities.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="info-box blue" style="margin-top: 32px;">
+                        <div class="flex-row">
+                            <div style="font-size: 32px;">💡</div>
+                            <div>
+                                <h3 style="color: #1e40af; margin-bottom: 8px;">Real-World Example: Data Lakehouse Architecture</h3>
+                                <p>A company adopting a data lakehouse pattern can unify structured and unstructured data for analytics. Instead of maintaining separate data warehouses and data lakes, they create a single platform that combines the benefits of both—structured query performance with the flexibility to handle raw data. This reduces infrastructure costs, simplifies data management, and accelerates insights.</p>
+                            </div>
+                        </div>
+                    </div>
+                `
+            },
+            {
+                title: "Core Principles",
+                icon: "🎯",
+                content: `
+                    <h2>Core Principles of Data Architecture</h2>
+                    <p style="color: #6b7280; margin-bottom: 24px;">Five fundamental principles that guide effective data architecture design.</p>
+                    
+                    <div class="step-box" style="background-color: #eff6ff;">
+                        <div class="step-number" style="background-color: #3b82f6;">1</div>
+                        <div>
+                            <h3 style="color: #1e40af;">Centralization vs. Decentralization</h3>
+                            <p>Balance between unified repositories and distributed systems. Centralized architectures provide consistency and simplicity, while decentralized approaches offer autonomy and scalability. Choose based on organizational structure and data ownership models.</p>
+                        </div>
+                    </div>
+
+                    <div class="step-box" style="background-color: #eef2ff;">
+                        <div class="step-number" style="background-color: #6366f1;">2</div>
+                        <div>
+                            <h3 style="color: #4f46e5;">Data Flow</h3>
+                            <p>Clear pipelines from ingestion to consumption. Define how data moves through your system—from source systems, through transformation layers, to analytics and applications. Well-designed data flows are observable, repeatable, and fault-tolerant.</p>
+                        </div>
+                    </div>
+
+                    <div class="step-box" style="background-color: #f0fdf4;">
+                        <div class="step-number" style="background-color: #10b981;">3</div>
+                        <div>
+                            <h3 style="color: #059669;">Interoperability</h3>
+                            <p>Systems must integrate seamlessly. Use standard protocols, APIs, and data formats to ensure components work together. Avoid vendor lock-in by designing for portability and using open standards where possible.</p>
+                        </div>
+                    </div>
+
+                    <div class="step-box" style="background-color: #fef3c7;">
+                        <div class="step-number" style="background-color: #f59e0b;">4</div>
+                        <div>
+                            <h3 style="color: #d97706;">Governance</h3>
+                            <p>Policies for security, compliance, and metadata. Embed governance into architecture from the start—not as an afterthought. Include access controls, data lineage, quality checks, and compliance measures at every layer.</p>
+                        </div>
+                    </div>
+
+                    <div class="step-box" style="background-color: #faf5ff;">
+                        <div class="step-number" style="background-color: #a855f7;">5</div>
+                        <div>
+                            <h3 style="color: #7c3aed;">Flexibility</h3>
+                            <p>Adaptable to evolving business needs. Build for change, not just current requirements. Use modular designs, loose coupling, and abstraction layers that allow components to evolve independently without breaking the entire system.</p>
+                        </div>
+                    </div>
+                `
+            },
+            {
+                title: "Design Patterns",
+                icon: "🧩",
+                content: `
+                    <h2>Common Data Design Patterns</h2>
+                    <p style="color: #6b7280; margin-bottom: 24px;">Seven essential patterns that solve recurring challenges in data systems.</p>
+                    
+                    <div class="pattern-diagram">
+                        <div class="pattern-visual">🏢</div>
+                        <h3 style="color: #1e40af; margin-bottom: 8px;">Data Warehouse Pattern</h3>
+                        <p><strong>Use Case:</strong> Centralized, structured storage for analytics</p>
+                        <p style="color: #6b7280; margin-top: 8px;">Traditional pattern for business intelligence. Data is extracted, transformed, and loaded into a structured schema optimized for queries. Best for well-defined reporting needs with structured data. Examples: Snowflake, BigQuery, Redshift.</p>
+                    </div>
+
+                    <div class="pattern-diagram">
+                        <div class="pattern-visual">🌊</div>
+                        <h3 style="color: #4f46e5; margin-bottom: 8px;">Data Lake Pattern</h3>
+                        <p><strong>Use Case:</strong> Raw, unstructured storage for flexibility</p>
+                        <p style="color: #6b7280; margin-top: 8px;">Store data in its raw format without upfront schema definition. Provides flexibility to process data for various use cases later. Best for diverse data types, exploratory analysis, and machine learning. Examples: AWS S3, Azure Data Lake, Google Cloud Storage.</p>
+                    </div>
+
+                    <div class="pattern-diagram">
+                        <div class="pattern-visual">🔀</div>
+                        <h3 style="color: #059669; margin-bottom: 8px;">Data Lakehouse Pattern</h3>
+                        <p><strong>Use Case:</strong> Hybrid approach combining warehouse and lake benefits</p>
+                        <p style="color: #6b7280; margin-top: 8px;">Combines data lake flexibility with data warehouse structure and performance. Supports both structured queries and raw data processing on the same platform. Best for organizations needing both analytics and AI/ML. Examples: Databricks Delta Lake, Apache Iceberg.</p>
+                    </div>
+
+                    <div class="pattern-diagram">
+                        <div class="pattern-visual">⏱️</div>
+                        <h3 style="color: #d97706; margin-bottom: 8px;">Lambda Architecture</h3>
+                        <p><strong>Use Case:</strong> Batch + real-time processing for speed and accuracy</p>
+                        <p style="color: #6b7280; margin-top: 8px;">Dual processing paths: batch layer for accuracy and completeness, speed layer for low-latency approximate results. Combines both for comprehensive views. Best when you need both real-time insights and accurate historical analysis.</p>
+                    </div>
+
+                    <div class="pattern-diagram">
+                        <div class="pattern-visual">🔄</div>
+                        <h3 style="color: #7c3aed; margin-bottom: 8px;">Kappa Architecture</h3>
+                        <p><strong>Use Case:</strong> Stream-only processing for simplicity</p>
+                        <p style="color: #6b7280; margin-top: 8px;">Everything is a stream—batch is just a special case. Single processing path simplifies architecture and operations. Best when real-time processing can handle both current and historical data reprocessing. Examples: Apache Kafka + Flink.</p>
+                    </div>
+
+                    <div class="pattern-diagram">
+                        <div class="pattern-visual">📡</div>
+                        <h3 style="color: #991b1b; margin-bottom: 8px;">Event-Driven Architecture</h3>
+                        <p><strong>Use Case:</strong> Systems react to data events in real time</p>
+                        <p style="color: #6b7280; margin-top: 8px;">Components communicate through events rather than direct calls. Enables loose coupling, scalability, and real-time responsiveness. Best for microservices, real-time analytics, and reactive systems. Examples: Apache Kafka, AWS EventBridge.</p>
+                    </div>
+
+                    <div class="pattern-diagram">
+                        <div class="pattern-visual">🧩</div>
+                        <h3 style="color: #0891b2; margin-bottom: 8px;">Microservices with Data Mesh</h3>
+                        <p><strong>Use Case:</strong> Decentralized ownership of data domains</p>
+                        <p style="color: #6b7280; margin-top: 8px;">Treat data as a product owned by domain teams. Decentralized data architecture with federated governance. Best for large organizations with distinct business domains needing autonomy. Combines domain-driven design with self-serve data infrastructure.</p>
+                    </div>
+                `
+            },
+            {
+                title: "Tools & Technologies",
+                icon: "🛠️",
+                content: `
+                    <h2>Tools & Technologies</h2>
+                    <p style="color: #6b7280; margin-bottom: 24px;">Modern platforms and tools for implementing data architecture and design patterns.</p>
+                    
+                    <div class="card-item tool-card" style="border-color: #3b82f6; margin-bottom: 20px;">
+                        <div class="flex-row">
+                            <div style="font-size: 48px;">🏢</div>
+                            <div style="flex: 1;">
+                                <h3 style="color: #1e40af; margin-bottom: 8px;">Data Warehousing</h3>
+                                <p style="margin-bottom: 12px;"><strong>Platforms:</strong> Snowflake, Google BigQuery, Amazon Redshift, Azure Synapse</p>
+                                <div style="background-color: #eff6ff; padding: 12px; border-radius: 4px;">
+                                    Cloud-native data warehouses with automatic scaling, separation of storage and compute, and optimized query performance for structured analytics and business intelligence workloads.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-item tool-card" style="border-color: #6366f1; margin-bottom: 20px;">
+                        <div class="flex-row">
+                            <div style="font-size: 48px;">🌊</div>
+                            <div style="flex: 1;">
+                                <h3 style="color: #4f46e5; margin-bottom: 8px;">Lakes & Lakehouses</h3>
+                                <p style="margin-bottom: 12px;"><strong>Platforms:</strong> Databricks Delta Lake, AWS S3 + Athena, Azure Data Lake, Apache Iceberg</p>
+                                <div style="background-color: #eef2ff; padding: 12px; border-radius: 4px;">
+                                    Scalable storage for raw and processed data with support for ACID transactions, schema evolution, and both batch and streaming workloads on unified platforms.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-item tool-card" style="border-color: #10b981; margin-bottom: 20px;">
+                        <div class="flex-row">
+                            <div style="font-size: 48px;">📡</div>
+                            <div style="flex: 1;">
+                                <h3 style="color: #059669; margin-bottom: 8px;">Streaming & Events</h3>
+                                <p style="margin-bottom: 12px;"><strong>Tools:</strong> Apache Kafka, Apache Flink, Spark Streaming, AWS Kinesis</p>
+                                <div style="background-color: #f0fdf4; padding: 12px; border-radius: 4px;">
+                                    Real-time data streaming platforms for building event-driven architectures, processing continuous data flows, and implementing Lambda or Kappa patterns.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-item tool-card" style="border-color: #f59e0b; margin-bottom: 20px;">
+                        <div class="flex-row">
+                            <div style="font-size: 48px;">⚙️</div>
+                            <div style="flex: 1;">
+                                <h3 style="color: #d97706; margin-bottom: 8px;">Orchestration</h3>
+                                <p style="margin-bottom: 12px;"><strong>Tools:</strong> Apache Airflow, Prefect, Dagster, Azure Data Factory</p>
+                                <div style="background-color: #fef3c7; padding: 12px; border-radius: 4px;">
+                                    Workflow orchestration platforms for scheduling, monitoring, and managing data pipelines with dependency management, retry logic, and observability.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-item tool-card" style="border-color: #a855f7;">
+                        <div class="flex-row">
+                            <div style="font-size: 48px;">🔒</div>
+                            <div style="flex: 1;">
+                                <h3 style="color: #7c3aed; margin-bottom: 8px;">Governance & Metadata</h3>
+                                <p style="margin-bottom: 12px;"><strong>Tools:</strong> Collibra, Alation, Apache Atlas, AWS Glue Catalog</p>
+                                <div style="background-color: #faf5ff; padding: 12px; border-radius: 4px;">
+                                    Data governance platforms for cataloging, lineage tracking, access control, compliance management, and metadata discovery across the data ecosystem.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `
+            },
+            {
+                title: "Practical Applications",
+                icon: "💼",
+                content: `
+                    <h2>Practical Applications</h2>
+                    <p style="color: #6b7280; margin-bottom: 24px;">How architecture patterns solve real-world challenges across industries.</p>
+                    
+                    <div class="card-item" style="background: linear-gradient(to right, #fef3c7, #fde68a); margin-bottom: 20px;">
+                        <div class="flex-row">
+                            <div class="icon-large">💰</div>
+                            <div>
+                                <h3 style="color: #d97706; margin-bottom: 8px;">Finance</h3>
+                                <p><strong>Pattern:</strong> Lambda Architecture for fraud detection</p>
+                                <p style="margin-top: 8px; color: #6b7280;">Financial institutions use Lambda Architecture to detect fraud in real-time while maintaining accurate historical analysis. The speed layer processes transactions as they occur, flagging suspicious patterns instantly. The batch layer ensures comprehensive, accurate fraud analysis across all historical data for compliance and model training.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-item" style="background: linear-gradient(to right, #f0fdf4, #dcfce7); margin-bottom: 20px;">
+                        <div class="flex-row">
+                            <div class="icon-large">🏥</div>
+                            <div>
+                                <h3 style="color: #059669; margin-bottom: 8px;">Healthcare</h3>
+                                <p><strong>Pattern:</strong> Lakehouse for integrating structured and unstructured patient data</p>
+                                <p style="margin-top: 8px; color: #6b7280;">Healthcare providers use lakehouse architecture to combine structured EHR data with unstructured clinical notes, medical images, and genomic data. This unified platform supports both SQL analytics for reporting and machine learning for diagnostics, all while maintaining HIPAA compliance.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-item" style="background: linear-gradient(to right, #eff6ff, #dbeafe); margin-bottom: 20px;">
+                        <div class="flex-row">
+                            <div class="icon-large">📱</div>
+                            <div>
+                                <h3 style="color: #1e40af; margin-bottom: 8px;">Social Media</h3>
+                                <p><strong>Pattern:</strong> Event-Driven Architecture for real-time engagement tracking</p>
+                                <p style="margin-top: 8px; color: #6b7280;">Social platforms process billions of events daily using event-driven architecture. Every like, share, comment, and view triggers events that update feeds, send notifications, and power recommendation algorithms—all in real-time with loose coupling between services.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-item" style="background: linear-gradient(to right, #fef2f2, #fee2e2); margin-bottom: 20px;">
+                        <div class="flex-row">
+                            <div class="icon-large">🛍️</div>
+                            <div>
+                                <h3 style="color: #991b1b; margin-bottom: 8px;">Retail</h3>
+                                <p><strong>Pattern:</strong> Data Mesh for decentralized customer insights</p>
+                                <p style="margin-top: 8px; color: #6b7280;">Large retailers implement Data Mesh to give each business domain (e-commerce, supply chain, marketing) ownership of their data products. Teams maintain autonomy while federated governance ensures consistency, enabling faster innovation and better customer experiences.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-item" style="background: linear-gradient(to right, #eef2ff, #e0e7ff);">
+                        <div class="flex-row">
+                            <div class="icon-large">🏛️</div>
+                            <div>
+                                <h3 style="color: #4f46e5; margin-bottom: 8px;">Government</h3>
+                                <p><strong>Pattern:</strong> Centralized Warehouse for census and policy analysis</p>
+                                <p style="margin-top: 8px; color: #6b7280;">Government agencies use centralized data warehouses to integrate citizen data, program outcomes, and economic indicators. This single source of truth supports policy analysis, budget allocation, and public reporting with strong governance and security controls.</p>
+                            </div>
+                        </div>
+                    </div>
+                `
+            },
+            {
+                title: "Best Practices",
+                icon: "✨",
+                content: `
+                    <h2>Best Practices for Data Architecture</h2>
+                    <p style="color: #6b7280; margin-bottom: 24px;">Five essential practices to build robust, scalable data architectures.</p>
+                    
+                    <div class="step-box" style="background-color: #eff6ff;">
+                        <div class="step-number" style="background-color: #3b82f6;">1</div>
+                        <div>
+                            <h3 style="color: #1e40af;">Align with Business Goals</h3>
+                            <p>Architecture must serve organizational needs. Start by understanding business objectives, not technology trends. Design architectures that deliver measurable business value—whether that's faster insights, cost reduction, or new capabilities.</p>
+                        </div>
+                    </div>
+
+                    <div class="step-box" style="background-color: #f0fdf4;">
+                        <div class="step-number" style="background-color: #10b981;">2</div>
+                        <div>
+                            <h3 style="color: #059669;">Choose Patterns Wisely</h3>
+                            <p>Match design to use case—batch vs. streaming, centralized vs. decentralized. There's no one-size-fits-all solution. Understand your data characteristics, latency requirements, and team capabilities before selecting patterns.</p>
+                        </div>
+                    </div>
+
+                    <div class="step-box" style="background-color: #eef2ff;">
+                        <div class="step-number" style="background-color: #6366f1;">3</div>
+                        <div>
+                            <h3 style="color: #4f46e5;">Ensure Governance</h3>
+                            <p>Embed compliance and metadata management from the start. Don't treat governance as an afterthought—it's fundamental to architecture. Include access controls, lineage tracking, and quality checks at every layer.</p>
+                        </div>
+                    </div>
+
+                    <div class="step-box" style="background-color: #fef3c7;">
+                        <div class="step-number" style="background-color: #f59e0b;">4</div>
+                        <div>
+                            <h3 style="color: #d97706;">Design for Resilience</h3>
+                            <p>Build fault tolerance into pipelines. Assume components will fail and design accordingly. Implement retry logic, circuit breakers, dead letter queues, and monitoring to ensure graceful degradation rather than catastrophic failure.</p>
+                        </div>
+                    </div>
+
+                    <div class="step-box" style="background-color: #faf5ff;">
+                        <div class="step-number" style="background-color: #a855f7;">5</div>
+                        <div>
+                            <h3 style="color: #7c3aed;">Document & Communicate</h3>
+                            <p>Share architecture diagrams and standards across teams. Architecture only works if everyone understands it. Create clear documentation, hold architecture review sessions, and establish communication channels for architectural decisions.</p>
+                        </div>
+                    </div>
+                `
+            },
+            {
+                title: "Pattern Comparison",
+                icon: "📊",
+                content: `
+                    <h2>Comparing Architecture Patterns</h2>
+                    <p style="color: #6b7280; margin-bottom: 24px;">Understanding when to use each pattern and their trade-offs.</p>
+                    
+                    <div class="grid grid-2">
+                        <div class="card-item" style="background: linear-gradient(to right, #eff6ff, #dbeafe); border-top: 4px solid #3b82f6;">
+                            <h3 style="color: #1e40af; margin-bottom: 12px;">🏢 Warehouse vs. 🌊 Lake</h3>
+                            <div style="background-color: #dbeafe; padding: 12px; border-radius: 6px; margin-bottom: 12px;">
+                                <strong>Warehouse:</strong> Structured, fast queries, high governance
+                            </div>
+                            <div style="background-color: #bfdbfe; padding: 12px; border-radius: 6px;">
+                                <strong>Lake:</strong> Flexible, raw data, lower cost
+                            </div>
+                            <p style="margin-top: 12px; font-size: 16px; color: #6b7280;">Choose warehouse for well-defined BI needs, lake for exploratory analytics and ML.</p>
+                        </div>
+
+                        <div class="card-item" style="background: linear-gradient(to right, #f0fdf4, #dcfce7); border-top: 4px solid #10b981;">
+                            <h3 style="color: #059669; margin-bottom: 12px;">⏱️ Lambda vs. 🔄 Kappa</h3>
+                            <div style="background-color: #dcfce7; padding: 12px; border-radius: 6px; margin-bottom: 12px;">
+                                <strong>Lambda:</strong> Dual paths, complex, accurate + fast
+                            </div>
+                            <div style="background-color: #bbf7d0; padding: 12px; border-radius: 6px;">
+                                <strong>Kappa:</strong> Single path, simpler, stream-only
+                            </div>
+                            <p style="margin-top: 12px; font-size: 16px; color: #6b7280;">Choose Lambda when you need both accuracy and speed, Kappa for simplified stream processing.</p>
+                        </div>
+
+                        <div class="card-item" style="background: linear-gradient(to right, #eef2ff, #e0e7ff); border-top: 4px solid #6366f1;">
+                            <h3 style="color: #4f46e5; margin-bottom: 12px;">🏛️ Centralized vs. 🧩 Mesh</h3>
+                            <div style="background-color: #e0e7ff; padding: 12px; border-radius: 6px; margin-bottom: 12px;">
+                                <strong>Centralized:</strong> Single platform, consistent, controlled
+                            </div>
+                            <div style="background-color: #c7d2fe; padding: 12px; border-radius: 6px;">
+                                <strong>Data Mesh:</strong> Domain-owned, autonomous, federated
+                            </div>
+                            <p style="margin-top: 12px; font-size: 16px; color: #6b7280;">Choose centralized for smaller orgs, mesh for large enterprises with distinct domains.</p>
+                        </div>
+
+                        <div class="card-item" style="background: linear-gradient(to right, #fef3c7, #fde68a); border-top: 4px solid #f59e0b;">
+                            <h3 style="color: #d97706; margin-bottom: 12px;">🔀 Lakehouse: Best of Both</h3>
+                            <div style="background-color: #fde68a; padding: 12px; border-radius: 6px; margin-bottom: 12px;">
+                                <strong>Combines:</strong> Warehouse performance + Lake flexibility
+                            </div>
+                            <div style="background-color: #fcd34d; padding: 12px; border-radius: 6px;">
+                                <strong>Provides:</strong> ACID transactions on raw data
+                            </div>
+                            <p style="margin-top: 12px; font-size: 16px; color: #6b7280;">Ideal for organizations needing both BI analytics and ML on unified platform.</p>
+                        </div>
+                    </div>
+
+                    <div class="info-box yellow" style="margin-top: 24px;">
+                        <div class="flex-row">
+                            <div style="font-size: 32px;">💡</div>
+                            <div>
+                                <h3 style="color: #d97706; margin-bottom: 8px;">Pattern Selection Framework</h3>
+                                <p><strong>Consider these factors when choosing patterns:</strong></p>
+                                <ul style="margin-top: 12px;">
+                                    <li><strong>Data characteristics:</strong> Structured vs. unstructured, volume, velocity</li>
+                                    <li><strong>Latency requirements:</strong> Real-time vs. batch acceptable</li>
+                                    <li><strong>Team capabilities:</strong> Expertise and operational maturity</li>
+                                    <li><strong>Cost constraints:</strong> Infrastructure and maintenance budget</li>
+                                    <li><strong>Governance needs:</strong> Compliance and security requirements</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                `
+            },
+            {
+                title: "Summary & Takeaways",
+                icon: "🎓",
+                content: `
+                    <h2>Summary & Takeaways</h2>
+                    
+                    <div class="info-box green" style="margin-bottom: 16px;">
+                        <div class="flex-row">
+                            <span class="checkmark">✓</span>
+                            <p style="font-size: 18px;">Data Architecture provides the blueprint; Design Patterns offer proven, reusable solutions</p>
+                        </div>
+                    </div>
+
+                    <div class="info-box green" style="margin-bottom: 16px;">
+                        <div class="flex-row">
+                            <span class="checkmark">✓</span>
+                            <p style="font-size: 18px;">Seven key patterns solve common challenges: Warehouse, Lake, Lakehouse, Lambda, Kappa, Event-Driven, and Data Mesh</p>
+                        </div>
+                    </div>
+
+                    <div class="info-box green" style="margin-bottom: 16px;">
+                        <div class="flex-row">
+                            <span class="checkmark">✓</span>
+                            <p style="font-size: 18px;">Modern tools span storage, streaming, orchestration, and governance across the architecture stack</p>
+                        </div>
+                    </div>
+
+                    <div class="info-box green">
+                        <div class="flex-row">
+                            <span class="checkmark">✓</span>
+                            <p style="font-size: 18px;">Best practices ensure scalability, resilience, and alignment with business goals</p>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 32px; padding: 24px; background: linear-gradient(to right, #eff6ff, #eef2ff); border-radius: 8px;">
+                        <h3 style="color: #1e40af; margin-bottom: 12px;">🎯 Key Principles to Remember</h3>
+                        <ul>
+                            <li><strong>Architecture is strategy</strong> - Your architecture decisions determine what's possible</li>
+                            <li><strong>No silver bullets</strong> - Every pattern has trade-offs; choose wisely for your context</li>
+                            <li><strong>Start simple, evolve</strong> - Begin with proven patterns, add complexity only when needed</li>
+                            <li><strong>Governance is foundational</strong> - Security and compliance aren't add-ons</li>
+                            <li><strong>Think in systems</strong> - Components must work together, not just individually</li>
+                            <li><strong>Document decisions</strong> - Future teams need to understand the "why" behind choices</li>
+                        </ul>
+                    </div>
+
+                    <div class="info-box yellow" style="margin-top: 24px;">
+                        <div class="flex-row">
+                            <div style="font-size: 32px;">🏛️</div>
+                            <div>
+                                <h3 style="color: #d97706; margin-bottom: 8px;">The Golden Rule of Data Architecture</h3>
+                                <p><strong>"Good architecture enables options; bad architecture eliminates them."</strong></p>
+                                <p style="margin-top: 8px;">The best architectures aren't rigid—they're flexible enough to adapt to changing business needs while maintaining reliability and performance. Design for change, because the only constant in data systems is evolution.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="cta-box">
+                        <h3>📌 Continue Your Learning Journey</h3>
+                        <p style="font-size: 18px; margin-bottom: 24px;">Congratulations on completing Part 10! You've now mastered the complete data management journey—from fundamentals to advanced architecture patterns.</p>
+                        <p style="margin-bottom: 24px;">Ready to apply these architectural principles? Connect with me on LinkedIn for more insights, discussions on emerging patterns, and future learning content.</p>
+                        <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+                            <a href="https://www.linkedin.com/in/aditya-bhutada94/" target="_blank" class="cta-btn">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                                </svg>
+                                Connect on LinkedIn
+                            </a>
+                            <a href="https://github.com/aditya-bhutada" target="_blank" class="cta-btn">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                                </svg>
+                                View on GitHub
+                            </a>
+                        </div>
+                    </div>
+
+                    <div style="text-align: center; margin-top: 32px; padding: 24px; background-color: #f9fafb; border-radius: 8px;">
+                        <p style="font-size: 18px; color: #6b7280; margin-bottom: 8px;">🎉 Congratulations on completing Part 10!</p>
+                        <p style="color: #9ca3af;">You now understand how to architect scalable, reliable data systems using proven patterns</p>
+                        <p style="color: #3b82f6; font-weight: 600; margin-top: 12px;">Keep building the future of data! 🚀</p>
+                    </div>
+                `
+            }
+        ];
+
+        function renderPage() {
+            const page = pages[currentPage];
+            document.getElementById('pageIcon').textContent = page.icon;
+            document.getElementById('pageNumber').textContent = `Chapter ${currentPage + 1} of ${pages.length}`;
+            document.getElementById('pageTitle').textContent = page.title;
+            document.getElementById('pageContent').innerHTML = page.content;
+            document.getElementById('pageIndicator').textContent = `Page ${currentPage + 1} of ${pages.length}`;
+            
+            document.getElementById('prevBtn').disabled = currentPage === 0;
+            document.getElementById('nextBtn').disabled = currentPage === pages.length - 1;
+            
+            completedPages.add(currentPage);
+            const progress = ((completedPages.size) / pages.length) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+            document.getElementById('progressText').textContent = Math.round(progress) + '% Complete';
+            
+            window.scrollTo(0, 0);
+        }
+
+        function renderMenu() {
+            const menuItems = pages.map((page, index) => `
+                <button class="menu-item ${currentPage === index ? 'active' : ''}" onclick="goToPage(${index})">
+                    <div class="menu-item-content">
+                        <span class="menu-item-icon">${page.icon}</span>
+                        <div style="flex: 1; text-align: left;">
+                            <div class="menu-item-title">${page.title}</div>
+                            <div class="menu-item-subtitle">Chapter ${index + 1}</div>
+                        </div>
+                        ${completedPages.has(index) ? '<span style="color: #10b981; font-size: 20px;">✓</span>' : ''}
+                    </div>
+                </button>
+            `).join('');
+            
+            document.getElementById('menuItems').innerHTML = menuItems;
+        }
+
+        function toggleMenu() {
+            const overlay = document.getElementById('menuOverlay');
+            const sidebar = document.getElementById('menuSidebar');
+            overlay.classList.toggle('active');
+            sidebar.classList.toggle('active');
+        }
+
+        function goToPage(index) {
+            currentPage = index;
+            renderPage();
+            renderMenu();
+            toggleMenu();
+        }
+
+        function nextPage() {
+            if (currentPage < pages.length - 1) {
+                currentPage++;
+                renderPage();
+                renderMenu();
+            }
+        }
+
+        function previousPage() {
+            if (currentPage > 0) {
+                currentPage--;
+                renderPage();
+                renderMenu();
+            }
+        }
+
+        renderPage();
+        renderMenu();
+    </script>
+</body>
+</html>
