@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Cleaning & Preparation Summary</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', sans-serif;
+            background: linear-gradient(135deg, #f59e0b 0%, #3b82f6 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            width: 1080px;
+            height: 1080px;
+            background: white;
+            border-radius: 24px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #f59e0b 0%, #3b82f6 100%);
+            padding: 40px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+        
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: pulse 3s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+        }
+        
+        .series-badge {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .header h1 {
+            color: white;
+            font-size: 42px;
+            font-weight: 800;
+            margin-bottom: 8px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .header .subtitle {
+            color: rgba(255,255,255,0.9);
+            font-size: 20px;
+            font-weight: 500;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .main-icon {
+            font-size: 80px;
+            margin: 20px 0;
+            animation: float 3s ease-in-out infinite;
+            position: relative;
+            z-index: 1;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .content {
+            padding: 30px 40px;
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .section {
+            margin-bottom: 24px;
+            flex-shrink: 0;
+        }
+        
+        .section-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .section-title span {
+            font-size: 28px;
+        }
+        
+        .issues-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        
+        .issue-card {
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            padding: 16px;
+            border-radius: 12px;
+            text-align: center;
+            transition: all 0.3s;
+            cursor: pointer;
+            border: 2px solid transparent;
+            position: relative;
+        }
+        
+        .issue-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+        
+        .issue-card:nth-child(1) { border-color: #ef4444; }
+        .issue-card:nth-child(2) { border-color: #f97316; }
+        .issue-card:nth-child(3) { border-color: #f59e0b; }
+        .issue-card:nth-child(4) { border-color: #a855f7; }
+        .issue-card:nth-child(5) { border-color: #10b981; }
+        
+        .issue-icon {
+            font-size: 32px;
+            margin-bottom: 8px;
+            display: block;
+        }
+        
+        .issue-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: #1f2937;
+            line-height: 1.2;
+        }
+        
+        .steps-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+        
+        .step {
+            background: white;
+            border-left: 4px solid;
+            padding: 14px;
+            border-radius: 8px;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        
+        .step:hover {
+            transform: translateX(5px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        .step:nth-child(1) { border-color: #3b82f6; }
+        .step:nth-child(2) { border-color: #10b981; }
+        .step:nth-child(3) { border-color: #a855f7; }
+        .step:nth-child(4) { border-color: #f59e0b; }
+        .step:nth-child(5) { border-color: #f97316; }
+        .step:nth-child(6) { border-color: #eab308; }
+        .step:nth-child(7) { border-color: #0ea5e9; }
+        
+        .step-num {
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: currentColor;
+            color: white;
+            text-align: center;
+            line-height: 24px;
+            font-size: 12px;
+            font-weight: 700;
+            margin-right: 8px;
+        }
+        
+        .step-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: #1f2937;
+        }
+        
+        .footer {
+            background: #1f2937;
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-shrink: 0;
+        }
+        
+        .author {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .author-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #f59e0b 0%, #3b82f6 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: white;
+        }
+        
+        .author-info h3 {
+            color: white;
+            font-size: 16px;
+            font-weight: 700;
+        }
+        
+        .author-info p {
+            color: #9ca3af;
+            font-size: 12px;
+        }
+        
+        .social-links {
+            display: flex;
+            gap: 12px;
+        }
+        
+        .social-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        
+        .social-btn:hover {
+            background: rgba(255,255,255,0.2);
+            transform: scale(1.1);
+        }
+        
+        .stat-badge {
+            background: linear-gradient(135deg, #f59e0b 0%, #3b82f6 100%);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            display: inline-block;
+            margin-right: 8px;
+            margin-bottom: 8px;
+        }
+        
+        .key-insight {
+            background: linear-gradient(135deg, #fef3c7 0%, #dbeafe 100%);
+            border: 2px solid #f59e0b;
+            padding: 18px;
+            border-radius: 12px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .key-insight h3 {
+            font-size: 16px;
+            color: #92400e;
+            margin-bottom: 8px;
+            font-weight: 800;
+        }
+        
+        .key-insight p {
+            font-size: 13px;
+            color: #78350f;
+            font-style: italic;
+            font-weight: 600;
+        }
+        
+        .stats-row {
+            text-align: center;
+            margin-top: 16px;
+        }
+
+        .tools-row {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            margin-top: 12px;
+        }
+
+        .tool-badge {
+            background: rgba(59, 130, 246, 0.1);
+            border: 2px solid #3b82f6;
+            color: #1e40af;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="series-badge">LinkedIn Learning Series • Part 2 of 8</div>
+            <div class="main-icon">🧹</div>
+            <h1>Data Cleaning & Preparation</h1>
+            <div class="subtitle">Turning Raw Data into Reliable Insights</div>
+        </div>
+        
+        <div class="content">
+            <div class="section">
+                <div class="section-title">
+                    <span>🔍</span>
+                    <div>5 Common Data Issues</div>
+                </div>
+                <div class="issues-grid">
+                    <div class="issue-card">
+                        <span class="issue-icon">❌</span>
+                        <div class="issue-title">Missing Values</div>
+                    </div>
+                    <div class="issue-card">
+                        <span class="issue-icon">👥</span>
+                        <div class="issue-title">Duplicates</div>
+                    </div>
+                    <div class="issue-card">
+                        <span class="issue-icon">📅</span>
+                        <div class="issue-title">Inconsistent Formats</div>
+                    </div>
+                    <div class="issue-card">
+                        <span class="issue-icon">📊</span>
+                        <div class="issue-title">Outliers</div>
+                    </div>
+                    <div class="issue-card">
+                        <span class="issue-icon">🔊</span>
+                        <div class="issue-title">Noise</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="key-insight">
+                <h3>💡 Industry Insight</h3>
+                <p>Data scientists spend 60-80% of their time on cleaning & preparation!</p>
+            </div>
+            
+            <div class="section">
+                <div class="section-title">
+                    <span>🛠️</span>
+                    <div>7 Cleaning Steps</div>
+                </div>
+                <div class="steps-grid">
+                    <div class="step">
+                        <span class="step-num" style="background: #3b82f6;">1</span>
+                        <span class="step-title">Data Collection Review</span>
+                    </div>
+                    <div class="step">
+                        <span class="step-num" style="background: #10b981;">2</span>
+                        <span class="step-title">Handling Missing Data</span>
+                    </div>
+                    <div class="step">
+                        <span class="step-num" style="background: #a855f7;">3</span>
+                        <span class="step-title">Removing Duplicates</span>
+                    </div>
+                    <div class="step">
+                        <span class="step-num" style="background: #f59e0b;">4</span>
+                        <span class="step-title">Standardizing Formats</span>
+                    </div>
+                    <div class="step">
+                        <span class="step-num" style="background: #f97316;">5</span>
+                        <span class="step-title">Outlier Detection</span>
+                    </div>
+                    <div class="step">
+                        <span class="step-num" style="background: #eab308;">6</span>
+                        <span class="step-title">Data Transformation</span>
+                    </div>
+                    <div class="step">
+                        <span class="step-num" style="background: #0ea5e9;">7</span>
+                        <span class="step-title">Validation</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">
+                    <span>🔧</span>
+                    <div>Essential Tools</div>
+                </div>
+                <div class="tools-row">
+                    <div class="tool-badge">📊 Excel</div>
+                    <div class="tool-badge">🐍 Python</div>
+                    <div class="tool-badge">🗄️ SQL</div>
+                    <div class="tool-badge">🤖 AI Tools</div>
+                </div>
+            </div>
+            
+            <div class="stats-row">
+                <span class="stat-badge">✅ Better Decisions</span>
+                <span class="stat-badge">⚡ Faster Analysis</span>
+                <span class="stat-badge">🎯 Accurate Models</span>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <div class="author">
+                <div class="author-avatar">AB</div>
+                <div class="author-info">
+                    <h3>Aditya Bhutada</h3>
+                    <p>Data Professional | Part 2 of 8 ✨</p>
+                </div>
+            </div>
+            <div class="social-links">
+                <a href="https://www.linkedin.com/in/aditya-bhutada94/" target="_blank" class="social-btn" title="LinkedIn">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                    </svg>
+                </a>
+                <a href="https://github.com/aditya-bhutada" target="_blank" class="social-btn" title="GitHub">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                    </svg>
+                </a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
