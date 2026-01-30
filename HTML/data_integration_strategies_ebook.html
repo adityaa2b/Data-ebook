@@ -1,0 +1,1224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Integration Strategies - Interactive E-Book</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+            background: linear-gradient(135deg, #DBEAFE 0%, #ffffff 50%, #E0E7FF 100%);
+            min-height: 100vh;
+        }
+        
+        .header {
+            background: white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 16px;
+        }
+        
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        
+        .header-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .header-title h1 {
+            font-size: 20px;
+            color: #1f2937;
+        }
+        
+        .header-title p {
+            font-size: 14px;
+            color: #6b7280;
+        }
+        
+        .menu-btn {
+            background: none;
+            border: none;
+            padding: 8px;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: background 0.2s;
+        }
+        
+        .menu-btn:hover {
+            background: #f3f4f6;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e5e7eb;
+            border-radius: 9999px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(to right, #3b82f6, #6366f1);
+            transition: width 0.5s ease;
+        }
+        
+        .progress-text {
+            text-align: right;
+            font-size: 12px;
+            color: #6b7280;
+            margin-top: 4px;
+        }
+        
+        .menu-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 200;
+            display: none;
+        }
+        
+        .menu-overlay.active {
+            display: block;
+        }
+        
+        .menu-sidebar {
+            position: fixed;
+            right: 0;
+            top: 0;
+            height: 100%;
+            width: 320px;
+            background: white;
+            padding: 24px;
+            overflow-y: auto;
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+            z-index: 201;
+        }
+        
+        .menu-sidebar.active {
+            transform: translateX(0);
+        }
+        
+        .menu-sidebar h2 {
+            font-size: 24px;
+            margin-bottom: 24px;
+            color: #1f2937;
+        }
+        
+        .menu-item {
+            width: 100%;
+            text-align: left;
+            padding: 16px;
+            margin-bottom: 8px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            background: #f9fafb;
+            transition: all 0.2s;
+        }
+        
+        .menu-item:hover {
+            background: #f3f4f6;
+        }
+        
+        .menu-item.active {
+            background: linear-gradient(to right, #3b82f6, #6366f1);
+            color: white;
+            box-shadow: 0 4px 6px rgba(59, 130, 246, 0.3);
+        }
+        
+        .menu-item-content {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .menu-item-icon {
+            font-size: 24px;
+        }
+        
+        .menu-item-title {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        
+        .menu-item-subtitle {
+            font-size: 12px;
+            opacity: 0.75;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 32px 16px;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            padding: 48px;
+            min-height: 600px;
+        }
+        
+        .page-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 2px solid #f3f4f6;
+        }
+        
+        .page-icon {
+            font-size: 48px;
+        }
+        
+        .page-info p {
+            font-size: 14px;
+            color: #6b7280;
+        }
+        
+        .page-info h2 {
+            font-size: 28px;
+            color: #1f2937;
+        }
+        
+        .content {
+            line-height: 1.7;
+        }
+        
+        .content h1 {
+            font-size: 36px;
+            color: #3b82f6;
+            margin-bottom: 16px;
+        }
+        
+        .content h2 {
+            font-size: 28px;
+            color: #1f2937;
+            margin-bottom: 16px;
+        }
+        
+        .content h3 {
+            font-size: 24px;
+            color: #1f2937;
+            margin-bottom: 12px;
+        }
+        
+        .content h4 {
+            font-size: 20px;
+            margin-bottom: 8px;
+        }
+        
+        .content p {
+            font-size: 18px;
+            color: #374151;
+            margin-bottom: 16px;
+        }
+
+        .content ul {
+            margin-left: 24px;
+            margin-top: 12px;
+            line-height: 1.8;
+        }
+
+        .content li {
+            font-size: 18px;
+            color: #374151;
+            margin-bottom: 8px;
+        }
+        
+        .info-box {
+            padding: 24px;
+            border-radius: 8px;
+            margin: 24px 0;
+            border-left: 4px solid;
+        }
+
+        .info-box.blue {
+            background-color: #eff6ff;
+            border-color: #3b82f6;
+        }
+
+        .info-box.indigo {
+            background-color: #eef2ff;
+            border-color: #6366f1;
+        }
+
+        .info-box.green {
+            background-color: #f0fdf4;
+            border-color: #10b981;
+        }
+
+        .info-box.purple {
+            background-color: #faf5ff;
+            border-color: #a855f7;
+        }
+
+        .info-box.yellow {
+            background-color: #fef3c7;
+            border-color: #f59e0b;
+        }
+        
+        .grid {
+            display: grid;
+            gap: 16px;
+            margin: 24px 0;
+        }
+        
+        .grid-2 {
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        }
+        
+        .grid-3 {
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        }
+        
+        .card-item {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+        }
+        
+        .card-item:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            transform: translateY(-2px);
+        }
+        
+        .flex-row {
+            display: flex;
+            gap: 16px;
+            align-items: flex-start;
+        }
+        
+        .icon-large {
+            font-size: 48px;
+            flex-shrink: 0;
+        }
+        
+        .step-box {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+            transition: all 0.3s;
+        }
+        
+        .step-box:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        .step-number {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+        
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 32px;
+        }
+        
+        .nav-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .nav-btn:disabled {
+            background: #e5e7eb;
+            color: #9ca3af;
+            cursor: not-allowed;
+        }
+        
+        .nav-btn-primary {
+            background: linear-gradient(to right, #3b82f6, #6366f1);
+            color: white;
+            box-shadow: 0 2px 4px rgba(59, 130, 246, 0.3);
+        }
+        
+        .nav-btn-primary:hover:not(:disabled) {
+            box-shadow: 0 4px 8px rgba(59, 130, 246, 0.4);
+            transform: translateY(-2px);
+        }
+        
+        .page-indicator {
+            text-align: center;
+            color: #6b7280;
+            font-size: 14px;
+        }
+        
+        .cta-box {
+            background: linear-gradient(to right, #3b82f6, #6366f1);
+            color: white;
+            padding: 32px;
+            border-radius: 8px;
+            margin-top: 32px;
+        }
+        
+        .cta-box h3 {
+            color: white;
+            margin-bottom: 16px;
+        }
+        
+        .cta-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: white;
+            color: #3b82f6;
+            padding: 12px 24px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+            margin-right: 12px;
+            margin-bottom: 12px;
+        }
+        
+        .cta-btn:hover {
+            background: #f3f4f6;
+            transform: translateY(-2px);
+        }
+        
+        .checkmark {
+            color: #10b981;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+        
+        .series-badge {
+            background: linear-gradient(to right, #3b82f6, #6366f1);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            display: inline-block;
+            margin-bottom: 16px;
+        }
+
+        .tool-card {
+            border-left: 4px solid;
+            margin-bottom: 20px;
+        }
+
+        .strategy-diagram {
+            background: #f9fafb;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 24px;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .strategy-visual {
+            font-size: 64px;
+            margin: 16px 0;
+        }
+        
+        @media (max-width: 768px) {
+            .card {
+                padding: 24px;
+            }
+            
+            .menu-sidebar {
+                width: 100%;
+            }
+            
+            .content h1 {
+                font-size: 28px;
+            }
+            
+            .content h2 {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-content">
+            <div class="header-top">
+                <div class="header-title">
+                    <div style="font-size: 28px;">🔗</div>
+                    <div>
+                        <h1>Data Integration Strategies</h1>
+                        <p>by Aditya Bhutada • Part 11</p>
+                    </div>
+                </div>
+                <button class="menu-btn" onclick="toggleMenu()">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="3" y1="12" x2="21" y2="12"></line>
+                        <line x1="3" y1="6" x2="21" y2="6"></line>
+                        <line x1="3" y1="18" x2="21" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressBar"></div>
+            </div>
+            <div class="progress-text" id="progressText">0% Complete</div>
+        </div>
+    </div>
+
+    <div class="menu-overlay" id="menuOverlay" onclick="toggleMenu()"></div>
+    
+    <div class="menu-sidebar" id="menuSidebar">
+        <h2>Table of Contents</h2>
+        <div id="menuItems"></div>
+    </div>
+
+    <div class="container">
+        <div class="card">
+            <div class="page-header">
+                <span class="page-icon" id="pageIcon">🔗</span>
+                <div class="page-info">
+                    <p id="pageNumber">Chapter 1 of 10</p>
+                    <h2 id="pageTitle">Welcome</h2>
+                </div>
+            </div>
+            <div class="content" id="pageContent"></div>
+        </div>
+
+        <div class="navigation">
+            <button class="nav-btn nav-btn-primary" id="prevBtn" onclick="previousPage()">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="15 18 9 12 15 6"></polyline>
+                </svg>
+                Previous
+            </button>
+            <div class="page-indicator" id="pageIndicator">Page 1 of 10</div>
+            <button class="nav-btn nav-btn-primary" id="nextBtn" onclick="nextPage()">
+                Next
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        let currentPage = 0;
+        let completedPages = new Set();
+
+        const pages = [
+            {
+                title: "Welcome",
+                icon: "🔗",
+                content: `
+                    <div style="text-align: center; margin-bottom: 32px;">
+                        <span class="series-badge">LinkedIn Learning Series • Part 11</span>
+                        <h1>Data Integration Strategies</h1>
+                        <p style="font-size: 22px; color: #3b82f6; font-weight: 600; margin-top: 8px;">Unifying Diverse Sources for Seamless Analytics</p>
+                        <p style="font-size: 18px; color: #9ca3af; margin-top: 8px;">by Aditya Bhutada</p>
+                    </div>
+                    
+                    <div class="info-box blue">
+                        <p style="font-size: 18px;">Welcome to Part 11! After mastering data architecture patterns, now learn how to connect and unify data from diverse sources. Integration is the bridge that transforms isolated data islands into a cohesive, actionable ecosystem.</p>
+                    </div>
+                    
+                    <div class="grid grid-3">
+                        <div class="card-item" style="border-top: 4px solid #3b82f6;">
+                            <div style="font-size: 32px; margin-bottom: 8px;">📖</div>
+                            <div style="font-weight: 600; color: #1f2937;">10 Chapters</div>
+                            <div style="font-size: 14px; color: #6b7280;">Complete framework</div>
+                        </div>
+                        <div class="card-item" style="border-top: 4px solid #6366f1;">
+                            <div style="font-size: 32px; margin-bottom: 8px;">⏱️</div>
+                            <div style="font-weight: 600; color: #1f2937;">28 min read</div>
+                            <div style="font-size: 14px; color: #6b7280;">Integration strategies</div>
+                        </div>
+                        <div class="card-item" style="border-top: 4px solid #10b981;">
+                            <div style="font-size: 32px; margin-bottom: 8px;">✔</div>
+                            <div style="font-weight: 600; color: #1f2937;">7 Strategies</div>
+                            <div style="font-size: 14px; color: #6b7280;">Integration approaches</div>
+                        </div>
+                    </div>
+                `
+            },
+            {
+                title: "Introduction",
+                icon: "📋",
+                content: `
+                    <h2>Introduction</h2>
+                    
+                    <div class="info-box indigo">
+                        <p style="font-size: 18px; font-style: italic;">Data Integration is the process of combining data from multiple sources into a unified view. Effective strategies ensure consistency, accuracy, and accessibility, enabling organizations to leverage data for analytics, reporting, and AI. In today's multi-cloud, multi-source world, integration is not optional—it's essential.</p>
+                    </div>
+                    
+                    <div style="margin-top: 32px;">
+                        <h3 style="color: #3b82f6;">The Connective Tissue of Data Systems</h3>
+                        <p>Modern organizations collect data from hundreds or thousands of sources—databases, APIs, files, streams, and SaaS applications. Data integration creates the pathways that allow this scattered information to flow together, providing a complete picture rather than fragmented glimpses.</p>
+                        <ul>
+                            <li><strong>Unification</strong> - Brings together disparate data sources into cohesive datasets</li>
+                            <li><strong>Transformation</strong> - Converts data into consistent formats and structures</li>
+                            <li><strong>Accessibility</strong> - Makes integrated data available where it's needed</li>
+                            <li><strong>Quality</strong> - Ensures accuracy and consistency across sources</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="card-item" style="background: linear-gradient(to right, #eff6ff, #eef2ff); margin-top: 32px;">
+                        <div class="flex-row">
+                            <div style="font-size: 48px;">💡</div>
+                            <div>
+                                <h3 style="color: #1e40af; margin-bottom: 8px;">Why Integration Matters Now More Than Ever</h3>
+                                <p>The explosion of data sources—from IoT devices to social media, from cloud applications to edge computing—has made integration more complex and more critical. Without effective integration, organizations drown in data while starving for insights. The right integration strategy turns data chaos into actionable intelligence.</p>
+                            </div>
+                        </div>
+                    </div>
+                `
+            },
+            {
+                title: "Why It Matters",
+                icon: "⭐",
+                content: `
+                    <h2>Why Data Integration Matters</h2>
+                    
+                    <div class="grid" style="gap: 20px;">
+                        <div class="card-item" style="background: linear-gradient(to right, #eff6ff, #dbeafe);">
+                            <div class="flex-row">
+                                <div class="icon-large">🔍</div>
+                                <div>
+                                    <h3 style="color: #1e40af; margin-bottom: 8px;">Holistic View</h3>
+                                    <p>Combines siloed data into a single source of truth. Instead of partial views from individual systems, integration provides complete context—seeing customers, operations, and performance as unified wholes rather than disconnected pieces.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-item" style="background: linear-gradient(to right, #eef2ff, #e0e7ff);">
+                            <div class="flex-row">
+                                <div class="icon-large">✓</div>
+                                <div>
+                                    <h3 style="color: #4f46e5; margin-bottom: 8px;">Consistency</h3>
+                                    <p>Provides standardized approaches across teams. Integration ensures everyone works with the same definitions, values, and metrics—eliminating contradictory reports and conflicting analyses.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-item" style="background: linear-gradient(to right, #f0fdf4, #dcfce7);">
+                            <div class="flex-row">
+                                <div class="icon-large">⚡</div>
+                                <div>
+                                    <h3 style="color: #059669; margin-bottom: 8px;">Efficiency</h3>
+                                    <p>Reduces duplication and manual reconciliation. Automated integration eliminates tedious manual data gathering, transformation, and validation—freeing teams to focus on analysis rather than data wrangling.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-item" style="background: linear-gradient(to right, #fef3c7, #fde68a);">
+                            <div class="flex-row">
+                                <div class="icon-large">📈</div>
+                                <div>
+                                    <h3 style="color: #d97706; margin-bottom: 8px;">Scalability</h3>
+                                    <p>Supports growing data sources and formats. Well-designed integration frameworks adapt to new sources without requiring complete rebuilds—future-proofing your data infrastructure.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-item" style="background: linear-gradient(to right, #fef2f2, #fee2e2);">
+                            <div class="flex-row">
+                                <div class="icon-large">💼</div>
+                                <div>
+                                    <h3 style="color: #991b1b; margin-bottom: 8px;">Business Value</h3>
+                                    <p>Enables richer insights and better decision-making. Integrated data reveals patterns and relationships invisible in isolated systems—driving innovation, optimization, and competitive advantage.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="info-box blue" style="margin-top: 32px;">
+                        <div class="flex-row">
+                            <div style="font-size: 32px;">💡</div>
+                            <div>
+                                <h3 style="color: #1e40af; margin-bottom: 8px;">Real-World Example: Global Customer 360</h3>
+                                <p>A multinational company integrates CRM data, ERP transactions, social media engagement, and support tickets to create a complete customer view. Integration reveals that customers who engage on social media have 40% higher lifetime value—insights impossible when data remains siloed. This drives targeted campaigns and personalized experiences that boost retention.</p>
+                            </div>
+                        </div>
+                    </div>
+                `
+            },
+            {
+                title: "Core Strategies",
+                icon: "🎯",
+                content: `
+                    <h2>Core Data Integration Strategies</h2>
+                    <p style="color: #6b7280; margin-bottom: 24px;">Seven fundamental strategies for integrating data across systems and sources.</p>
+                    
+                    <div class="strategy-diagram">
+                        <div class="strategy-visual">📤</div>
+                        <h3 style="color: #1e40af; margin-bottom: 8px;">ETL (Extract, Transform, Load)</h3>
+                        <p><strong>Approach:</strong> Traditional batch processing into warehouses</p>
+                        <p style="color: #6b7280; margin-top: 8px;">Extract data from sources, transform it to match target schema and business rules, then load into a data warehouse. Best for batch processing, complex transformations, and when compute resources are limited at the destination. Proven approach with mature tooling.</p>
+                    </div>
+
+                    <div class="strategy-diagram">
+                        <div class="strategy-visual">📥</div>
+                        <h3 style="color: #4f46e5; margin-bottom: 8px;">ELT (Extract, Load, Transform)</h3>
+                        <p><strong>Approach:</strong> Modern cloud-native processing</p>
+                        <p style="color: #6b7280; margin-top: 8px;">Extract and load raw data into powerful cloud warehouses, then transform using the warehouse's compute. Leverages cloud elasticity for scalable transformations. Best for cloud environments where storage is cheap and compute scales on-demand. Faster time-to-value with raw data availability.</p>
+                    </div>
+
+                    <div class="strategy-diagram">
+                        <div class="strategy-visual">🌐</div>
+                        <h3 style="color: #059669; margin-bottom: 8px;">Data Virtualization</h3>
+                        <p><strong>Approach:</strong> Unified view without physical data movement</p>
+                        <p style="color: #6b7280; margin-top: 8px;">Create a virtual layer that queries multiple sources in real-time without copying data. Provides a unified view while data stays in source systems. Best for agile access to distributed data, reducing storage costs, and maintaining single source of truth in original systems.</p>
+                    </div>
+
+                    <div class="strategy-diagram">
+                        <div class="strategy-visual">🔌</div>
+                        <h3 style="color: #d97706; margin-bottom: 8px;">API-Based Integration</h3>
+                        <p><strong>Approach:</strong> Real-time system connectivity through APIs</p>
+                        <p style="color: #6b7280; margin-top: 8px;">Connect systems via REST APIs, GraphQL, or other API protocols for real-time or near-real-time integration. Enables bidirectional data flow and system orchestration. Best for SaaS integrations, real-time updates, and microservices architectures.</p>
+                    </div>
+
+                    <div class="strategy-diagram">
+                        <div class="strategy-visual">📡</div>
+                        <h3 style="color: #7c3aed; margin-bottom: 8px;">Streaming Integration</h3>
+                        <p><strong>Approach:</strong> Real-time ingestion from event-driven sources</p>
+                        <p style="color: #6b7280; margin-top: 8px;">Process continuous data streams from IoT devices, clickstreams, logs, and other event sources. Enables real-time analytics and immediate responses. Best for time-sensitive applications, monitoring, and event-driven architectures.</p>
+                    </div>
+
+                    <div class="strategy-diagram">
+                        <div class="strategy-visual">🌐</div>
+                        <h3 style="color: #991b1b; margin-bottom: 8px;">Data Federation</h3>
+                        <p><strong>Approach:</strong> Dynamic query combination across systems</p>
+                        <p style="color: #6b7280; margin-top: 8px;">Execute queries that span multiple databases and systems, combining results on-the-fly. Similar to virtualization but focuses on query federation. Best for ad-hoc analysis across diverse systems without pre-planned integration.</p>
+                    </div>
+
+                    <div class="strategy-diagram">
+                        <div class="strategy-visual">🧩</div>
+                        <h3 style="color: #0891b2; margin-bottom: 8px;">Master Data Management (MDM)</h3>
+                        <p><strong>Approach:</strong> Ensuring consistency of key business entities</p>
+                        <p style="color: #6b7280; margin-top: 8px;">Create and maintain a single, authoritative source for critical business entities like customers, products, or locations. Resolves duplicates and conflicts across systems. Best for ensuring data quality and consistency of master records across the enterprise.</p>
+                    </div>
+                `
+            },
+            {
+                title: "Strategy Selection",
+                icon: "🧭",
+                content: `
+                    <h2>Choosing the Right Integration Strategy</h2>
+                    <p style="color: #6b7280; margin-bottom: 24px;">Understanding when to use each strategy based on your requirements.</p>
+                    
+                    <div class="grid grid-2">
+                        <div class="card-item" style="background: linear-gradient(to right, #eff6ff, #dbeafe); border-top: 4px solid #3b82f6;">
+                            <h3 style="color: #1e40af; margin-bottom: 12px;">📤 ETL vs. 📥 ELT</h3>
+                            <div style="background-color: #dbeafe; padding: 12px; border-radius: 6px; margin-bottom: 12px;">
+                                <strong>ETL:</strong> On-premise, limited compute, complex pre-load transformations
+                            </div>
+                            <div style="background-color: #bfdbfe; padding: 12px; border-radius: 6px;">
+                                <strong>ELT:</strong> Cloud platforms, elastic compute, raw data access
+                            </div>
+                            <p style="margin-top: 12px; font-size: 16px; color: #6b7280;">Choose ETL for traditional data warehouses, ELT for cloud-native platforms like Snowflake or BigQuery.</p>
+                        </div>
+
+                        <div class="card-item" style="background: linear-gradient(to right, #f0fdf4, #dcfce7); border-top: 4px solid #10b981;">
+                            <h3 style="color: #059669; margin-bottom: 12px;">📡 Batch vs. 🔌 Real-Time</h3>
+                            <div style="background-color: #dcfce7; padding: 12px; border-radius: 6px; margin-bottom: 12px;">
+                                <strong>Batch (ETL/ELT):</strong> Scheduled updates, historical analysis
+                            </div>
+                            <div style="background-color: #bbf7d0; padding: 12px; border-radius: 6px;">
+                                <strong>Real-Time (API/Streaming):</strong> Immediate insights, live monitoring
+                            </div>
+                            <p style="margin-top: 12px; font-size: 16px; color: #6b7280;">Choose batch for reporting and analytics, real-time for operational systems and live dashboards.</p>
+                        </div>
+
+                        <div class="card-item" style="background: linear-gradient(to right, #eef2ff, #e0e7ff); border-top: 4px solid #6366f1;">
+                            <h3 style="color: #4f46e5; margin-bottom: 12px;">🌐 Physical vs. Virtual</h3>
+                            <div style="background-color: #e0e7ff; padding: 12px; border-radius: 6px; margin-bottom: 12px;">
+                                <strong>Physical (ETL/ELT):</strong> Data copied, fast queries, more storage
+                            </div>
+                            <div style="background-color: #c7d2fe; padding: 12px; border-radius: 6px;">
+                                <strong>Virtual:</strong> Data stays at source, agile, less storage
+                            </div>
+                            <p style="margin-top: 12px; font-size: 16px; color: #6b7280;">Choose physical for performance-critical queries, virtual for agile access without duplication.</p>
+                        </div>
+
+                        <div class="card-item" style="background: linear-gradient(to right, #fef3c7, #fde68a); border-top: 4px solid #f59e0b;">
+                            <h3 style="color: #d97706; margin-bottom: 12px;">🧩 When to Use MDM</h3>
+                            <div style="background-color: #fde68a; padding: 12px; border-radius: 6px; margin-bottom: 12px;">
+                                <strong>Use MDM when:</strong> Multiple systems create/update master data
+                            </div>
+                            <div style="background-color: #fcd34d; padding: 12px; border-radius: 6px;">
+                                <strong>Examples:</strong> Customer records, product catalogs, locations
+                            </div>
+                            <p style="margin-top: 12px; font-size: 16px; color: #6b7280;">Essential for enterprises with duplicate records across systems requiring golden record management.</p>
+                        </div>
+                    </div>
+
+                    <div class="info-box yellow" style="margin-top: 24px;">
+                        <div class="flex-row">
+                            <div style="font-size: 32px;">💡</div>
+                            <div>
+                                <h3 style="color: #d97706; margin-bottom: 8px;">Integration Strategy Decision Framework</h3>
+                                <p><strong>Ask these questions to select the right approach:</strong></p>
+                                <ul style="margin-top: 12px;">
+                                    <li><strong>Latency requirements:</strong> Real-time vs. batch acceptable?</li>
+                                    <li><strong>Data volume:</strong> How much data moves daily?</li>
+                                    <li><strong>Transformation complexity:</strong> Simple mappings vs. complex logic?</li>
+                                    <li><strong>Source system capabilities:</strong> Can sources handle query load?</li>
+                                    <li><strong>Governance needs:</strong> Who owns data, where must it live?</li>
+                                    <li><strong>Cost constraints:</strong> Storage vs. compute vs. network costs?</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                `
+            },
+            {
+                title: "Tools & Technologies",
+                icon: "🛠️",
+                content: `
+                    <h2>Tools & Technologies</h2>
+                    <p style="color: #6b7280; margin-bottom: 24px;">Modern platforms and tools for implementing integration strategies.</p>
+                    
+                    <div class="card-item tool-card" style="border-color: #3b82f6; margin-bottom: 20px;">
+                        <div class="flex-row">
+                            <div style="font-size: 48px;">📤</div>
+                            <div style="flex: 1;">
+                                <h3 style="color: #1e40af; margin-bottom: 8px;">ETL/ELT Platforms</h3>
+                                <p style="margin-bottom: 12px;"><strong>Tools:</strong> Informatica PowerCenter, Talend, dbt, Apache Spark, Fivetran, Matillion</p>
+                                <div style="background-color: #eff6ff; padding: 12px; border-radius: 4px;">
+                                    Enterprise-grade and modern cloud-native tools for extracting, transforming, and loading data. Range from code-free visual designers to SQL-based transformation frameworks. Support batch and incremental loads with scheduling, monitoring, and error handling.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-item tool-card" style="border-color: #6366f1; margin-bottom: 20px;">
+                        <div class="flex-row">
+                            <div style="font-size: 48px;">🌐</div>
+                            <div style="flex: 1;">
+                                <h3 style="color: #4f46e5; margin-bottom: 8px;">Data Virtualization</h3>
+                                <p style="margin-bottom: 12px;"><strong>Platforms:</strong> Denodo, Red Hat JBoss Data Virtualization, Dremio, Starburst</p>
+                                <div style="background-color: #eef2ff; padding: 12px; border-radius: 4px;">
+                                    Create unified views across heterogeneous data sources without physical data movement. Query federation, caching, and security layers enable real-time access to distributed data. Ideal for agile analytics without ETL overhead.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-item tool-card" style="border-color: #10b981; margin-bottom: 20px;">
+                        <div class="flex-row">
+                            <div style="font-size: 48px;">📡</div>
+                            <div style="flex: 1;">
+                                <h3 style="color: #059669; margin-bottom: 8px;">Streaming Integration</h3>
+                                <p style="margin-bottom: 12px;"><strong>Tools:</strong> Apache Kafka, Apache Flink, Spark Streaming, AWS Kinesis, Confluent</p>
+                                <div style="background-color: #f0fdf4; padding: 12px; border-radius: 4px;">
+                                    Real-time event streaming platforms for ingesting, processing, and distributing continuous data flows. Support exactly-once semantics, stateful processing, and complex event processing for mission-critical applications.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-item tool-card" style="border-color: #f59e0b; margin-bottom: 20px;">
+                        <div class="flex-row">
+                            <div style="font-size: 48px;">🔌</div>
+                            <div style="flex: 1;">
+                                <h3 style="color: #d97706; margin-bottom: 8px;">API Integration & Management</h3>
+                                <p style="margin-bottom: 12px;"><strong>Platforms:</strong> MuleSoft Anypoint, Apigee, Kong, Dell Boomi, Zapier</p>
+                                <div style="background-color: #fef3c7; padding: 12px; border-radius: 4px;">
+                                    API-first integration platforms for connecting cloud and on-premise applications. Visual flow designers, pre-built connectors, API gateway capabilities, and monitoring. Enable both technical and citizen integrators.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-item tool-card" style="border-color: #a855f7;">
+                        <div class="flex-row">
+                            <div style="font-size: 48px;">🧩</div>
+                            <div style="flex: 1;">
+                                <h3 style="color: #7c3aed; margin-bottom: 8px;">Master Data Management</h3>
+                                <p style="margin-bottom: 12px;"><strong>Solutions:</strong> Informatica MDM, SAP Master Data Governance, Reltio, Semarchy</p>
+                                <div style="background-color: #faf5ff; padding: 12px; border-radius: 4px;">
+                                    Enterprise MDM platforms for creating golden records, resolving duplicates, managing hierarchies, and synchronizing master data across systems. Include data quality, matching algorithms, and workflow for data stewardship.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `
+            },
+            {
+                title: "Practical Applications",
+                icon: "💼",
+                content: `
+                    <h2>Practical Applications</h2>
+                    <p style="color: #6b7280; margin-bottom: 24px;">How integration strategies solve real-world challenges across industries.</p>
+                    
+                    <div class="card-item" style="background: linear-gradient(to right, #fef3c7, #fde68a); margin-bottom: 20px;">
+                        <div class="flex-row">
+                            <div class="icon-large">💰</div>
+                            <div>
+                                <h3 style="color: #d97706; margin-bottom: 8px;">Finance</h3>
+                                <p><strong>Strategy:</strong> Streaming + ETL for fraud detection and compliance</p>
+                                <p style="margin-top: 8px; color: #6b7280;">Financial institutions stream transaction data for real-time fraud detection using Kafka and Flink, while ETL processes consolidate data from core banking, cards, and trading systems into data warehouses for regulatory reporting. MDM ensures customer records are consistent across all systems.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-item" style="background: linear-gradient(to right, #f0fdf4, #dcfce7); margin-bottom: 20px;">
+                        <div class="flex-row">
+                            <div class="icon-large">🏥</div>
+                            <div>
+                                <h3 style="color: #059669; margin-bottom: 8px;">Healthcare</h3>
+                                <p><strong>Strategy:</strong> HL7 integration + ELT for patient records</p>
+                                <p style="margin-top: 8px; color: #6b7280;">Healthcare providers integrate electronic health records (EHR) across hospitals using HL7/FHIR APIs for real-time patient data access. ELT consolidates clinical data, billing, and claims into analytics platforms. MDM creates unified patient identities across facilities for complete medical histories.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-item" style="background: linear-gradient(to right, #eff6ff, #dbeafe); margin-bottom: 20px;">
+                        <div class="flex-row">
+                            <div class="icon-large">📱</div>
+                            <div>
+                                <h3 style="color: #1e40af; margin-bottom: 8px;">Social Media</h3>
+                                <p><strong>Strategy:</strong> Event streaming for real-time engagement</p>
+                                <p style="margin-top: 8px; color: #6b7280;">Social platforms use Kafka to stream billions of engagement events (likes, shares, comments) for real-time feed updates, notifications, and trending analysis. API-based integration connects with third-party services for cross-posting. Batch ETL processes aggregate metrics for analytics and ML model training.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-item" style="background: linear-gradient(to right, #fef2f2, #fee2e2); margin-bottom: 20px;">
+                        <div class="flex-row">
+                            <div class="icon-large">🛍️</div>
+                            <div>
+                                <h3 style="color: #991b1b; margin-bottom: 8px;">Retail</h3>
+                                <p><strong>Strategy:</strong> Omnichannel integration with ELT + APIs</p>
+                                <p style="margin-top: 8px; color: #6b7280;">Retailers integrate e-commerce platforms, point-of-sale systems, mobile apps, and inventory management using APIs for real-time stock visibility. ELT consolidates customer data, transactions, and product catalogs for analytics. MDM maintains golden product records across channels for consistent pricing and descriptions.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-item" style="background: linear-gradient(to right, #eef2ff, #e0e7ff);">
+                        <div class="flex-row">
+                            <div class="icon-large">🏛️</div>
+                            <div>
+                                <h3 style="color: #4f46e5; margin-bottom: 8px;">Government</h3>
+                                <p><strong>Strategy:</strong> Federated queries + ETL for census and policy</p>
+                                <p style="margin-top: 8px; color: #6b7280;">Government agencies use data federation to query across department databases for policy analysis without centralizing sensitive citizen data. ETL processes consolidate census data, economic indicators, and program outcomes into analytical warehouses for long-term trend analysis and budget planning.</p>
+                            </div>
+                        </div>
+                    </div>
+                `
+            },
+            {
+                title: "Best Practices",
+                icon: "✨",
+                content: `
+                    <h2>Best Practices for Data Integration</h2>
+                    <p style="color: #6b7280; margin-bottom: 24px;">Six essential practices to ensure successful integration initiatives.</p>
+                    
+                    <div class="step-box" style="background-color: #eff6ff;">
+                        <div class="step-number" style="background-color: #3b82f6;">1</div>
+                        <div>
+                            <h3 style="color: #1e40af;">Define Clear Objectives</h3>
+                            <p>Align integration with business goals and use cases. Don't integrate data just because you can—understand what business questions you're trying to answer. Define success metrics: faster reporting, reduced manual work, or better customer insights.</p>
+                        </div>
+                    </div>
+
+                    <div class="step-box" style="background-color: #f0fdf4;">
+                        <div class="step-number" style="background-color: #10b981;">2</div>
+                        <div>
+                            <h3 style="color: #059669;">Choose the Right Strategy</h3>
+                            <p>Match ETL, ELT, streaming, or virtualization to your use case. Consider latency requirements, data volumes, transformation complexity, and source system capabilities. Hybrid approaches often work best—batch for historical data, streaming for real-time events.</p>
+                        </div>
+                    </div>
+
+                    <div class="step-box" style="background-color: #eef2ff;">
+                        <div class="step-number" style="background-color: #6366f1;">3</div>
+                        <div>
+                            <h3 style="color: #4f46e5;">Ensure Data Quality</h3>
+                            <p>Validate and cleanse data during integration. Bad data in equals bad insights out. Implement validation rules, handle nulls and duplicates, standardize formats, and profile data regularly. Build quality checks into your pipelines, not as afterthoughts.</p>
+                        </div>
+                    </div>
+
+                    <div class="step-box" style="background-color: #fef3c7;">
+                        <div class="step-number" style="background-color: #f59e0b;">4</div>
+                        <div>
+                            <h3 style="color: #d97706;">Automate Workflows</h3>
+                            <p>Reduce manual intervention with orchestration and monitoring. Schedule jobs, manage dependencies, implement retry logic, and set up alerts. Automation ensures consistency, reduces errors, and frees teams from babysitting pipelines.</p>
+                        </div>
+                    </div>
+
+                    <div class="step-box" style="background-color: #faf5ff;">
+                        <div class="step-number" style="background-color: #a855f7;">5</div>
+                        <div>
+                            <h3 style="color: #7c3aed;">Monitor Continuously</h3>
+                            <p>Track performance, data quality, and pipeline health. Monitor SLAs, data freshness, volume anomalies, and error rates. Set up dashboards for visibility and alerts for proactive issue detection. Treat integration as production systems requiring operational excellence.</p>
+                        </div>
+                    </div>
+
+                    <div class="step-box" style="background-color: #fef2f2;">
+                        <div class="step-number" style="background-color: #ef4444;">6</div>
+                        <div>
+                            <h3 style="color: #991b1b;">Apply Governance</h3>
+                            <p>Implement metadata management, lineage tracking, and compliance policies. Document what data means, where it comes from, who owns it, and how it's transformed. Governance ensures trust, enables collaboration, and satisfies regulatory requirements.</p>
+                        </div>
+                    </div>
+                `
+            },
+            {
+                title: "Common Challenges",
+                icon: "⚠️",
+                content: `
+                    <h2>Common Integration Challenges & Solutions</h2>
+                    <p style="color: #6b7280; margin-bottom: 24px;">Understanding obstacles and how to overcome them.</p>
+                    
+                    <div class="card-item" style="background: linear-gradient(to right, #fef2f2, #fee2e2); margin-bottom: 20px;">
+                        <div class="flex-row">
+                            <div style="font-size: 48px;">🔥</div>
+                            <div>
+                                <h3 style="color: #991b1b; margin-bottom: 12px;">Challenge: Data Quality Issues</h3>
+                                <p><strong>Problem:</strong> Inconsistent formats, missing values, duplicates across sources</p>
+                                <div style="background-color: #dcfce7; padding: 12px; border-radius: 6px; margin-top: 12px;">
+                                    <strong>Solution:</strong> Implement data quality frameworks with profiling, validation rules, and cleansing logic. Use tools like Great Expectations or Talend Data Quality. Establish data quality metrics and SLAs.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-item" style="background: linear-gradient(to right, #fef3c7, #fde68a); margin-bottom: 20px;">
+                        <div class="flex-row">
+                            <div style="font-size: 48px;">⚡</div>
+                            <div>
+                                <h3 style="color: #d97706; margin-bottom: 12px;">Challenge: Performance Bottlenecks</h3>
+                                <p><strong>Problem:</strong> Slow pipelines, query timeouts, resource constraints</p>
+                                <div style="background-color: #dbeafe; padding: 12px; border-radius: 6px; margin-top: 12px;">
+                                    <strong>Solution:</strong> Optimize queries, implement incremental loads, use parallel processing, and right-size infrastructure. Consider ELT over ETL for cloud platforms. Use partitioning and indexing strategically.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-item" style="background: linear-gradient(to right, #eef2ff, #e0e7ff); margin-bottom: 20px;">
+                        <div class="flex-row">
+                            <div style="font-size: 48px;">🔐</div>
+                            <div>
+                                <h3 style="color: #4f46e5; margin-bottom: 12px;">Challenge: Security & Compliance</h3>
+                                <p><strong>Problem:</strong> Sensitive data exposure, regulatory requirements, access control</p>
+                                <div style="background-color: #faf5ff; padding: 12px; border-radius: 6px; margin-top: 12px;">
+                                    <strong>Solution:</strong> Implement encryption in transit and at rest, tokenization for PII, row-level security, and audit logging. Use data masking for non-production environments. Maintain compliance documentation.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-item" style="background: linear-gradient(to right, #f0fdf4, #dcfce7); margin-bottom: 20px;">
+                        <div class="flex-row">
+                            <div style="font-size: 48px;">🔄</div>
+                            <div>
+                                <h3 style="color: #059669; margin-bottom: 12px;">Challenge: Schema Changes</h3>
+                                <p><strong>Problem:</strong> Source systems evolve, breaking integration pipelines</p>
+                                <div style="background-color: #fef3c7; padding: 12px; border-radius: 6px; margin-top: 12px;">
+                                    <strong>Solution:</strong> Design flexible schemas with schema-on-read approaches. Implement change data capture (CDC) and version control. Use data contracts between teams. Build robust error handling for schema drift.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="info-box blue">
+                        <div class="flex-row">
+                            <div style="font-size: 32px;">💡</div>
+                            <div>
+                                <h3 style="color: #1e40af; margin-bottom: 8px;">Proactive Prevention</h3>
+                                <p>The best approach to integration challenges is prevention. Invest in robust architecture upfront, establish governance early, automate testing, and maintain comprehensive documentation. Regular reviews and continuous improvement catch issues before they become crises.</p>
+                            </div>
+                        </div>
+                    </div>
+                `
+            },
+            {
+                title: "Summary & Takeaways",
+                icon: "🎓",
+                content: `
+                    <h2>Summary & Takeaways</h2>
+                    
+                    <div class="info-box green" style="margin-bottom: 16px;">
+                        <div class="flex-row">
+                            <span class="checkmark">✓</span>
+                            <p style="font-size: 18px;">Data Integration unifies diverse sources, enabling holistic views and richer insights</p>
+                        </div>
+                    </div>
+
+                    <div class="info-box green" style="margin-bottom: 16px;">
+                        <div class="flex-row">
+                            <span class="checkmark">✓</span>
+                            <p style="font-size: 18px;">Seven core strategies: ETL, ELT, Virtualization, APIs, Streaming, Federation, and MDM</p>
+                        </div>
+                    </div>
+
+                    <div class="info-box green" style="margin-bottom: 16px;">
+                        <div class="flex-row">
+                            <span class="checkmark">✓</span>
+                            <p style="font-size: 18px;">Modern tools span batch processing, real-time streaming, and virtual integration</p>
+                        </div>
+                    </div>
+
+                    <div class="info-box green">
+                        <div class="flex-row">
+                            <span class="checkmark">✓</span>
+                            <p style="font-size: 18px;">Best practices ensure quality, scalability, and alignment with business objectives</p>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 32px; padding: 24px; background: linear-gradient(to right, #eff6ff, #eef2ff); border-radius: 8px;">
+                        <h3 style="color: #1e40af; margin-bottom: 12px;">🎯 Key Principles to Remember</h3>
+                        <ul>
+                            <li><strong>Match strategy to use case</strong> - No single approach fits all scenarios</li>
+                            <li><strong>Quality over speed</strong> - Bad data integrated quickly is still bad data</li>
+                            <li><strong>Automate everything</strong> - Manual processes don't scale and introduce errors</li>
+                            <li><strong>Monitor continuously</strong> - Integration is an ongoing operation, not a one-time project</li>
+                            <li><strong>Design for change</strong> - Sources evolve; build flexibility into pipelines</li>
+                            <li><strong>Govern from the start</strong> - Metadata, lineage, and quality are foundational</li>
+                        </ul>
+                    </div>
+
+                    <div class="info-box yellow" style="margin-top: 24px;">
+                        <div class="flex-row">
+                            <div style="font-size: 32px;">🔗</div>
+                            <div>
+                                <h3 style="color: #d97706; margin-bottom: 8px;">The Golden Rule of Data Integration</h3>
+                                <p><strong>"Integration is not about moving data—it's about creating value."</strong></p>
+                                <p style="margin-top: 8px;">Don't integrate data just because you can. Every integration should serve a clear business purpose—whether that's enabling better decisions, automating processes, or creating new capabilities. Focus on outcomes, not just outputs.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="cta-box">
+                        <h3>📌 Continue Your Learning Journey</h3>
+                        <p style="font-size: 18px; margin-bottom: 24px;">Congratulations on completing Part 11! You now understand how to connect and unify data from diverse sources using proven integration strategies.</p>
+                        <p style="margin-bottom: 24px;">Ready to apply these integration techniques? Connect with me on LinkedIn for more insights, integration patterns, and future learning content.</p>
+                        <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+                            <a href="https://www.linkedin.com/in/aditya-bhutada94/" target="_blank" class="cta-btn">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                                </svg>
+                                Connect on LinkedIn
+                            </a>
+                            <a href="https://github.com/aditya-bhutada" target="_blank" class="cta-btn">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                                </svg>
+                                View on GitHub
+                            </a>
+                        </div>
+                    </div>
+
+                    <div style="text-align: center; margin-top: 32px; padding: 24px; background-color: #f9fafb; border-radius: 8px;">
+                        <p style="font-size: 18px; color: #6b7280; margin-bottom: 8px;">🎉 Congratulations on completing Part 11!</p>
+                        <p style="color: #9ca3af;">You now know how to integrate data from diverse sources into unified, actionable datasets</p>
+                        <p style="color: #3b82f6; font-weight: 600; margin-top: 12px;">Keep connecting the data dots! 🚀</p>
+                    </div>
+                `
+            }
+        ];
+
+        function renderPage() {
+            const page = pages[currentPage];
+            document.getElementById('pageIcon').textContent = page.icon;
+            document.getElementById('pageNumber').textContent = `Chapter ${currentPage + 1} of ${pages.length}`;
+            document.getElementById('pageTitle').textContent = page.title;
+            document.getElementById('pageContent').innerHTML = page.content;
+            document.getElementById('pageIndicator').textContent = `Page ${currentPage + 1} of ${pages.length}`;
+            
+            document.getElementById('prevBtn').disabled = currentPage === 0;
+            document.getElementById('nextBtn').disabled = currentPage === pages.length - 1;
+            
+            completedPages.add(currentPage);
+            const progress = ((completedPages.size) / pages.length) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+            document.getElementById('progressText').textContent = Math.round(progress) + '% Complete';
+            
+            window.scrollTo(0, 0);
+        }
+
+        function renderMenu() {
+            const menuItems = pages.map((page, index) => `
+                <button class="menu-item ${currentPage === index ? 'active' : ''}" onclick="goToPage(${index})">
+                    <div class="menu-item-content">
+                        <span class="menu-item-icon">${page.icon}</span>
+                        <div style="flex: 1; text-align: left;">
+                            <div class="menu-item-title">${page.title}</div>
+                            <div class="menu-item-subtitle">Chapter ${index + 1}</div>
+                        </div>
+                        ${completedPages.has(index) ? '<span style="color: #10b981; font-size: 20px;">✓</span>' : ''}
+                    </div>
+                </button>
+            `).join('');
+            
+            document.getElementById('menuItems').innerHTML = menuItems;
+        }
+
+        function toggleMenu() {
+            const overlay = document.getElementById('menuOverlay');
+            const sidebar = document.getElementById('menuSidebar');
+            overlay.classList.toggle('active');
+            sidebar.classList.toggle('active');
+        }
+
+        function goToPage(index) {
+            currentPage = index;
+            renderPage();
+            renderMenu();
+            toggleMenu();
+        }
+
+        function nextPage() {
+            if (currentPage < pages.length - 1) {
+                currentPage++;
+                renderPage();
+                renderMenu();
+            }
+        }
+
+        function previousPage() {
+            if (currentPage > 0) {
+                currentPage--;
+                renderPage();
+                renderMenu();
+            }
+        }
+
+        renderPage();
+        renderMenu();
+    </script>
+</body>
+</html>
