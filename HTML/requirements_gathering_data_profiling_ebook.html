@@ -1,0 +1,1178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Requirements Gathering & Data Profiling - Interactive E-Book</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+            background: linear-gradient(135deg, #DBEAFE 0%, #ffffff 50%, #E0E7FF 100%);
+            min-height: 100vh;
+        }
+        
+        .header {
+            background: white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 16px;
+        }
+        
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        
+        .header-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .header-title h1 {
+            font-size: 20px;
+            color: #1f2937;
+        }
+        
+        .header-title p {
+            font-size: 14px;
+            color: #6b7280;
+        }
+        
+        .menu-btn {
+            background: none;
+            border: none;
+            padding: 8px;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: background 0.2s;
+        }
+        
+        .menu-btn:hover {
+            background: #f3f4f6;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e5e7eb;
+            border-radius: 9999px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(to right, #3b82f6, #6366f1);
+            transition: width 0.5s ease;
+        }
+        
+        .progress-text {
+            text-align: right;
+            font-size: 12px;
+            color: #6b7280;
+            margin-top: 4px;
+        }
+        
+        .menu-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 200;
+            display: none;
+        }
+        
+        .menu-overlay.active {
+            display: block;
+        }
+        
+        .menu-sidebar {
+            position: fixed;
+            right: 0;
+            top: 0;
+            height: 100%;
+            width: 320px;
+            background: white;
+            padding: 24px;
+            overflow-y: auto;
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+            z-index: 201;
+        }
+        
+        .menu-sidebar.active {
+            transform: translateX(0);
+        }
+        
+        .menu-sidebar h2 {
+            font-size: 24px;
+            margin-bottom: 24px;
+            color: #1f2937;
+        }
+        
+        .menu-item {
+            width: 100%;
+            text-align: left;
+            padding: 16px;
+            margin-bottom: 8px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            background: #f9fafb;
+            transition: all 0.2s;
+        }
+        
+        .menu-item:hover {
+            background: #f3f4f6;
+        }
+        
+        .menu-item.active {
+            background: linear-gradient(to right, #3b82f6, #6366f1);
+            color: white;
+            box-shadow: 0 4px 6px rgba(59, 130, 246, 0.3);
+        }
+        
+        .menu-item-content {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .menu-item-icon {
+            font-size: 24px;
+        }
+        
+        .menu-item-title {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        
+        .menu-item-subtitle {
+            font-size: 12px;
+            opacity: 0.75;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 32px 16px;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            padding: 48px;
+            min-height: 600px;
+        }
+        
+        .page-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 2px solid #f3f4f6;
+        }
+        
+        .page-icon {
+            font-size: 48px;
+        }
+        
+        .page-info p {
+            font-size: 14px;
+            color: #6b7280;
+        }
+        
+        .page-info h2 {
+            font-size: 28px;
+            color: #1f2937;
+        }
+        
+        .content {
+            line-height: 1.7;
+        }
+        
+        .content h1 {
+            font-size: 36px;
+            color: #3b82f6;
+            margin-bottom: 16px;
+        }
+        
+        .content h2 {
+            font-size: 28px;
+            color: #1f2937;
+            margin-bottom: 16px;
+        }
+        
+        .content h3 {
+            font-size: 24px;
+            color: #1f2937;
+            margin-bottom: 12px;
+        }
+        
+        .content h4 {
+            font-size: 20px;
+            margin-bottom: 8px;
+        }
+        
+        .content p {
+            font-size: 18px;
+            color: #374151;
+            margin-bottom: 16px;
+        }
+
+        .content ul {
+            margin-left: 24px;
+            margin-top: 12px;
+            line-height: 1.8;
+        }
+
+        .content li {
+            font-size: 18px;
+            color: #374151;
+            margin-bottom: 8px;
+        }
+        
+        .info-box {
+            padding: 24px;
+            border-radius: 8px;
+            margin: 24px 0;
+            border-left: 4px solid;
+        }
+
+        .info-box.blue {
+            background-color: #eff6ff;
+            border-color: #3b82f6;
+        }
+
+        .info-box.indigo {
+            background-color: #eef2ff;
+            border-color: #6366f1;
+        }
+
+        .info-box.green {
+            background-color: #f0fdf4;
+            border-color: #10b981;
+        }
+
+        .info-box.purple {
+            background-color: #faf5ff;
+            border-color: #a855f7;
+        }
+
+        .info-box.yellow {
+            background-color: #fef3c7;
+            border-color: #f59e0b;
+        }
+        
+        .grid {
+            display: grid;
+            gap: 16px;
+            margin: 24px 0;
+        }
+        
+        .grid-2 {
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        }
+        
+        .grid-3 {
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        }
+        
+        .card-item {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+        }
+        
+        .card-item:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            transform: translateY(-2px);
+        }
+        
+        .flex-row {
+            display: flex;
+            gap: 16px;
+            align-items: flex-start;
+        }
+        
+        .icon-large {
+            font-size: 48px;
+            flex-shrink: 0;
+        }
+        
+        .step-box {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+            transition: all 0.3s;
+        }
+        
+        .step-box:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        .step-number {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+        
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 32px;
+        }
+        
+        .nav-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .nav-btn:disabled {
+            background: #e5e7eb;
+            color: #9ca3af;
+            cursor: not-allowed;
+        }
+        
+        .nav-btn-primary {
+            background: linear-gradient(to right, #3b82f6, #6366f1);
+            color: white;
+            box-shadow: 0 2px 4px rgba(59, 130, 246, 0.3);
+        }
+        
+        .nav-btn-primary:hover:not(:disabled) {
+            box-shadow: 0 4px 8px rgba(59, 130, 246, 0.4);
+            transform: translateY(-2px);
+        }
+        
+        .page-indicator {
+            text-align: center;
+            color: #6b7280;
+            font-size: 14px;
+        }
+        
+        .cta-box {
+            background: linear-gradient(to right, #3b82f6, #6366f1);
+            color: white;
+            padding: 32px;
+            border-radius: 8px;
+            margin-top: 32px;
+        }
+        
+        .cta-box h3 {
+            color: white;
+            margin-bottom: 16px;
+        }
+        
+        .cta-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: white;
+            color: #3b82f6;
+            padding: 12px 24px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+            margin-right: 12px;
+            margin-bottom: 12px;
+        }
+        
+        .cta-btn:hover {
+            background: #f3f4f6;
+            transform: translateY(-2px);
+        }
+        
+        .checkmark {
+            color: #10b981;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+        
+        .series-badge {
+            background: linear-gradient(to right, #3b82f6, #6366f1);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            display: inline-block;
+            margin-bottom: 16px;
+        }
+
+        .tool-card {
+            border-left: 4px solid;
+            margin-bottom: 20px;
+        }
+
+        .process-diagram {
+            background: #f9fafb;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 24px;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .process-visual {
+            font-size: 64px;
+            margin: 16px 0;
+        }
+        
+        @media (max-width: 768px) {
+            .card {
+                padding: 24px;
+            }
+            
+            .menu-sidebar {
+                width: 100%;
+            }
+            
+            .content h1 {
+                font-size: 28px;
+            }
+            
+            .content h2 {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-content">
+            <div class="header-top">
+                <div class="header-title">
+                    <div style="font-size: 28px;">📋</div>
+                    <div>
+                        <h1>Requirements Gathering & Data Profiling</h1>
+                        <p>by Aditya Bhutada • Part 12</p>
+                    </div>
+                </div>
+                <button class="menu-btn" onclick="toggleMenu()">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="3" y1="12" x2="21" y2="12"></line>
+                        <line x1="3" y1="6" x2="21" y2="6"></line>
+                        <line x1="3" y1="18" x2="21" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressBar"></div>
+            </div>
+            <div class="progress-text" id="progressText">0% Complete</div>
+        </div>
+    </div>
+
+    <div class="menu-overlay" id="menuOverlay" onclick="toggleMenu()"></div>
+    
+    <div class="menu-sidebar" id="menuSidebar">
+        <h2>Table of Contents</h2>
+        <div id="menuItems"></div>
+    </div>
+
+    <div class="container">
+        <div class="card">
+            <div class="page-header">
+                <span class="page-icon" id="pageIcon">📋</span>
+                <div class="page-info">
+                    <p id="pageNumber">Chapter 1 of 10</p>
+                    <h2 id="pageTitle">Welcome</h2>
+                </div>
+            </div>
+            <div class="content" id="pageContent"></div>
+        </div>
+
+        <div class="navigation">
+            <button class="nav-btn nav-btn-primary" id="prevBtn" onclick="previousPage()">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="15 18 9 12 15 6"></polyline>
+                </svg>
+                Previous
+            </button>
+            <div class="page-indicator" id="pageIndicator">Page 1 of 10</div>
+            <button class="nav-btn nav-btn-primary" id="nextBtn" onclick="nextPage()">
+                Next
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        let currentPage = 0;
+        let completedPages = new Set();
+
+        const pages = [
+            {
+                title: "Welcome",
+                icon: "📋",
+                content: `
+                    <div style="text-align: center; margin-bottom: 32px;">
+                        <span class="series-badge">LinkedIn Learning Series • Part 12</span>
+                        <h1>Requirements Gathering & Data Profiling</h1>
+                        <p style="font-size: 22px; color: #3b82f6; font-weight: 600; margin-top: 8px;">Laying the Foundation for Successful Data Projects</p>
+                        <p style="font-size: 18px; color: #9ca3af; margin-top: 8px;">by Aditya Bhutada</p>
+                    </div>
+                    
+                    <div class="info-box blue">
+                        <p style="font-size: 18px;">Welcome to Part 12! After learning integration strategies, now discover how to start data projects right. Every successful initiative begins with clear requirements and deep understanding of your data. This foundation determines whether projects succeed or struggle.</p>
+                    </div>
+                    
+                    <div class="grid grid-3">
+                        <div class="card-item" style="border-top: 4px solid #3b82f6;">
+                            <div style="font-size: 32px; margin-bottom: 8px;">📖</div>
+                            <div style="font-weight: 600; color: #1f2937;">10 Chapters</div>
+                            <div style="font-size: 14px; color: #6b7280;">Complete framework</div>
+                        </div>
+                        <div class="card-item" style="border-top: 4px solid #6366f1;">
+                            <div style="font-size: 32px; margin-bottom: 8px;">⏱️</div>
+                            <div style="font-weight: 600; color: #1f2937;">26 min read</div>
+                            <div style="font-size: 14px; color: #6b7280;">Foundation practices</div>
+                        </div>
+                        <div class="card-item" style="border-top: 4px solid #10b981;">
+                            <div style="font-size: 32px; margin-bottom: 8px;">✔</div>
+                            <div style="font-weight: 600; color: #1f2937;">2 Processes</div>
+                            <div style="font-size: 14px; color: #6b7280;">Core methodologies</div>
+                        </div>
+                    </div>
+                `
+            },
+            {
+                title: "Introduction",
+                icon: "🎯",
+                content: `
+                    <h2>Introduction</h2>
+                    
+                    <div class="info-box indigo">
+                        <p style="font-size: 18px; font-style: italic;">Every successful data project begins with clear requirements and a deep understanding of the data itself. Requirements Gathering ensures alignment with business goals, while Data Profiling provides insights into the quality, structure, and usability of data. Together, they form the foundation for effective data engineering, analytics, and governance.</p>
+                    </div>
+                    
+                    <div style="margin-top: 32px;">
+                        <h3 style="color: #3b82f6;">The Twin Pillars of Project Success</h3>
+                        <p>Most data project failures trace back to two root causes: unclear requirements and poor understanding of the data. Requirements gathering answers "what should we build?" while data profiling answers "what are we working with?" Skip either, and you're building on shaky ground.</p>
+                        <ul>
+                            <li><strong>Requirements</strong> - Defines what success looks like and how to achieve it</li>
+                            <li><strong>Profiling</strong> - Reveals the reality of your data's quality and structure</li>
+                            <li><strong>Alignment</strong> - Bridges business needs with technical capabilities</li>
+                            <li><strong>Foundation</strong> - Creates solid base for all subsequent work</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="card-item" style="background: linear-gradient(to right, #eff6ff, #eef2ff); margin-top: 32px;">
+                        <div class="flex-row">
+                            <div style="font-size: 48px;">💡</div>
+                            <div>
+                                <h3 style="color: #1e40af; margin-bottom: 8px;">Why This Matters</h3>
+                                <p>Projects without proper requirements gathering deliver the wrong solution. Projects without data profiling encounter unexpected quality issues mid-stream. Both lead to costly rework, missed deadlines, and disappointed stakeholders. Investing time upfront in requirements and profiling saves exponentially more time and money later.</p>
+                            </div>
+                        </div>
+                    </div>
+                `
+            },
+            {
+                title: "Why It Matters",
+                icon: "⭐",
+                content: `
+                    <h2>Why Requirements Gathering & Data Profiling Matter</h2>
+                    
+                    <div class="grid" style="gap: 20px;">
+                        <div class="card-item" style="background: linear-gradient(to right, #eff6ff, #dbeafe);">
+                            <div class="flex-row">
+                                <div class="icon-large">🎯</div>
+                                <div>
+                                    <h3 style="color: #1e40af; margin-bottom: 8px;">Alignment</h3>
+                                    <p>Ensures solutions meet business needs. Clear requirements create shared understanding between technical teams and business stakeholders, eliminating the "that's not what I asked for" problem.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-item" style="background: linear-gradient(to right, #eef2ff, #e0e7ff);">
+                            <div class="flex-row">
+                                <div class="icon-large">🔍</div>
+                                <div>
+                                    <h3 style="color: #4f46e5; margin-bottom: 8px;">Clarity</h3>
+                                    <p>Defines scope, objectives, and success criteria. Everyone knows what's in scope, what's out of scope, and what "done" looks like. Prevents scope creep and endless revisions.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-item" style="background: linear-gradient(to right, #f0fdf4, #dcfce7);">
+                            <div class="flex-row">
+                                <div class="icon-large">⚡</div>
+                                <div>
+                                    <h3 style="color: #059669; margin-bottom: 8px;">Efficiency</h3>
+                                    <p>Reduces rework and accelerates delivery. Understanding requirements and data quality upfront prevents mid-project surprises that derail timelines and budgets. Build it right the first time.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-item" style="background: linear-gradient(to right, #fef3c7, #fde68a);">
+                            <div class="flex-row">
+                                <div class="icon-large">✓</div>
+                                <div>
+                                    <h3 style="color: #d97706; margin-bottom: 8px;">Quality Assurance</h3>
+                                    <p>Identifies issues in data early. Data profiling reveals quality problems before they're baked into reports and models. Fix issues at the source rather than patching symptoms downstream.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-item" style="background: linear-gradient(to right, #fef2f2, #fee2e2);">
+                            <div class="flex-row">
+                                <div class="icon-large">🤝</div>
+                                <div>
+                                    <h3 style="color: #991b1b; margin-bottom: 8px;">Trust</h3>
+                                    <p>Builds confidence in data-driven decisions. Stakeholders trust outputs when they understand requirements were clear and data quality was verified. Trust is the currency of data teams.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="info-box blue" style="margin-top: 32px;">
+                        <div class="flex-row">
+                            <div style="font-size: 32px;">💡</div>
+                            <div>
+                                <h3 style="color: #1e40af; margin-bottom: 8px;">Real-World Example: Fraud Detection System</h3>
+                                <p>A bank gathers requirements for a fraud detection system through interviews with risk managers, fraud analysts, and compliance officers. They learn detection must happen in under 100ms, flag transactions above $10,000, and maintain 99.9% uptime. Data profiling reveals 15% of historical transactions have missing merchant codes and 8% have inconsistent timestamps. These findings shape system design—adding data quality checks and deciding to impute missing values using machine learning rather than discarding incomplete records.</p>
+                            </div>
+                        </div>
+                    </div>
+                `
+            },
+            {
+                title: "Requirements Gathering",
+                icon: "📝",
+                content: `
+                    <h2>Requirements Gathering</h2>
+                    <p style="color: #6b7280; margin-bottom: 24px;">Five essential steps to capture complete, actionable requirements.</p>
+                    
+                    <div class="step-box" style="background-color: #eff6ff;">
+                        <div class="step-number" style="background-color: #3b82f6;">1</div>
+                        <div>
+                            <h3 style="color: #1e40af;">Stakeholder Interviews</h3>
+                            <p>Capture goals, pain points, and expectations through one-on-one conversations. Ask open-ended questions to understand not just what stakeholders want, but why they want it. Document both functional requirements (what the system does) and non-functional requirements (how well it performs).</p>
+                        </div>
+                    </div>
+
+                    <div class="step-box" style="background-color: #eef2ff;">
+                        <div class="step-number" style="background-color: #6366f1;">2</div>
+                        <div>
+                            <h3 style="color: #4f46e5;">Workshops & Brainstorming</h3>
+                            <p>Collaborate to refine scope and explore solutions. Bring stakeholders together to align on priorities, resolve conflicts, and generate creative solutions. Workshops surface assumptions and build consensus that individual interviews miss.</p>
+                        </div>
+                    </div>
+
+                    <div class="step-box" style="background-color: #f0fdf4;">
+                        <div class="step-number" style="background-color: #10b981;">3</div>
+                        <div>
+                            <h3 style="color: #059669;">Documentation</h3>
+                            <p>Record functional and non-functional requirements in clear, testable language. Use user stories, use cases, or formal requirement specifications. Include acceptance criteria so everyone knows when requirements are met. Make documents accessible and version-controlled.</p>
+                        </div>
+                    </div>
+
+                    <div class="step-box" style="background-color: #fef3c7;">
+                        <div class="step-number" style="background-color: #f59e0b;">4</div>
+                        <div>
+                            <h3 style="color: #d97706;">Prioritization</h3>
+                            <p>Rank requirements based on business impact, urgency, and dependencies. Use frameworks like MoSCoW (Must have, Should have, Could have, Won't have) or RICE (Reach, Impact, Confidence, Effort). Prioritization enables phased delivery and focuses effort on high-value features.</p>
+                        </div>
+                    </div>
+
+                    <div class="step-box" style="background-color: #faf5ff;">
+                        <div class="step-number" style="background-color: #a855f7;">5</div>
+                        <div>
+                            <h3 style="color: #7c3aed;">Validation</h3>
+                            <p>Confirm requirements with stakeholders before implementation. Review documented requirements, walk through scenarios, and get explicit sign-off. Validation catches misunderstandings early when they're cheap to fix rather than expensive to correct post-launch.</p>
+                        </div>
+                    </div>
+                `
+            },
+            {
+                title: "Data Profiling",
+                icon: "🔬",
+                content: `
+                    <h2>Data Profiling</h2>
+                    <p style="color: #6b7280; margin-bottom: 24px;">Five critical dimensions of understanding your data.</p>
+                    
+                    <div class="process-diagram">
+                        <div class="process-visual">📊</div>
+                        <h3 style="color: #1e40af; margin-bottom: 8px;">Structure Analysis</h3>
+                        <p><strong>Focus:</strong> Understand schema, data types, and relationships</p>
+                        <p style="color: #6b7280; margin-top: 8px;">Examine table structures, column definitions, primary keys, foreign keys, and indexes. Identify data types (integers, strings, dates) and constraints. Map relationships between tables. Structure analysis reveals how data is organized and how entities connect.</p>
+                    </div>
+
+                    <div class="process-diagram">
+                        <div class="process-visual">🔍</div>
+                        <h3 style="color: #4f46e5; margin-bottom: 8px;">Content Analysis</h3>
+                        <p><strong>Focus:</strong> Identify patterns, distributions, and anomalies</p>
+                        <p style="color: #6b7280; margin-top: 8px;">Look at actual data values—not just schemas. Analyze frequency distributions, identify common values, find outliers, and spot unexpected patterns. Content analysis uncovers business rules encoded in data and reveals data quality issues invisible in schema alone.</p>
+                    </div>
+
+                    <div class="process-diagram">
+                        <div class="process-visual">✓</div>
+                        <h3 style="color: #059669; margin-bottom: 8px;">Quality Checks</h3>
+                        <p><strong>Focus:</strong> Assess completeness, accuracy, and consistency</p>
+                        <p style="color: #6b7280; margin-top: 8px;">Measure null rates, check for duplicates, validate against business rules, and verify referential integrity. Assess whether data matches expected formats and ranges. Quality checks quantify data reliability and identify cleanup priorities.</p>
+                    </div>
+
+                    <div class="process-diagram">
+                        <div class="process-visual">📚</div>
+                        <h3 style="color: #d97706; margin-bottom: 8px;">Metadata Review</h3>
+                        <p><strong>Focus:</strong> Document lineage, definitions, and ownership</p>
+                        <p style="color: #6b7280; margin-top: 8px;">Capture where data comes from, how it's transformed, what fields mean, and who owns it. Document update frequency, retention policies, and access controls. Metadata provides context that makes data interpretable and trustworthy.</p>
+                    </div>
+
+                    <div class="process-diagram">
+                        <div class="process-visual">📈</div>
+                        <h3 style="color: #7c3aed; margin-bottom: 8px;">Statistical Profiling</h3>
+                        <p><strong>Focus:</strong> Use descriptive statistics to summarize datasets</p>
+                        <p style="color: #6b7280; margin-top: 8px;">Calculate means, medians, standard deviations, min/max values, and percentiles. Generate histograms and correlation matrices. Statistical profiling provides quantitative baseline for understanding data distributions and relationships.</p>
+                    </div>
+                `
+            },
+            {
+                title: "Tools & Technologies",
+                icon: "🛠️",
+                content: `
+                    <h2>Tools & Technologies</h2>
+                    <p style="color: #6b7280; margin-bottom: 24px;">Modern platforms and tools for requirements gathering and data profiling.</p>
+                    
+                    <div class="card-item tool-card" style="border-color: #3b82f6; margin-bottom: 20px;">
+                        <div class="flex-row">
+                            <div style="font-size: 48px;">📝</div>
+                            <div style="flex: 1;">
+                                <h3 style="color: #1e40af; margin-bottom: 8px;">Requirements Gathering Tools</h3>
+                                <p style="margin-bottom: 12px;"><strong>Platforms:</strong> JIRA, Confluence, Trello, Microsoft Teams, Notion</p>
+                                <div style="background-color: #eff6ff; padding: 12px; border-radius: 4px;">
+                                    Collaborative platforms for documenting requirements, tracking stakeholder feedback, managing backlogs, and maintaining living documentation. Enable distributed teams to gather, refine, and validate requirements asynchronously.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-item tool-card" style="border-color: #6366f1; margin-bottom: 20px;">
+                        <div class="flex-row">
+                            <div style="font-size: 48px;">🔬</div>
+                            <div style="flex: 1;">
+                                <h3 style="color: #4f46e5; margin-bottom: 8px;">Data Profiling Tools</h3>
+                                <p style="margin-bottom: 12px;"><strong>Solutions:</strong> Talend Data Preparation, Informatica Data Quality, Trifacta, OpenRefine</p>
+                                <div style="background-color: #eef2ff; padding: 12px; border-radius: 4px;">
+                                    Specialized tools for automated data profiling, quality assessment, and cleansing. Provide visual interfaces for exploring data distributions, identifying anomalies, and documenting quality metrics. Generate profiling reports automatically.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-item tool-card" style="border-color: #10b981; margin-bottom: 20px;">
+                        <div class="flex-row">
+                            <div style="font-size: 48px;">☁️</div>
+                            <div style="flex: 1;">
+                                <h3 style="color: #059669; margin-bottom: 8px;">Cloud Data Catalogs</h3>
+                                <p style="margin-bottom: 12px;"><strong>Services:</strong> AWS Glue Data Catalog, Azure Purview, Google Data Catalog, Alation</p>
+                                <div style="background-color: #f0fdf4; padding: 12px; border-radius: 4px;">
+                                    Cloud-native platforms for data discovery, cataloging, and lineage tracking. Automatically profile data, extract metadata, and provide searchable catalogs. Integrate with cloud data warehouses and lakes for unified governance.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-item tool-card" style="border-color: #f59e0b; margin-bottom: 20px;">
+                        <div class="flex-row">
+                            <div style="font-size: 48px;">🎨</div>
+                            <div style="flex: 1;">
+                                <h3 style="color: #d97706; margin-bottom: 8px;">Collaboration & Visualization</h3>
+                                <p style="margin-bottom: 12px;"><strong>Tools:</strong> Miro, Lucidchart, Figma, draw.io</p>
+                                <div style="background-color: #fef3c7; padding: 12px; border-radius: 4px;">
+                                    Visual collaboration platforms for creating data flow diagrams, ERDs, wireframes, and journey maps during requirements workshops. Enable real-time co-creation and maintain visual documentation of requirements and data structures.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-item tool-card" style="border-color: #a855f7;">
+                        <div class="flex-row">
+                            <div style="font-size: 48px;">🐍</div>
+                            <div style="flex: 1;">
+                                <h3 style="color: #7c3aed; margin-bottom: 8px;">Programming Libraries</h3>
+                                <p style="margin-bottom: 12px;"><strong>Libraries:</strong> pandas-profiling, Great Expectations, ydata-profiling, Apache Griffin</p>
+                                <div style="background-color: #faf5ff; padding: 12px; border-radius: 4px;">
+                                    Python and open-source libraries for programmatic data profiling, quality testing, and validation. Generate comprehensive profiling reports, implement data quality checks in pipelines, and integrate profiling into CI/CD workflows.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `
+            },
+            {
+                title: "Practical Applications",
+                icon: "💼",
+                content: `
+                    <h2>Practical Applications</h2>
+                    <p style="color: #6b7280; margin-bottom: 24px;">How requirements gathering and data profiling work together across industries.</p>
+                    
+                    <div class="card-item" style="background: linear-gradient(to right, #fef3c7, #fde68a); margin-bottom: 20px;">
+                        <div class="flex-row">
+                            <div class="icon-large">💰</div>
+                            <div>
+                                <h3 style="color: #d97706; margin-bottom: 8px;">Finance</h3>
+                                <p><strong>Application:</strong> Profiling transaction data for fraud detection</p>
+                                <p style="margin-top: 8px; color: #6b7280;">Banks gather requirements from fraud analysts on detection rules, false positive thresholds, and investigation workflows. Data profiling reveals transaction patterns—80% occur under $100, but 2% of high-value transactions account for 60% of fraud. This shapes model design, focusing detection logic on high-value anomalies while streamlining processing for routine transactions.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-item" style="background: linear-gradient(to right, #f0fdf4, #dcfce7); margin-bottom: 20px;">
+                        <div class="flex-row">
+                            <div class="icon-large">🏥</div>
+                            <div>
+                                <h3 style="color: #059669; margin-bottom: 8px;">Healthcare</h3>
+                                <p><strong>Application:</strong> Ensuring patient records are complete and accurate</p>
+                                <p style="margin-top: 8px; color: #6b7280;">Hospitals gather requirements for electronic health record (EHR) integration from clinicians, nurses, and administrators. Profiling patient data reveals 12% of records missing critical allergy information and 8% with inconsistent medication dosages. Requirements shift to include data validation at point of entry and reconciliation processes for legacy records.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-item" style="background: linear-gradient(to right, #eff6ff, #dbeafe); margin-bottom: 20px;">
+                        <div class="flex-row">
+                            <div class="icon-large">📱</div>
+                            <div>
+                                <h3 style="color: #1e40af; margin-bottom: 8px;">Social Media</h3>
+                                <p><strong>Application:</strong> Profiling engagement data for recommendation engines</p>
+                                <p style="margin-top: 8px; color: #6b7280;">Social platforms gather requirements for recommendation features from product managers and users. Data profiling shows engagement patterns vary dramatically by time of day and content type—video engagement peaks evenings, text posts perform better mornings. Requirements evolve to include time-aware recommendations and content-type specific models.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-item" style="background: linear-gradient(to right, #fef2f2, #fee2e2); margin-bottom: 20px;">
+                        <div class="flex-row">
+                            <div class="icon-large">🛍️</div>
+                            <div>
+                                <h3 style="color: #991b1b; margin-bottom: 8px;">Retail</h3>
+                                <p><strong>Application:</strong> Profiling customer data for segmentation</p>
+                                <p style="margin-top: 8px; color: #6b7280;">Retailers gather requirements for customer segmentation from marketing teams seeking personalized campaigns. Profiling reveals 30% of customers have incomplete profiles and 15% show contradictory demographic data across channels. Requirements expand to include profile enrichment and data unification before segmentation.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-item" style="background: linear-gradient(to right, #eef2ff, #e0e7ff);">
+                        <div class="flex-row">
+                            <div class="icon-large">🏛️</div>
+                            <div>
+                                <h3 style="color: #4f46e5; margin-bottom: 8px;">Government</h3>
+                                <p><strong>Application:</strong> Gathering requirements for census systems</p>
+                                <p style="margin-top: 8px; color: #6b7280;">Government agencies gather requirements for census data systems from policy makers, statisticians, and privacy officers. Profiling historical census data reveals response rates vary by demographics and geography. Requirements include targeted outreach strategies and data imputation methods for underrepresented populations.</p>
+                            </div>
+                        </div>
+                    </div>
+                `
+            },
+            {
+                title: "Best Practices",
+                icon: "✨",
+                content: `
+                    <h2>Best Practices for Requirements Gathering & Data Profiling</h2>
+                    <p style="color: #6b7280; margin-bottom: 24px;">Five essential practices to maximize effectiveness.</p>
+                    
+                    <div class="step-box" style="background-color: #eff6ff;">
+                        <div class="step-number" style="background-color: #3b82f6;">1</div>
+                        <div>
+                            <h3 style="color: #1e40af;">Engage Stakeholders Early</h3>
+                            <p>Avoid misalignment later by involving business users, data owners, and technical teams from day one. Early engagement surfaces conflicting priorities, builds buy-in, and creates shared ownership. Don't wait until requirements are "final"—start conversations early and iterate.</p>
+                        </div>
+                    </div>
+
+                    <div class="step-box" style="background-color: #f0fdf4;">
+                        <div class="step-number" style="background-color: #10b981;">2</div>
+                        <div>
+                            <h3 style="color: #059669;">Iterate Requirements</h3>
+                            <p>Refine as new insights emerge from profiling and prototyping. Requirements aren't static—they evolve as you learn more about data reality and technical constraints. Build feedback loops, show working prototypes, and adjust based on what you discover.</p>
+                        </div>
+                    </div>
+
+                    <div class="step-box" style="background-color: #eef2ff;">
+                        <div class="step-number" style="background-color: #6366f1;">3</div>
+                        <div>
+                            <h3 style="color: #4f46e5;">Automate Profiling</h3>
+                            <p>Use tools to continuously monitor data quality rather than one-time manual profiling. Automated profiling catches quality degradation, schema drift, and emerging patterns. Schedule regular profiling runs and set up alerts for anomalies.</p>
+                        </div>
+                    </div>
+
+                    <div class="step-box" style="background-color: #fef3c7;">
+                        <div class="step-number" style="background-color: #f59e0b;">4</div>
+                        <div>
+                            <h3 style="color: #d97706;">Document Thoroughly</h3>
+                            <p>Maintain clear records for governance and future reference. Document not just what requirements are, but why they exist and what tradeoffs were made. Profiling reports should be versioned and stored alongside requirements. Future teams will thank you.</p>
+                        </div>
+                    </div>
+
+                    <div class="step-box" style="background-color: #faf5ff;">
+                        <div class="step-number" style="background-color: #a855f7;">5</div>
+                        <div>
+                            <h3 style="color: #7c3aed;">Validate Findings</h3>
+                            <p>Share profiling results with business teams who know the data's real-world context. Technical teams spot data anomalies, but business teams explain whether they're errors or legitimate edge cases. Validation prevents fixing "problems" that are actually correct but unexpected.</p>
+                        </div>
+                    </div>
+                `
+            },
+            {
+                title: "Common Challenges",
+                icon: "⚠️",
+                content: `
+                    <h2>Common Challenges & Solutions</h2>
+                    <p style="color: #6b7280; margin-bottom: 24px;">Overcoming typical obstacles in requirements and profiling.</p>
+                    
+                    <div class="card-item" style="background: linear-gradient(to right, #fef2f2, #fee2e2); margin-bottom: 20px;">
+                        <div class="flex-row">
+                            <div style="font-size: 48px;">🤔</div>
+                            <div>
+                                <h3 style="color: #991b1b; margin-bottom: 12px;">Challenge: Vague Requirements</h3>
+                                <p><strong>Problem:</strong> Stakeholders say "I'll know it when I see it" or provide high-level goals without specifics</p>
+                                <div style="background-color: #dcfce7; padding: 12px; border-radius: 6px; margin-top: 12px;">
+                                    <strong>Solution:</strong> Use concrete examples and scenarios. Show mockups or prototypes. Ask "what would make this successful?" and "how will you use this?" Turn abstract goals into specific, testable acceptance criteria.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-item" style="background: linear-gradient(to right, #fef3c7, #fde68a); margin-bottom: 20px;">
+                        <div class="flex-row">
+                            <div style="font-size: 48px;">🗣️</div>
+                            <div>
+                                <h3 style="color: #d97706; margin-bottom: 12px;">Challenge: Conflicting Stakeholder Priorities</h3>
+                                <p><strong>Problem:</strong> Different teams want incompatible features or have opposing priorities</p>
+                                <div style="background-color: #dbeafe; padding: 12px; border-radius: 6px; margin-top: 12px;">
+                                    <strong>Solution:</strong> Facilitate prioritization workshops with decision-makers present. Use objective criteria (business value, effort, risk) to rank requirements. Document tradeoffs and get executive sponsorship for final priority calls.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-item" style="background: linear-gradient(to right, #eef2ff, #e0e7ff); margin-bottom: 20px;">
+                        <div class="flex-row">
+                            <div style="font-size: 48px;">💾</div>
+                            <div>
+                                <h3 style="color: #4f46e5; margin-bottom: 12px;">Challenge: Massive Datasets</h3>
+                                <p><strong>Problem:</strong> Profiling billions of rows is slow and resource-intensive</p>
+                                <div style="background-color: #faf5ff; padding: 12px; border-radius: 6px; margin-top: 12px;">
+                                    <strong>Solution:</strong> Use statistical sampling for initial profiling. Focus deep profiling on critical columns and problematic patterns identified in samples. Leverage distributed computing (Spark) for large-scale profiling. Schedule heavy profiling during off-peak hours.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-item" style="background: linear-gradient(to right, #f0fdf4, #dcfce7); margin-bottom: 20px;">
+                        <div class="flex-row">
+                            <div style="font-size: 48px;">📊</div>
+                            <div>
+                                <h3 style="color: #059669; margin-bottom: 12px;">Challenge: Interpreting Profiling Results</h3>
+                                <p><strong>Problem:</strong> Profiling reveals anomalies but unclear if they're errors or valid edge cases</p>
+                                <div style="background-color: #fef3c7; padding: 12px; border-radius: 6px; margin-top: 12px;">
+                                    <strong>Solution:</strong> Collaborate with business experts who understand data context. Investigate outliers through source system queries. Document findings and create data dictionaries explaining legitimate patterns vs. quality issues.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="info-box blue">
+                        <div class="flex-row">
+                            <div style="font-size: 32px;">💡</div>
+                            <div>
+                                <h3 style="color: #1e40af; margin-bottom: 8px;">The Iterative Mindset</h3>
+                                <p>Requirements gathering and data profiling aren't one-and-done activities. They're ongoing conversations. As you profile data, you discover constraints that reshape requirements. As requirements evolve, you profile new data sources. Embrace iteration rather than seeking perfection upfront.</p>
+                            </div>
+                        </div>
+                    </div>
+                `
+            },
+            {
+                title: "Summary & Takeaways",
+                icon: "🎓",
+                content: `
+                    <h2>Summary & Takeaways</h2>
+                    
+                    <div class="info-box green" style="margin-bottom: 16px;">
+                        <div class="flex-row">
+                            <span class="checkmark">✓</span>
+                            <p style="font-size: 18px;">Requirements Gathering ensures alignment with business goals and defines project success criteria</p>
+                        </div>
+                    </div>
+
+                    <div class="info-box green" style="margin-bottom: 16px;">
+                        <div class="flex-row">
+                            <span class="checkmark">✓</span>
+                            <p style="font-size: 18px;">Data Profiling provides insights into quality, structure, and usability before building solutions</p>
+                        </div>
+                    </div>
+
+                    <div class="info-box green" style="margin-bottom: 16px;">
+                        <div class="flex-row">
+                            <span class="checkmark">✓</span>
+                            <p style="font-size: 18px;">Modern tools support collaboration, automation, and continuous monitoring of requirements and data</p>
+                        </div>
+                    </div>
+
+                    <div class="info-box green">
+                        <div class="flex-row">
+                            <span class="checkmark">✓</span>
+                            <p style="font-size: 18px;">Best practices emphasize early engagement, iteration, and validation with stakeholders</p>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 32px; padding: 24px; background: linear-gradient(to right, #eff6ff, #eef2ff); border-radius: 8px;">
+                        <h3 style="color: #1e40af; margin-bottom: 12px;">🎯 Key Principles to Remember</h3>
+                        <ul>
+                            <li><strong>Start with why</strong> - Understand business goals before diving into technical solutions</li>
+                            <li><strong>Show, don't tell</strong> - Use prototypes and examples to clarify requirements</li>
+                            <li><strong>Trust but verify</strong> - Profile data to validate assumptions about quality and structure</li>
+                            <li><strong>Document decisions</strong> - Record not just what but why for future reference</li>
+                            <li><strong>Iterate continuously</strong> - Requirements and profiling inform each other cyclically</li>
+                            <li><strong>Automate what repeats</strong> - Make profiling continuous, not one-time</li>
+                        </ul>
+                    </div>
+
+                    <div class="info-box yellow" style="margin-top: 24px;">
+                        <div class="flex-row">
+                            <div style="font-size: 32px;">📋</div>
+                            <div>
+                                <h3 style="color: #d97706; margin-bottom: 8px;">The Golden Rule of Project Foundation</h3>
+                                <p><strong>"Measure twice, cut once. Profile early, build right."</strong></p>
+                                <p style="margin-top: 8px;">Time invested in requirements gathering and data profiling pays exponential dividends. Rush past this foundation, and you'll spend far more time fixing problems later. The most expensive projects are those that deliver the wrong solution to the wrong problem using bad data. Get the foundation right.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="cta-box">
+                        <h3>📌 Continue Your Learning Journey</h3>
+                        <p style="font-size: 18px; margin-bottom: 24px;">Congratulations on completing Part 12! You now understand how to lay solid foundations for data projects through effective requirements gathering and data profiling.</p>
+                        <p style="margin-bottom: 24px;">Ready to apply these techniques? Connect with me on LinkedIn for more insights, templates, and future learning content.</p>
+                        <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+                            <a href="https://www.linkedin.com/in/aditya-bhutada94/" target="_blank" class="cta-btn">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                                </svg>
+                                Connect on LinkedIn
+                            </a>
+                            <a href="https://github.com/aditya-bhutada" target="_blank" class="cta-btn">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                                </svg>
+                                View on GitHub
+                            </a>
+                        </div>
+                    </div>
+
+                    <div style="text-align: center; margin-top: 32px; padding: 24px; background-color: #f9fafb; border-radius: 8px;">
+                        <p style="font-size: 18px; color: #6b7280; margin-bottom: 8px;">🎉 Congratulations on completing Part 12!</p>
+                        <p style="color: #9ca3af;">You now know how to start data projects with clear requirements and deep data understanding</p>
+                        <p style="color: #3b82f6; font-weight: 600; margin-top: 12px;">Build on solid foundations! 🚀</p>
+                    </div>
+                `
+            }
+        ];
+
+        function renderPage() {
+            const page = pages[currentPage];
+            document.getElementById('pageIcon').textContent = page.icon;
+            document.getElementById('pageNumber').textContent = `Chapter ${currentPage + 1} of ${pages.length}`;
+            document.getElementById('pageTitle').textContent = page.title;
+            document.getElementById('pageContent').innerHTML = page.content;
+            document.getElementById('pageIndicator').textContent = `Page ${currentPage + 1} of ${pages.length}`;
+            
+            document.getElementById('prevBtn').disabled = currentPage === 0;
+            document.getElementById('nextBtn').disabled = currentPage === pages.length - 1;
+            
+            completedPages.add(currentPage);
+            const progress = ((completedPages.size) / pages.length) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+            document.getElementById('progressText').textContent = Math.round(progress) + '% Complete';
+            
+            window.scrollTo(0, 0);
+        }
+
+        function renderMenu() {
+            const menuItems = pages.map((page, index) => `
+                <button class="menu-item ${currentPage === index ? 'active' : ''}" onclick="goToPage(${index})">
+                    <div class="menu-item-content">
+                        <span class="menu-item-icon">${page.icon}</span>
+                        <div style="flex: 1; text-align: left;">
+                            <div class="menu-item-title">${page.title}</div>
+                            <div class="menu-item-subtitle">Chapter ${index + 1}</div>
+                        </div>
+                        ${completedPages.has(index) ? '<span style="color: #10b981; font-size: 20px;">✓</span>' : ''}
+                    </div>
+                </button>
+            `).join('');
+            
+            document.getElementById('menuItems').innerHTML = menuItems;
+        }
+
+        function toggleMenu() {
+            const overlay = document.getElementById('menuOverlay');
+            const sidebar = document.getElementById('menuSidebar');
+            overlay.classList.toggle('active');
+            sidebar.classList.toggle('active');
+        }
+
+        function goToPage(index) {
+            currentPage = index;
+            renderPage();
+            renderMenu();
+            toggleMenu();
+        }
+
+        function nextPage() {
+            if (currentPage < pages.length - 1) {
+                currentPage++;
+                renderPage();
+                renderMenu();
+            }
+        }
+
+        function previousPage() {
+            if (currentPage > 0) {
+                currentPage--;
+                renderPage();
+                renderMenu();
+            }
+        }
+
+        renderPage();
+        renderMenu();
+    </script>
+</body>
+</html>
